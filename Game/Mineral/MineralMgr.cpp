@@ -1,0 +1,222 @@
+#include "Mineral.h"
+#include "MineralMgr.h"
+#include "MineralTarget.h"
+#include "../Game/DestructibleObject/DestructibleObjectMgr.h"
+#include "../Player.h"
+#include "../Building/BuildingMgr.h"
+
+MineralMgr::MineralMgr() {
+
+	for (auto& index : m_minerals) {
+
+		index = std::make_shared<Mineral>();
+
+	}
+
+}
+
+void MineralMgr::DebugGenerate() {
+
+	using namespace KazMath;
+
+	std::vector<Vec3<float>> debugInfo;
+	debugInfo.emplace_back(KazMath::Vec3<float>(169.0f,10.0f,105.0f) + KazMath::Vec3<float>(30.0f, 0.0f, 0.0f));
+	debugInfo.emplace_back(KazMath::Vec3<float>(169.0f,10.0f,105.0f) - KazMath::Vec3<float>(30.0f, 0.0f, 0.0f));
+
+	for (auto& param : debugInfo) {
+
+		for (auto& index : m_minerals) {
+
+			if (index->GetIsAlive()) continue;
+
+			index->Generate(index, param, {});
+
+			break;
+
+		}
+
+	}
+
+}
+
+void MineralMgr::Init() {
+
+	for (auto& index : m_minerals) {
+
+		index->Init();
+
+	}
+
+}
+
+void MineralMgr::Generate(KazMath::Vec3<float>& arg_pos, KazMath::Vec3<float>& arg_respawnDir, int arg_mineralID) {
+
+	for (auto& index : m_minerals) {
+
+		if (index->GetIsAlive()) continue;
+
+		index->Generate(index, arg_pos, arg_respawnDir, arg_mineralID);
+
+		break;
+
+	}
+
+}
+
+void MineralMgr::Update(std::weak_ptr<Player> arg_player, std::weak_ptr<MineralTarget> arg_mineralTarget) {
+
+	for (auto& index : m_minerals) {
+
+		if (!index->GetIsAlive()) continue;
+
+		//分裂した場合のベクトル
+		std::vector<std::pair<KazMath::Vec3<float>, int>> breakUpPos;
+
+		//更新処理
+		index->Update(arg_player, breakUpPos);
+
+		//分裂した場合、生成する。
+		for (auto& breakUp : breakUpPos) {
+
+			Generate(index->GetPos(), breakUp.first, breakUp.second);
+
+		}
+
+	}
+
+	//重ならないようにする。
+	for (auto& targetMineral : m_minerals) {
+
+		if (!targetMineral->GetIsAlive()) continue;
+
+		for (auto& otherMineral : m_minerals) {
+
+			if (!otherMineral->GetIsAlive()) continue;
+
+			//同じオブジェクトだったら飛ばす。
+			if (targetMineral == otherMineral) continue;
+
+			targetMineral->CounterOverlap(arg_player.lock()->GetMineralCenterPos(), otherMineral->GetPosRef(), otherMineral->GetCollisionScale());
+
+		}
+
+	}
+
+	//解散状態だったら。
+	if (arg_player.lock()->GetIsBreakUP()) {
+
+		for (auto& index : m_minerals) {
+
+			//同じオブジェクトだったら飛ばす。
+			if (!index->GetIsAlive()) continue;
+			if (!index->GetIsGathering()) continue;
+
+			index->BreakUP(arg_player.lock()->GetForwardVec());
+
+		}
+
+	}
+
+	//プレイヤーが台パン状態だったら
+	if (arg_player.lock()->GetIsDaipanTrigger() && arg_mineralTarget.lock()->GetCanTarget()) {
+
+		//どのミネラルを攻撃させるかを決める。
+		bool isSmallMineral = false;
+		bool isMediumMineral = false;
+		bool isLergeMineral = false;
+		for (auto& index : m_minerals) {
+
+			if (!index->GetIsAlive()) continue;
+			if (index->GetIsAttack()) continue;
+			if (!index->GetIsGathering()) continue;
+			if (index->GetIsGatheringTrigger()) continue;
+
+			//ミネラルの種類を検索。
+			isSmallMineral |= index->GetMineralID() == 0;
+			isMediumMineral |= index->GetMineralID() == 1;
+			isLergeMineral |= index->GetMineralID() == 2;
+
+		}
+
+		//生成するミネラルのID
+		int generateMineralID = 0;
+		if (isSmallMineral) {
+			generateMineralID = 0;
+		}
+		else if (isMediumMineral) {
+			generateMineralID = 1;
+		}
+		else if (isLergeMineral) {
+			generateMineralID = 2;
+		}
+
+		//攻撃させる。
+		for (auto& index : m_minerals) {
+
+			if (!index->GetIsAlive()) continue;
+			if (index->GetIsAttack()) continue;
+			if (!index->GetIsGathering()) continue;
+			if (index->GetIsGatheringTrigger()) continue;
+
+
+			int targetIndex = arg_mineralTarget.lock()->GetCanTarget();
+			//ターゲットが建造物の場合はサイズは関係ない。
+			if (targetIndex == 5) {
+				//建築材料を持っていたら
+				if (index->GetHaveMaterial()) {
+
+					//建築材料が足りていなかったら。
+					if (BuildingMgr::Instance()->IsFullMaterialWall(arg_mineralTarget.lock()->GetTargetBuilidngIndex())) {
+
+						//材料を足す。
+						BuildingMgr::Instance()->AddMaterialWall(arg_mineralTarget.lock()->GetTargetBuilidngIndex());
+						index->EraseTheMaterial();
+
+					}
+					else {
+
+						//地面に置く。
+						index->DropMaterial();
+
+					}
+
+				}
+			}
+
+			//ミネラルの種類によって処理を省く。
+			if (generateMineralID != index->GetMineralID()) continue;
+
+			//攻撃させる。
+			if (targetIndex == 1) {
+				index->Attack(arg_mineralTarget.lock()->GetTargetRock());
+			}
+			else if (targetIndex == 2) {
+				index->Attack(arg_mineralTarget.lock()->GetTargetMinekuji());
+			}
+			else if (targetIndex == 3) {
+				index->Attack(arg_mineralTarget.lock()->GetTargetTree());
+			}
+			else if (targetIndex == 4) {
+				if (index->GetHaveMaterial()) continue;
+				index->HaveMaterial(arg_mineralTarget.lock()->GetTargetMaterial());
+				break;
+			}
+
+		}
+
+	}
+
+}
+
+void MineralMgr::Draw(DrawingByRasterize& arg_rasterize, Raytracing::BlasVector& arg_blasVec) {
+
+
+	for (auto& index : m_minerals) {
+
+		//if (!index->GetIsAlive()) continue;
+
+		index->Draw(arg_rasterize, arg_blasVec);
+
+	}
+
+}

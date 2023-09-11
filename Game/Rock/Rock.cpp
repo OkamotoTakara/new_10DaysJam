@@ -1,0 +1,246 @@
+#include "Rock.h"
+#include "../Game/Player.h"
+#include "../Game/Effect/ShakeMgr.h"
+
+Rock::Rock()
+{
+
+	m_isAlive = false;
+	m_gravity = 0;
+	m_rockID = BIG;
+
+	m_transform.pos = { 10000,-10000,10000 };
+	m_transform.scale = { 0,0,0 };
+
+	m_model[0].Load("Resource/Rock/", "Rock_S_01.gltf");
+	m_model[1].Load("Resource/Rock/", "Rock_S_02.gltf");
+	m_model[2].Load("Resource/Rock/", "Rock_S_03.gltf");
+	m_modelIndex = 0;
+
+}
+
+void Rock::Init()
+{
+
+	m_isAlive = false;
+	m_gravity = 0;
+	m_reactionVec = {};
+
+}
+
+void Rock::Generate(KazMath::Vec3<float> arg_pos, KazMath::Vec3<float> arg_respawnVec, int arg_rockID)
+{
+
+	m_rockID = static_cast<ROCK_ID>(arg_rockID);
+	m_transform.pos = arg_pos;
+	m_respawnVec = arg_respawnVec;
+	m_isAlive = true;
+	m_canCollision = false;
+	m_canOldCollision = false;
+	m_gravity = 0;
+	m_reactionVec = {};
+
+	m_hp = MAX_HP[static_cast<int>(m_rockID)];
+
+	m_modelIndex = KazMath::Rand(0, 2);
+
+}
+
+void Rock::Update(std::weak_ptr<Player> arg_player, std::vector<std::pair<KazMath::Vec3<float>, int>>& arg_respawnVec)
+{
+
+	using namespace KazMath;
+
+	//与えられた初速を座標に足す。
+	if (0.01f < m_respawnVec.Length()) {
+
+		m_transform.pos += m_respawnVec;
+		m_respawnVec -= m_respawnVec / 10.0f;
+
+	}
+	else {
+
+		m_respawnVec = {};
+
+	}
+
+	//攻撃を食らったときの移動を足す。
+	if (0.01f < m_reactionVec.Length()) {
+
+		m_transform.pos += m_reactionVec;
+		m_reactionVec -= m_reactionVec / 10.0f;
+
+	}
+	else {
+
+		m_reactionVec = {};
+
+	}
+
+	//空中に浮いていたら重力を計算する。
+	m_canOldCollision = m_canCollision;
+	if (0 < m_transform.pos.y) {
+
+		m_gravity += GRAVITY;
+		m_transform.pos.y -= m_gravity;
+		m_canCollision = false;
+
+	}
+	else {
+
+		m_gravity = 0.0f;
+		m_transform.pos.y = 0.0f;
+		m_canCollision = true;
+
+	}
+
+	//プレイヤーとの当たり判定を行う。
+	if (m_canCollision && arg_player.lock()->GetIsDaipanTrigger()) {
+
+		//当たり判定チェック
+		bool isHit = Vec3<float>(arg_player.lock()->GetTransform().pos - m_transform.pos).Length() <= arg_player.lock()->GetMineralAffectStrongRange() + m_transform.scale.x;
+		if (isHit) {
+
+			//ベクトルチェック。
+			KazMath::Vec3<float> dir = KazMath::Vec3<float>(m_transform.pos - arg_player.lock()->GetTransform().pos);
+			dir.y = 0.0f;
+			dir.Normalize();
+
+			//HPを減らす。
+			Damage(dir / 5.0f, 4);
+			if (m_hp <= 0.0f) {
+
+				if (m_rockID == SMALL) {
+
+					m_respawnVec = { Vec3<float>(KazMath::Rand(-0.1f, 0.1f) ,KazMath::Rand(0.5f, 2.0f) ,KazMath::Rand(-0.1f, 0.1f)) };
+					m_respawnVec.Normalize();
+
+				}
+				else {
+
+					int id = 0;
+					switch (m_rockID)
+					{
+					case ROCK_ID::SMALL:
+						break;
+					case ROCK_ID::MEDIUM:
+						id = SMALL;
+						//強力なシェイクをかける。
+						ShakeMgr::Instance()->m_shakeAmount = 2.0f;
+						break;
+					case ROCK_ID::BIG:
+						id = MEDIUM;
+						//強力なシェイクをかける。
+						ShakeMgr::Instance()->m_shakeAmount = 3.0f;
+						break;
+					default:
+						break;
+					}
+
+					//分散させる。
+					for (int index = 0; index < 2; ++index) {
+						std::pair<KazMath::Vec3<float>, int> respawnData;
+						respawnData.first = { Vec3<float>(KazMath::Rand(-1.0f, 1.0f) ,KazMath::Rand(-0.0f, 2.0f) ,KazMath::Rand(-1.0f, 1.0f)) };
+						respawnData.first.GetNormal();
+						respawnData.first *= STRONG_DAIPAN_POWER;
+						respawnData.second = id;
+						arg_respawnVec.emplace_back(respawnData);
+					}
+
+					//こいつ本体は消す。
+					Init();
+
+
+				}
+
+			}
+
+		}
+
+	}
+
+	//ミネラルのサイズをステータスによって変更させる。
+	switch (m_rockID)
+	{
+	case ROCK_ID::SMALL:
+		m_transform.scale = { DRAW_SIZE_SMALL,DRAW_SIZE_SMALL ,DRAW_SIZE_SMALL };
+		break;
+	case ROCK_ID::MEDIUM:
+		m_transform.scale = { DRAW_SIZE_MEDIUM,DRAW_SIZE_MEDIUM ,DRAW_SIZE_MEDIUM };
+		break;
+	case ROCK_ID::BIG:
+		m_transform.scale = { DRAW_SIZE_BIG,DRAW_SIZE_BIG ,DRAW_SIZE_BIG };
+		break;
+	default:
+		break;
+	}
+
+	//HPが0になったら初期化
+	if (m_hp <= 0) {
+
+		if (m_rockID != SMALL) {
+
+			int id = 0;
+			switch (m_rockID)
+			{
+			case ROCK_ID::SMALL:
+				break;
+			case ROCK_ID::MEDIUM:
+				id = SMALL;
+				//強力なシェイクをかける。
+				ShakeMgr::Instance()->m_shakeAmount = 2.0f;
+				break;
+			case ROCK_ID::BIG:
+				id = MEDIUM;
+				//強力なシェイクをかける。
+				ShakeMgr::Instance()->m_shakeAmount = 3.0f;
+				break;
+			default:
+				break;
+			}
+
+			//分散させる。
+			for (int index = 0; index < 2; ++index) {
+				std::pair<KazMath::Vec3<float>, int> respawnData;
+				respawnData.first = { Vec3<float>(KazMath::Rand(-1.0f, 1.0f) ,KazMath::Rand(-0.0f, 2.0f) ,KazMath::Rand(-1.0f, 1.0f)) };
+				respawnData.first.GetNormal();
+				respawnData.first *= STRONG_DAIPAN_POWER;
+				respawnData.second = id;
+				arg_respawnVec.emplace_back(respawnData);
+			}
+
+		}
+		else {
+
+			ShakeMgr::Instance()->m_shakeAmount = 1.0f;
+
+		}
+
+		//こいつ本体は消す。
+		Init();
+
+	}
+
+
+}
+
+void Rock::Draw(DrawingByRasterize& arg_rasterize, Raytracing::BlasVector& arg_blasVec)
+{
+
+	if (!m_isAlive) {
+
+		m_transform.scale = { 0,0,0 };
+
+	}
+
+	m_model[m_modelIndex].Draw(arg_rasterize, arg_blasVec, m_transform);
+
+}
+
+void Rock::Damage(KazMath::Vec3<float> arg_reactionVec, int arg_damage)
+{
+
+	m_hp = std::clamp(m_hp - arg_damage, 0, MAX_HP.back());
+	m_reactionVec = arg_reactionVec;
+
+}
