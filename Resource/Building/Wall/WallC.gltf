@@ -15,7 +15,7 @@
     "nodes" : [
         {
             "mesh" : 0,
-            "name" : "\u5186\u67f1.009"
+            "name" : "WallC"
         }
     ],
     "materials" : [
@@ -26,7 +26,7 @@
                 0,
                 0
             ],
-            "name" : "Wall.016",
+            "name" : "Wall",
             "pbrMetallicRoughness" : {
                 "baseColorTexture" : {
                     "index" : 0,
@@ -39,7 +39,7 @@
     ],
     "meshes" : [
         {
-            "name" : "\u5186\u67f1.002",
+            "name" : "WallC",
             "primitives" : [
                 {
                     "attributes" : {
@@ -69,63 +69,63 @@
         {
             "bufferView" : 0,
             "componentType" : 5126,
-            "count" : 6885,
+            "count" : 7680,
             "max" : [
-                10.194121360778809,
-                3.3498852252960205,
-                0.37344983220100403
+                10.251832008361816,
+                4.427039623260498,
+                2.3034489154815674
             ],
             "min" : [
-                -10.076244354248047,
-                -2.1434173583984375,
-                -0.3732396960258484
+                -9.902629852294922,
+                -0.17985785007476807,
+                -2.3034489154815674
             ],
             "type" : "VEC3"
         },
         {
             "bufferView" : 1,
             "componentType" : 5126,
-            "count" : 6885,
+            "count" : 7680,
             "type" : "VEC3"
         },
         {
             "bufferView" : 2,
             "componentType" : 5126,
-            "count" : 6885,
+            "count" : 7680,
             "type" : "VEC2"
         },
         {
             "bufferView" : 3,
             "componentType" : 5123,
-            "count" : 6888,
+            "count" : 7680,
             "type" : "SCALAR"
         }
     ],
     "bufferViews" : [
         {
             "buffer" : 0,
-            "byteLength" : 82620,
+            "byteLength" : 92160,
             "byteOffset" : 0
         },
         {
             "buffer" : 0,
-            "byteLength" : 82620,
-            "byteOffset" : 82620
+            "byteLength" : 92160,
+            "byteOffset" : 92160
         },
         {
             "buffer" : 0,
-            "byteLength" : 55080,
-            "byteOffset" : 165240
+            "byteLength" : 61440,
+            "byteOffset" : 184320
         },
         {
             "buffer" : 0,
-            "byteLength" : 13776,
-            "byteOffset" : 220320
+            "byteLength" : 15360,
+            "byteOffset" : 245760
         }
     ],
     "buffers" : [
         {
-            "byteLength" : 234096,
+            "byteLength" : 261120,
             "uri" : "WallC.bin"
         }
     ]

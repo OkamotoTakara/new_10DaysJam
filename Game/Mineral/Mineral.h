@@ -4,6 +4,7 @@
 class Player;
 class Rock;
 class MineKuji;
+class MineTsumuri;
 class DestructibleTree;
 class BuildingMaterial;
 
@@ -28,7 +29,7 @@ private:
 	KazMath::Transform3D m_surpisedTransform;
 	KazMath::Vec3<float> m_respawnVec;
 	float m_gravity;
-	const float GRAVITY = 0.1f;
+	const float GRAVITY = 0.2f;
 	float m_gatheringTriggerEffect;
 	const float GATHERING_TRIGGER_EFFECT = 2.0f;
 	const float STRONG_DAIPAN_POWER = 2.0f;
@@ -40,6 +41,14 @@ private:
 	//解散するときのベクトル
 	KazMath::Vec3<float> m_breakUpVec;
 	const float BREAK_UP_POWER = 1.5f;
+
+	//移動関連
+	KazMath::Vec3<float> m_moveVec;
+	int m_moveSpan;
+	int m_randomMoveSpan;
+	const int MOVE_SPAN = 1;
+	const float MOVE_SPEED = 2.0f;
+	KazMath::Vec3<float> m_wallJump;	//壁超えの大ジャンプ
 
 	//ステータス
 	bool m_isAlive;
@@ -61,11 +70,12 @@ private:
 	const float MINERAL_COLLISION_SIZE_MEDIUM = 5.0f;
 	const float MINERAL_COLLISION_SIZE_SMALL = 3.0f;
 	//サイズごとに埋まりの対策のためにY軸を持ち上げる量。
-	std::array<const float, 3> MINERAL_OFFSETY = { 1.0f, 5.0f, 10.0f };
+	std::array<const float, 3> MINERAL_OFFSETY = { 1.0f, 6.0f, 15.0f };
 
 	//攻撃関係
 	std::weak_ptr<Rock> m_attackTargetRock;
 	std::weak_ptr<MineKuji> m_attackTargetMineKuji;
+	std::weak_ptr<MineTsumuri> m_attackTargetMineTsumuri;
 	std::weak_ptr<DestructibleTree> m_attackDestrutibleTree;
 	KazMath::Vec3<float> m_attackReactionVec;
 	float m_attackMoveSpeed;
@@ -100,7 +110,7 @@ public:
 
 	void Init();
 
-	void Generate(std::weak_ptr<Mineral> arg_thisMineral, KazMath::Vec3<float> arg_pos, KazMath::Vec3<float> arg_respawnVec, int arg_mineralID = BIG);
+	void Generate(std::weak_ptr<Mineral> arg_thisMineral, KazMath::Vec3<float> arg_pos, KazMath::Vec3<float> arg_respawnVec, int arg_mineralID = MEDIUM);
 
 	void Update(std::weak_ptr<Player> arg_player, std::vector<std::pair<KazMath::Vec3<float>, int>>& arg_respawnVec);
 
@@ -118,6 +128,7 @@ public:
 	//攻撃する。
 	void Attack(std::weak_ptr<Rock> arg_attackTargetRock);
 	void Attack(std::weak_ptr<MineKuji> arg_attackTargetMinekuji);
+	void Attack(std::weak_ptr<MineTsumuri> arg_attackTargetMineTsumuri);
 	void Attack(std::weak_ptr<DestructibleTree> arg_destructibleTree);
 
 	//マテリアルを持つ。

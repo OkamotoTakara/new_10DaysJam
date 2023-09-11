@@ -5,7 +5,7 @@
 #include "../Player.h"
 #include "../Building/BuildingMgr.h"
 
-MineralMgr::MineralMgr() {
+void MineralMgr::Setting() {
 
 	for (auto& index : m_minerals) {
 
@@ -20,8 +20,7 @@ void MineralMgr::DebugGenerate() {
 	using namespace KazMath;
 
 	std::vector<Vec3<float>> debugInfo;
-	debugInfo.emplace_back(KazMath::Vec3<float>(169.0f,10.0f,105.0f) + KazMath::Vec3<float>(30.0f, 0.0f, 0.0f));
-	debugInfo.emplace_back(KazMath::Vec3<float>(169.0f,10.0f,105.0f) - KazMath::Vec3<float>(30.0f, 0.0f, 0.0f));
+	debugInfo.emplace_back(KazMath::Vec3<float>(169.0f, 10.0f, 105.0f) - KazMath::Vec3<float>(50.0f, 0.0f, 0.0f));
 
 	for (auto& param : debugInfo) {
 
@@ -201,6 +200,9 @@ void MineralMgr::Update(std::weak_ptr<Player> arg_player, std::weak_ptr<MineralT
 				index->HaveMaterial(arg_mineralTarget.lock()->GetTargetMaterial());
 				break;
 			}
+			else if (targetIndex == 6) {
+				index->Attack(arg_mineralTarget.lock()->GetTargetMineTsumuri());
+			}
 
 		}
 
@@ -219,4 +221,35 @@ void MineralMgr::Draw(DrawingByRasterize& arg_rasterize, Raytracing::BlasVector&
 
 	}
 
+}
+
+bool MineralMgr::SearchNearMineral(KazMath::Vec3<float> arg_pos, float arg_searchRange, int& arg_mineralIndex) {
+
+	bool isHit = false;
+	float miniDistance = 1000000;
+	int mineralIndex = -1;
+
+	for (auto& index : m_minerals) {
+
+		if (!index->GetIsAlive()) continue;
+
+		//ãóó£Çåüçı
+		float distance = KazMath::Vec3<float>(index->GetPosZeroY() - arg_pos).Length();
+
+		if (arg_searchRange <= distance) continue;
+
+		isHit = true;
+		if (distance < miniDistance) {
+			distance = miniDistance;
+			mineralIndex = static_cast<int>(&index - &m_minerals[0]);
+		}
+
+
+	}
+
+	if (isHit) {
+		arg_mineralIndex = mineralIndex;
+	}
+
+	return isHit;
 }

@@ -12,40 +12,45 @@ void WaveMgr::Setting()
 	std::vector<Wave::EnemyWaveInfo> enemyInfo;
 
 	//1ウェーブ目 -----------------------------------------------------------------------------------------
-	int dayTime = 180;		//日中の時間 フレーム数
+	int dayTime = 10;		//日中の時間 フレーム数
 	int nightTime = 6000;	//夜の時間 フレーム数
 	int treeCount = 3;		//有効化時に生成される木の数
 	int rockCount = 3;		//有効化時に生成される岩の数
 	//敵を追加していく。
-	enemyInfo.emplace_back(EnemyRoute::ROUTE_ID::A, 0);	//第一引数 生成場所  第二引数 夜時間での生成フレーム(dayTimeを考慮する必要はなく、0からnightTimeの範囲でお願いします。)
-	enemyInfo.emplace_back(EnemyRoute::ROUTE_ID::B, 0);
-	enemyInfo.emplace_back(EnemyRoute::ROUTE_ID::C, 0);
-	enemyInfo.emplace_back(EnemyRoute::ROUTE_ID::A, 600);
-	enemyInfo.emplace_back(EnemyRoute::ROUTE_ID::B, 600);
-	enemyInfo.emplace_back(EnemyRoute::ROUTE_ID::C, 600);
-	enemyInfo.emplace_back(EnemyRoute::ROUTE_ID::A, 1200);
-	enemyInfo.emplace_back(EnemyRoute::ROUTE_ID::B, 1200);
-	enemyInfo.emplace_back(EnemyRoute::ROUTE_ID::C, 1200);
+	enemyInfo.emplace_back(EnemyRoute::A, Wave::ENEMY_ID::MINEKUJI, 0);
+	enemyInfo.emplace_back(EnemyRoute::A, Wave::ENEMY_ID::MINEKUJI, 30);
+	enemyInfo.emplace_back(EnemyRoute::A, Wave::ENEMY_ID::MINEKUJI, 60);
+	enemyInfo.emplace_back(EnemyRoute::A, Wave::ENEMY_ID::MINEKUJI, 90);
+	enemyInfo.emplace_back(EnemyRoute::A, Wave::ENEMY_ID::MINEKUJI, 120);
+	enemyInfo.emplace_back(EnemyRoute::B, Wave::ENEMY_ID::MINETSUMURI, 0);
+	//enemyInfo.emplace_back(EnemyRoute::ROUTE_ID::B, 0);
+	//enemyInfo.emplace_back(EnemyRoute::ROUTE_ID::C, 0);
+	//enemyInfo.emplace_back(EnemyRoute::ROUTE_ID::A, 600);
+	//enemyInfo.emplace_back(EnemyRoute::ROUTE_ID::B, 600);
+	//enemyInfo.emplace_back(EnemyRoute::ROUTE_ID::C, 600);
+	//enemyInfo.emplace_back(EnemyRoute::ROUTE_ID::A, 1200);
+	//enemyInfo.emplace_back(EnemyRoute::ROUTE_ID::B, 1200);
+	//enemyInfo.emplace_back(EnemyRoute::ROUTE_ID::C, 1200);
 	//ウェーブを追加。
 	m_waves.emplace_back(std::make_shared<Wave>(dayTime, nightTime, treeCount, rockCount, enemyInfo));
 	enemyInfo.clear();
 
 
 	//2ウェーブ目 -----------------------------------------------------------------------------------------
-	dayTime = 180;		//日中の時間 フレーム数
+	dayTime = 6000;		//日中の時間 フレーム数
 	nightTime = 6000;	//夜の時間 フレーム数
 	treeCount = 3;		//有効化時に生成される木の数
 	rockCount = 3;		//有効化時に生成される岩の数
 	//敵を追加していく。
-	enemyInfo.emplace_back(EnemyRoute::ROUTE_ID::A, 0);	//第一引数 生成場所  第二引数 夜時間での生成フレーム(dayTimeを考慮する必要はなく、0からnightTimeの範囲でお願いします。)
-	enemyInfo.emplace_back(EnemyRoute::ROUTE_ID::B, 0);
-	enemyInfo.emplace_back(EnemyRoute::ROUTE_ID::C, 0);
-	enemyInfo.emplace_back(EnemyRoute::ROUTE_ID::A, 600);
-	enemyInfo.emplace_back(EnemyRoute::ROUTE_ID::B, 600);
-	enemyInfo.emplace_back(EnemyRoute::ROUTE_ID::C, 600);
-	enemyInfo.emplace_back(EnemyRoute::ROUTE_ID::A, 1200);
-	enemyInfo.emplace_back(EnemyRoute::ROUTE_ID::B, 1200);
-	enemyInfo.emplace_back(EnemyRoute::ROUTE_ID::C, 1200);
+	//enemyInfo.emplace_back(EnemyRoute::ROUTE_ID::A, 0);	//第一引数 生成場所  第二引数 夜時間での生成フレーム(dayTimeを考慮する必要はなく、0からnightTimeの範囲でお願いします。)
+	//enemyInfo.emplace_back(EnemyRoute::ROUTE_ID::B, 0);
+	//enemyInfo.emplace_back(EnemyRoute::ROUTE_ID::C, 0);
+	//enemyInfo.emplace_back(EnemyRoute::ROUTE_ID::A, 600);
+	//enemyInfo.emplace_back(EnemyRoute::ROUTE_ID::B, 600);
+	//enemyInfo.emplace_back(EnemyRoute::ROUTE_ID::C, 600);
+	//enemyInfo.emplace_back(EnemyRoute::ROUTE_ID::A, 1200);
+	//enemyInfo.emplace_back(EnemyRoute::ROUTE_ID::B, 1200);
+	//enemyInfo.emplace_back(EnemyRoute::ROUTE_ID::C, 1200);
 	//ウェーブを追加。
 	m_waves.emplace_back(std::make_shared<Wave>(dayTime, nightTime, treeCount, rockCount, enemyInfo));
 	enemyInfo.clear();
@@ -104,10 +109,10 @@ void WaveMgr::Update(std::weak_ptr<EnemyMgr> arg_enemyMgr)
 	m_timerUI.m_transform.scale = { 168,168 };
 	m_timerUI.m_transform.pos = { 128,128 };
 	if (m_waves[m_nowWaveIndex]->GetIsNight()) {
-		m_timerUI.m_transform.rotation = 180.0f + m_waves[m_nowWaveIndex]->WaveTimerRate() * 180.0f;
+		m_timerUI.m_transform.rotation = 180.0f + m_waves[m_nowWaveIndex]->WaveTimerRate() * 180.0f - 90.0f;
 	}
 	else {
-		m_timerUI.m_transform.rotation = m_waves[m_nowWaveIndex]->WaveTimerRate() * 180.0f;
+		m_timerUI.m_transform.rotation = m_waves[m_nowWaveIndex]->WaveTimerRate() * 180.0f - 90.0f;
 	}
 	m_frameUI.m_transform.scale = { 168,168 };
 	m_frameUI.m_transform.pos = { 128,128 };

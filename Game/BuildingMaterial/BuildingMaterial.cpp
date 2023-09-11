@@ -3,7 +3,7 @@
 BuildingMaterial::BuildingMaterial()
 {
 
-	m_model.Load("Resource/Mineral/", "Material_tree_01.gltf");
+	m_model.LoadOutline("Resource/Mineral/", "Wood.gltf");
 	m_isActive = false;
 	m_isHeld = false;
 	m_gravity = 0.0f;
@@ -49,7 +49,8 @@ void BuildingMaterial::Update()
 	}
 
 	//èdóÕÇÇ©ÇØÇÈÅB
-	if (0 < m_transform.pos.y) {
+	const float GROUND = 2.0f;
+	if (GROUND < m_transform.pos.y) {
 
 		m_gravity += GRAVITY;
 		m_transform.pos.y =- m_gravity;
@@ -58,7 +59,7 @@ void BuildingMaterial::Update()
 	else {
 
 		m_gravity = 0.0f;
-		m_transform.pos.y = 0.0f;
+		m_transform.pos.y = GROUND;
 
 	}
 
@@ -78,6 +79,13 @@ void BuildingMaterial::Draw(DrawingByRasterize& arg_rasterize, Raytracing::BlasV
 
 	}
 
+	DessolveOutline outline;
+	outline.m_outline = KazMath::Vec4<float>(0.5f, 0, 0, 1);
+	m_model.m_model.extraBufferArray[4].bufferWrapper->TransData(&outline, sizeof(DessolveOutline));
+
+	m_model.m_model.extraBufferArray.back() = GBufferMgr::Instance()->m_outlineBuffer;
+	m_model.m_model.extraBufferArray.back().rangeType = GRAPHICS_RANGE_TYPE_UAV_DESC;
+	m_model.m_model.extraBufferArray.back().rootParamType = GRAPHICS_PRAMTYPE_TEX;
 
 	m_model.Draw(arg_rasterize, arg_blasVec, m_transform);
 

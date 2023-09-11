@@ -4,7 +4,7 @@
 DestructibleTree::DestructibleTree()
 {
 
-	m_model.Load("Resource/DestructibleObject/Tree/", "Tree.gltf");
+	m_model.LoadOutline("Resource/DestructibleObject/Tree/", "Tree.gltf");
 	m_transform.scale = { 5,5,5 };
 	m_isActive = false;
 	m_hp = HP;
@@ -59,6 +59,17 @@ void DestructibleTree::Draw(DrawingByRasterize& arg_rasterize, Raytracing::BlasV
 	else {
 		m_transform.scale = { 0,0,0 };
 	}
+
+
+
+
+	DessolveOutline outline;
+	outline.m_outline = KazMath::Vec4<float>(0.5f, 0, 0, 1);
+	m_model.m_model.extraBufferArray[4].bufferWrapper->TransData(&outline, sizeof(DessolveOutline));
+
+	m_model.m_model.extraBufferArray.back() = GBufferMgr::Instance()->m_outlineBuffer;
+	m_model.m_model.extraBufferArray.back().rangeType = GRAPHICS_RANGE_TYPE_UAV_DESC;
+	m_model.m_model.extraBufferArray.back().rootParamType = GRAPHICS_PRAMTYPE_TEX;
 
 	m_model.Draw(arg_rasterize, arg_blasVec, m_transform);
 

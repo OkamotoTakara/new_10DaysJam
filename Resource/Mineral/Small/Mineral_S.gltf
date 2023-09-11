@@ -64,15 +64,15 @@
         {
             "bufferView" : 0,
             "componentType" : 5126,
-            "count" : 5914,
+            "count" : 562,
             "max" : [
-                1.1684187650680542,
+                0.9510565400123596,
                 0.9465359449386597,
-                0.8639191389083862
+                0.7515879273414612
             ],
             "min" : [
-                -1.168418288230896,
-                -0.7271989583969116,
+                -0.9510564804077148,
+                -0.43963316082954407,
                 -1.0574290752410889
             ],
             "type" : "VEC3"
@@ -80,42 +80,42 @@
         {
             "bufferView" : 1,
             "componentType" : 5126,
-            "count" : 5914,
+            "count" : 562,
             "type" : "VEC3"
         },
         {
             "bufferView" : 2,
             "componentType" : 5126,
-            "count" : 5914,
+            "count" : 562,
             "type" : "VEC2"
         },
         {
             "bufferView" : 3,
             "componentType" : 5123,
-            "count" : 6012,
+            "count" : 660,
             "type" : "SCALAR"
         }
     ],
     "bufferViews" : [
         {
             "buffer" : 0,
-            "byteLength" : 70968,
+            "byteLength" : 6744,
             "byteOffset" : 0
         },
         {
             "buffer" : 0,
-            "byteLength" : 70968,
-            "byteOffset" : 70968
+            "byteLength" : 6744,
+            "byteOffset" : 6744
         },
         {
             "buffer" : 0,
-            "byteLength" : 47312,
-            "byteOffset" : 141936
+            "byteLength" : 4496,
+            "byteOffset" : 13488
         },
         {
             "buffer" : 0,
-            "byteLength" : 12024,
-            "byteOffset" : 189248
+            "byteLength" : 1320,
+            "byteOffset" : 17984
         }
     ],
     "samplers" : [
@@ -126,7 +126,7 @@
     ],
     "buffers" : [
         {
-            "byteLength" : 201272,
+            "byteLength" : 19304,
             "uri" : "Mineral_S.bin"
         }
     ]

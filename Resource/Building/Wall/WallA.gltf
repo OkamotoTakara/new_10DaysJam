@@ -15,7 +15,7 @@
     "nodes" : [
         {
             "mesh" : 0,
-            "name" : "\u5186\u67f1.003"
+            "name" : "WallA"
         }
     ],
     "materials" : [
@@ -26,7 +26,7 @@
                 0,
                 0
             ],
-            "name" : "Wall.002",
+            "name" : "Wall.004",
             "pbrMetallicRoughness" : {
                 "baseColorTexture" : {
                     "index" : 0,
@@ -39,7 +39,7 @@
     ],
     "meshes" : [
         {
-            "name" : "\u5186\u67f1.004",
+            "name" : "WallA",
             "primitives" : [
                 {
                     "attributes" : {
@@ -69,63 +69,63 @@
         {
             "bufferView" : 0,
             "componentType" : 5126,
-            "count" : 2949,
+            "count" : 3456,
             "max" : [
-                4.383777141571045,
-                3.3498852252960205,
-                0.37344983220100403
+                4.546236038208008,
+                4.244632720947266,
+                2.3034486770629883
             ],
             "min" : [
-                -4.320609092712402,
-                -2.1434173583984375,
-                -0.3732396960258484
+                -4.5467658042907715,
+                -0.3622652292251587,
+                -2.3034486770629883
             ],
             "type" : "VEC3"
         },
         {
             "bufferView" : 1,
             "componentType" : 5126,
-            "count" : 2949,
+            "count" : 3456,
             "type" : "VEC3"
         },
         {
             "bufferView" : 2,
             "componentType" : 5126,
-            "count" : 2949,
+            "count" : 3456,
             "type" : "VEC2"
         },
         {
             "bufferView" : 3,
             "componentType" : 5123,
-            "count" : 2952,
+            "count" : 3456,
             "type" : "SCALAR"
         }
     ],
     "bufferViews" : [
         {
             "buffer" : 0,
-            "byteLength" : 35388,
+            "byteLength" : 41472,
             "byteOffset" : 0
         },
         {
             "buffer" : 0,
-            "byteLength" : 35388,
-            "byteOffset" : 35388
+            "byteLength" : 41472,
+            "byteOffset" : 41472
         },
         {
             "buffer" : 0,
-            "byteLength" : 23592,
-            "byteOffset" : 70776
+            "byteLength" : 27648,
+            "byteOffset" : 82944
         },
         {
             "buffer" : 0,
-            "byteLength" : 5904,
-            "byteOffset" : 94368
+            "byteLength" : 6912,
+            "byteOffset" : 110592
         }
     ],
     "buffers" : [
         {
-            "byteLength" : 100272,
+            "byteLength" : 117504,
             "uri" : "WallA.bin"
         }
     ]

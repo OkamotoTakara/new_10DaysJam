@@ -22,7 +22,6 @@ class GameScene :public SceneBase
 private:
 
 	std::shared_ptr<Player> m_player;
-	std::unique_ptr<MineralMgr> m_mineralMgr;
 	std::shared_ptr<MineralTarget> m_mineralTarget;
 	std::shared_ptr<Core> m_goldCore;
 	std::shared_ptr<EnemyMgr> m_enemyMgr;

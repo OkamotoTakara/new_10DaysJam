@@ -1,6 +1,6 @@
 {
     "asset" : {
-        "generator" : "Khronos glTF Blender I/O v1.5.17",
+        "generator" : "Khronos glTF Blender I/O v1.3.48",
         "version" : "2.0"
     },
     "scene" : 0,
@@ -21,10 +21,16 @@
     "materials" : [
         {
             "doubleSided" : true,
+            "emissiveFactor" : [
+                0,
+                0,
+                0
+            ],
             "name" : "Stage_Ground",
             "pbrMetallicRoughness" : {
                 "baseColorTexture" : {
-                    "index" : 0
+                    "index" : 0,
+                    "texCoord" : 0
                 },
                 "metallicFactor" : 0,
                 "roughnessFactor" : 0.4000000059604645
@@ -49,7 +55,6 @@
     ],
     "textures" : [
         {
-            "sampler" : 0,
             "source" : 0
         }
     ],
@@ -64,7 +69,7 @@
         {
             "bufferView" : 0,
             "componentType" : 5126,
-            "count" : 4,
+            "count" : 6,
             "max" : [
                 151.37330627441406,
                 1.100024700164795,
@@ -80,13 +85,13 @@
         {
             "bufferView" : 1,
             "componentType" : 5126,
-            "count" : 4,
+            "count" : 6,
             "type" : "VEC3"
         },
         {
             "bufferView" : 2,
             "componentType" : 5126,
-            "count" : 4,
+            "count" : 6,
             "type" : "VEC2"
         },
         {
@@ -99,34 +104,28 @@
     "bufferViews" : [
         {
             "buffer" : 0,
-            "byteLength" : 48,
+            "byteLength" : 72,
             "byteOffset" : 0
         },
         {
             "buffer" : 0,
-            "byteLength" : 48,
-            "byteOffset" : 48
+            "byteLength" : 72,
+            "byteOffset" : 72
         },
         {
             "buffer" : 0,
-            "byteLength" : 32,
-            "byteOffset" : 96
+            "byteLength" : 48,
+            "byteOffset" : 144
         },
         {
             "buffer" : 0,
             "byteLength" : 12,
-            "byteOffset" : 128
-        }
-    ],
-    "samplers" : [
-        {
-            "magFilter" : 9729,
-            "minFilter" : 9987
+            "byteOffset" : 192
         }
     ],
     "buffers" : [
         {
-            "byteLength" : 140,
+            "byteLength" : 204,
             "uri" : "Stage_Ground.bin"
         }
     ]

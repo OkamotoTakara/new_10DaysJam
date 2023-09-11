@@ -81,7 +81,17 @@ void mainRayGen()
     float3 nonLightAlbedo = albedoColor.xyz;
     const float3 NIGHT_LIGHT_COLOR = float3(0.18f, 0.30f, 0.42f);
     const float3 DAY_GROUND_COLOR = float3(0.45f, 0.60f, 0.44f);
-    if (bright <= 0.0f)
+    //カスの色
+    if (abs(nonLightAlbedo.x - 0.24f) <= 0.2f && worldColor.y < 1.0f)
+    {
+        
+        const float3 NIGHT_SHADOW_COLOR = float3(0.10f, 0.12f, 0.18f);
+        const float3 DAY_SHADOW_COLOR = float3(0.24f, 0.15f, 0.17f);
+        albedoColor.xyz = DAY_SHADOW_COLOR * dayRate + NIGHT_SHADOW_COLOR * (1.0f - dayRate);
+        nonLightAlbedo = albedoColor.xyz;
+        
+    }
+    else if (bright <= 0.0f)
     {
         
         
@@ -108,7 +118,7 @@ void mainRayGen()
         if (isGround)
         {
             
-            albedoColor.xyz = DAY_GROUND_COLOR * dayRate + NIGHT_LIGHT_COLOR * (1.0f - dayRate);
+            albedoColor.xyz = (DAY_GROUND_COLOR) * dayRate + (NIGHT_LIGHT_COLOR * nonLightAlbedo) * (1.0f - dayRate);
             nonLightAlbedo = albedoColor.xyz;
             
         }

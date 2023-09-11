@@ -15,76 +15,125 @@ float4 SamplingPixel(uint2 arg_uv)
     return OutlineMap[uint2(clamp(arg_uv.x, 0, 1280), clamp(arg_uv.y, 0, 720))].xyzw;
 }
 
-bool OutlineCheck(uint2 arg_dtid, uint2 arg_offset)
-{
-    float4 pickColor = SamplingPixel(arg_dtid + arg_offset);
-    bool isNoise = !(0.9f < pickColor.x && pickColor.y < 0.1f && pickColor.z < 0.1f); //敵のノイズで消えた部分じゃないか
-    isNoise &= 0.9f <= pickColor.w;
-    if (isNoise)
-    {
-        Albedo[arg_dtid.xy] = pickColor;
-        Albedo[arg_dtid.xy].xyz *= Albedo[arg_dtid.xy].w;
-        Emissive[arg_dtid.xy] = pickColor;
-        Emissive[arg_dtid.xy].xyz *= Emissive[arg_dtid.xy].w;
-        return true;
-    }
-    
-    return false;
-}
-
 [numthreads(16, 16, 1)]
 void main(uint3 DTid : SV_DispatchThreadID)
 {
     
-    //パティクルだったら光らせない。
-    //何も無いところには描画しない。
-    bool isParticle = OutlineMap[DTid.xy].x <= -0.9f && OutlineMap[DTid.xy].y <= -0.9f && OutlineMap[DTid.xy].z <= -0.9f;
-    bool isNonObject = length(OutlineMap[DTid.xy].xyz) <= 0.1f;
-    if (isParticle || isNonObject)
+    float4 samplingPos = SamplingPixel(DTid.xy);
+    if (0.0f < length(samplingPos.xyz))
     {
-        
         Albedo[DTid.xy] = float4(0, 0, 0, 0);
         Emissive[DTid.xy] = float4(0, 0, 0, 0);
         return;
-        
     }
     
-    //ここが敵のノイズで消えた部分かどうか。
-    bool isEnmey = 0.9f < SamplingPixel(DTid.xy).x && SamplingPixel(DTid.xy).y < 0.1f && SamplingPixel(DTid.xy).z < 0.1f;
-    if (!isEnmey)
-    {
-        Albedo[DTid.xy] = float4(0, 0, 0, 0);
-        Emissive[DTid.xy] = float4(0, 0, 0, 0);
-        return;
-    }
+    const int OUTLINE_THICKNESS = 2;
+    
+    //隊列に参加していないミネラル
+    bool isNoGatheringMineral = false;
+    //敵対
+    bool isEnemy = false;
+    //友好
+    bool isPlayer = false;
+    //攻撃状態のミネラル
+    bool isMineralAttackMode = false;
+    //資材や建築物など
+    bool isbuildingAndMaterial = false;
     
     //右側をチェック
-    if (OutlineCheck(DTid.xy, uint2(1, 0)))
-    {
-        return;
-    }
+    float4 sample = SamplingPixel(DTid.xy + uint2(OUTLINE_THICKNESS, 0));
+    isPlayer |= abs(0.1f - sample.x) < 0.01f;
+    isEnemy |= abs(0.2f - sample.x) < 0.01f;
+    isNoGatheringMineral |= abs(0.3f - sample.x) < 0.01f;
+    isMineralAttackMode |= abs(0.4f - sample.x) < 0.01f;
+    isbuildingAndMaterial |= abs(0.5f - sample.x) < 0.01f;
     
     //左側をチェック
-    if (OutlineCheck(DTid.xy, uint2(-1, 0)))
-    {
-        return;
-    }
+    sample = SamplingPixel(DTid.xy + uint2(-OUTLINE_THICKNESS, 0));
+    isPlayer |= abs(0.1f - sample.x) < 0.01f;
+    isEnemy |= abs(0.2f - sample.x) < 0.01f;
+    isNoGatheringMineral |= abs(0.3f - sample.x) < 0.01f;
+    isMineralAttackMode |= abs(0.4f - sample.x) < 0.01f;
+    isbuildingAndMaterial |= abs(0.5f - sample.x) < 0.01f;
     
     //上側をチェック
-    if (OutlineCheck(DTid.xy, uint2(0, 1)))
-    {
-        return;
-    }
+    sample = SamplingPixel(DTid.xy + uint2(0, -OUTLINE_THICKNESS));
+    isPlayer |= abs(0.1f - sample.x) < 0.01f;
+    isEnemy |= abs(0.2f - sample.x) < 0.01f;
+    isNoGatheringMineral |= abs(0.3f - sample.x) < 0.01f;
+    isMineralAttackMode |= abs(0.4f - sample.x) < 0.01f;
+    isbuildingAndMaterial |= abs(0.5f - sample.x) < 0.01f;
     
     //下側をチェック
-    if (OutlineCheck(DTid.xy, uint2(0, -1)))
-    {
-        return;
-    }
+    sample = SamplingPixel(DTid.xy + uint2(0, OUTLINE_THICKNESS));
+    isPlayer |= abs(0.1f - sample.x) < 0.01f;
+    isEnemy |= abs(0.2f - sample.x) < 0.01f;
+    isNoGatheringMineral |= abs(0.3f - sample.x) < 0.01f;
+    isMineralAttackMode |= abs(0.4f - sample.x) < 0.01f;
+    isbuildingAndMaterial |= abs(0.5f - sample.x) < 0.01f;
+    
+    //右側をチェック
+    sample = SamplingPixel(DTid.xy + uint2(OUTLINE_THICKNESS, OUTLINE_THICKNESS));
+    isPlayer |= abs(0.1f - sample.x) < 0.01f;
+    isEnemy |= abs(0.2f - sample.x) < 0.01f;
+    isNoGatheringMineral |= abs(0.3f - sample.x) < 0.01f;
+    isMineralAttackMode |= abs(0.4f - sample.x) < 0.01f;
+    isbuildingAndMaterial |= abs(0.5f - sample.x) < 0.01f;
+    
+    //右側をチェック
+    sample = SamplingPixel(DTid.xy + uint2(-OUTLINE_THICKNESS, -OUTLINE_THICKNESS));
+    isPlayer |= abs(0.1f - sample.x) < 0.01f;
+    isEnemy |= abs(0.2f - sample.x) < 0.01f;
+    isNoGatheringMineral |= abs(0.3f - sample.x) < 0.01f;
+    isMineralAttackMode |= abs(0.4f - sample.x) < 0.01f;
+    isbuildingAndMaterial |= abs(0.5f - sample.x) < 0.01f;
+    
+    //右側をチェック
+    sample = SamplingPixel(DTid.xy + uint2(-OUTLINE_THICKNESS, OUTLINE_THICKNESS));
+    isPlayer |= abs(0.1f - sample.x) < 0.01f;
+    isEnemy |= abs(0.2f - sample.x) < 0.01f;
+    isNoGatheringMineral |= abs(0.3f - sample.x) < 0.01f;
+    isMineralAttackMode |= abs(0.4f - sample.x) < 0.01f;
+    isbuildingAndMaterial |= abs(0.5f - sample.x) < 0.01f;
+    
+    //右側をチェック
+    sample = SamplingPixel(DTid.xy + uint2(OUTLINE_THICKNESS, -OUTLINE_THICKNESS));
+    isPlayer |= abs(0.1f - sample.x) < 0.01f;
+    isEnemy |= abs(0.2f - sample.x) < 0.01f;
+    isNoGatheringMineral |= abs(0.3f - sample.x) < 0.01f;
+    isMineralAttackMode |= abs(0.4f - sample.x) < 0.01f;
+    isbuildingAndMaterial |= abs(0.5f - sample.x) < 0.01f;
     
 
-        
-    Albedo[DTid.xy] = float4(0, 0, 0, 0);
-    Emissive[DTid.xy] = float4(0, 0, 0, 0);
+    if (isPlayer)
+    {
+        Albedo[DTid.xy] = float4(0.59f, 0.84f, 0.31f, 1.0f);
+        Emissive[DTid.xy] = float4(0, 0, 0, 0);
+    }
+    else if (isEnemy)
+    {
+        Albedo[DTid.xy] = float4(0.70f, 0.21f, 0.34f, 1.0f);
+        Emissive[DTid.xy] = float4(0, 0, 0, 0);
+    }
+    else if (isNoGatheringMineral)
+    {
+        Albedo[DTid.xy] = float4(0.90f, 0.94f, 0.94f, 1.0f);
+        Emissive[DTid.xy] = float4(0, 0, 0, 0);
+    }
+    else if (isMineralAttackMode)
+    {
+        Albedo[DTid.xy] = float4(0.94f, 0.95f, 0.49f, 1.0f);
+        Emissive[DTid.xy] = float4(0, 0, 0, 0);
+    }
+    else if (isbuildingAndMaterial)
+    {
+        Albedo[DTid.xy] = float4(0.88f, 0.66f, 0.27f, 1.0f);
+        Emissive[DTid.xy] = float4(0, 0, 0, 0);
+    }
+    else
+    {
+        Albedo[DTid.xy] = float4(0, 0, 0, 0);
+        Emissive[DTid.xy] = float4(0, 0, 0, 0);
+    }
 
 }

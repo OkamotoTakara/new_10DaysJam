@@ -10,16 +10,16 @@ class Mineral;
 class Player;
 class MineralTarget;
 
-class MineralMgr {
+class MineralMgr : public ISingleton<MineralMgr> {
 
 private:
 
-	static const int MINERAL_COUNT = 32;
+	static const int MINERAL_COUNT = 64;
 	std::array<std::shared_ptr<Mineral>, MINERAL_COUNT> m_minerals;
 
 public:
 
-	MineralMgr();
+	void Setting();
 
 	void DebugGenerate();
 
@@ -30,5 +30,9 @@ public:
 	void Update(std::weak_ptr<Player> arg_player, std::weak_ptr<MineralTarget> arg_mineralTarget);
 
 	void Draw(DrawingByRasterize& arg_rasterize, Raytracing::BlasVector& arg_blasVec);
+
+	bool SearchNearMineral(KazMath::Vec3<float> arg_pos, float arg_searchRange, int& arg_mineralIndex);
+
+	std::weak_ptr<Mineral> GetMineral(int arg_index) { return m_minerals[arg_index]; }
 
 };
