@@ -44,11 +44,11 @@ GameScene::GameScene()
 
 	m_player = std::make_unique<Player>();
 
-	m_mineralMgr = std::make_unique<MineralMgr>();
 	m_mineralTarget = std::make_shared<MineralTarget>();
 	m_enemyMgr = std::make_shared<EnemyMgr>();
 	m_goldCore = std::make_shared<Core>();
 	m_goldCore->SetPos({ 169.0f,10.0f,105.0f });
+	MineralMgr::Instance()->Setting();
 	RockMgr::Instance()->Setting();
 	DestructibleObjectMgr::Instance()->Setting();
 	BuildingMaterialMgr::Instance()->Setting();
@@ -76,8 +76,8 @@ void GameScene::Init()
 	skipTurtorialFlag = false;
 
 	m_player->Init();
-	m_mineralMgr->Init();
-	m_mineralMgr->DebugGenerate();
+	MineralMgr::Instance()->Init();
+	MineralMgr::Instance()->DebugGenerate();
 	m_goldCore->Init();
 
 	m_enemyMgr->Init();
@@ -129,7 +129,7 @@ void GameScene::Update()
 	m_player->Update();
 
 	//ミネラルを更新。
-	m_mineralMgr->Update(m_player, m_mineralTarget);
+	MineralMgr::Instance()->Update(m_player, m_mineralTarget);
 
 	//岩を更新。
 	RockMgr::Instance()->Update(m_player);
@@ -176,7 +176,7 @@ void GameScene::Draw(DrawingByRasterize& arg_rasterize, Raytracing::BlasVector& 
 	PIXEndEvent(DirectX12CmdList::Instance()->cmdList.Get());
 
 	m_player->Draw(arg_rasterize, arg_blasVec);
-	m_mineralMgr->Draw(arg_rasterize, arg_blasVec);
+	MineralMgr::Instance()->Draw(arg_rasterize, arg_blasVec);
 	RockMgr::Instance()->Draw(arg_rasterize, arg_blasVec);
 	m_mineralTarget->Draw(arg_rasterize, arg_blasVec, m_enemyMgr);
 	m_enemyMgr->Draw(arg_rasterize, arg_blasVec);
@@ -185,35 +185,67 @@ void GameScene::Draw(DrawingByRasterize& arg_rasterize, Raytracing::BlasVector& 
 	BuildingMaterialMgr::Instance()->Draw(arg_rasterize, arg_blasVec);
 	BuildingMgr::Instance()->Draw(arg_rasterize, arg_blasVec);
 
+	//DessolveOutline outline;
+	//outline.m_outline = KazMath::Vec4<float>(0, 0, 0, 1);
+	//m_ground.m_model.extraBufferArray[4].bufferWrapper->TransData(&outline, sizeof(DessolveOutline));
+
+	//m_ground.m_model.extraBufferArray.back() = GBufferMgr::Instance()->m_outlineBuffer;
+	//m_ground.m_model.extraBufferArray.back().rangeType = GRAPHICS_RANGE_TYPE_UAV_DESC;
+	//m_ground.m_model.extraBufferArray.back().rootParamType = GRAPHICS_PRAMTYPE_TEX;
+
+
+	//outline.m_outline = KazMath::Vec4<float>(0, 0, 0, 1);
+	//m_fence.m_model.extraBufferArray[4].bufferWrapper->TransData(&outline, sizeof(DessolveOutline));
+
+	//m_fence.m_model.extraBufferArray.back() = GBufferMgr::Instance()->m_outlineBuffer;
+	//m_fence.m_model.extraBufferArray.back().rangeType = GRAPHICS_RANGE_TYPE_UAV_DESC;
+	//m_fence.m_model.extraBufferArray.back().rootParamType = GRAPHICS_PRAMTYPE_TEX;
+
+
+	//outline.m_outline = KazMath::Vec4<float>(0, 0, 0, 1);
+	//m_tree.m_model.extraBufferArray[4].bufferWrapper->TransData(&outline, sizeof(DessolveOutline));
+
+	//m_tree.m_model.extraBufferArray.back() = GBufferMgr::Instance()->m_outlineBuffer;
+	//m_tree.m_model.extraBufferArray.back().rangeType = GRAPHICS_RANGE_TYPE_UAV_DESC;
+	//m_tree.m_model.extraBufferArray.back().rootParamType = GRAPHICS_PRAMTYPE_TEX;
+
+
+	//outline.m_outline = KazMath::Vec4<float>(0, 0, 0, 1);
+	//m_rock.m_model.extraBufferArray[4].bufferWrapper->TransData(&outline, sizeof(DessolveOutline));
+
+	//m_rock.m_model.extraBufferArray.back() = GBufferMgr::Instance()->m_outlineBuffer;
+	//m_rock.m_model.extraBufferArray.back().rangeType = GRAPHICS_RANGE_TYPE_UAV_DESC;
+	//m_rock.m_model.extraBufferArray.back().rootParamType = GRAPHICS_PRAMTYPE_TEX;
+
 	m_ground.Draw(arg_rasterize, arg_blasVec, m_stageTransform);
 	m_fence.Draw(arg_rasterize, arg_blasVec, m_stageTransform);
 	m_tree.Draw(arg_rasterize, arg_blasVec, m_stageTransform);
 	m_rock.Draw(arg_rasterize, arg_blasVec, m_stageTransform);
 
 
-	ImGui::Begin("Stage");
+	//ImGui::Begin("Stage");
 
-	//ImGui::DragFloat("POS_X", &BuildingMgr::Instance()->GetWall(2).lock()->m_initPos.x, 1.0f);
-	//ImGui::DragFloat("POS_Y", &BuildingMgr::Instance()->GetWall(2).lock()->m_initPos.y, 1.0f);
-	//ImGui::DragFloat("POS_Z", &BuildingMgr::Instance()->GetWall(2).lock()->m_initPos.z, 1.0f);
-	//ImGui::DragFloat("SCALE_X", &BuildingMgr::Instance()->GetWall(0).lock()->m_transform.scale.x, 0.01f);
-	//ImGui::DragFloat("SCALE_Y", &BuildingMgr::Instance()->GetWall(0).lock()->m_transform.scale.y, 0.01f);
-	//ImGui::DragFloat("SCALE_Z", &BuildingMgr::Instance()->GetWall(0).lock()->m_transform.scale.z, 0.01f);
-	//ImGui::DragFloat("ROTATE_X", &BuildingMgr::Instance()->GetWall(0).lock()->m_transform.rotation.x, 0.1f);
-	//ImGui::DragFloat("ROTATE_Y", &BuildingMgr::Instance()->GetWall(2).lock()->m_rotateY, 0.1f);
-	//ImGui::DragFloat("ROTATE_Z", &BuildingMgr::Instance()->GetWall(0).lock()->m_transform.rotation.z, 0.1f);
+	////ImGui::DragFloat("POS_X", &BuildingMgr::Instance()->GetWall(2).lock()->m_initPos.x, 1.0f);
+	////ImGui::DragFloat("POS_Y", &BuildingMgr::Instance()->GetWall(2).lock()->m_initPos.y, 1.0f);
+	////ImGui::DragFloat("POS_Z", &BuildingMgr::Instance()->GetWall(2).lock()->m_initPos.z, 1.0f);
+	////ImGui::DragFloat("SCALE_X", &BuildingMgr::Instance()->GetWall(0).lock()->m_transform.scale.x, 0.01f);
+	////ImGui::DragFloat("SCALE_Y", &BuildingMgr::Instance()->GetWall(0).lock()->m_transform.scale.y, 0.01f);
+	////ImGui::DragFloat("SCALE_Z", &BuildingMgr::Instance()->GetWall(0).lock()->m_transform.scale.z, 0.01f);
+	////ImGui::DragFloat("ROTATE_X", &BuildingMgr::Instance()->GetWall(0).lock()->m_transform.rotation.x, 0.1f);
+	////ImGui::DragFloat("ROTATE_Y", &BuildingMgr::Instance()->GetWall(2).lock()->m_rotateY, 0.1f);
+	////ImGui::DragFloat("ROTATE_Z", &BuildingMgr::Instance()->GetWall(0).lock()->m_transform.rotation.z, 0.1f);
 
-	//ImGui::Text(" ");
+	////ImGui::Text(" ");
 
-	//ImGui::DragFloat("EyeDistance", &m_cameraEyeDistance, 1.0f);
-	ImGui::SliderFloat("DirLight_X", &GBufferMgr::Instance()->m_lightConstData.m_dirLight.m_dir.x, 0.0f, 1.0f);
-	ImGui::SliderFloat("DirLight_Y", &GBufferMgr::Instance()->m_lightConstData.m_dirLight.m_dir.y, 0.0f, 1.0f);
-	ImGui::SliderFloat("DirLight_Z", &GBufferMgr::Instance()->m_lightConstData.m_dirLight.m_dir.z, 0.0f, 1.0f);
+	////ImGui::DragFloat("EyeDistance", &m_cameraEyeDistance, 1.0f);
+	//ImGui::SliderFloat("DirLight_X", &GBufferMgr::Instance()->m_lightConstData.m_dirLight.m_dir.x, 0.0f, 1.0f);
+	//ImGui::SliderFloat("DirLight_Y", &GBufferMgr::Instance()->m_lightConstData.m_dirLight.m_dir.y, 0.0f, 1.0f);
+	//ImGui::SliderFloat("DirLight_Z", &GBufferMgr::Instance()->m_lightConstData.m_dirLight.m_dir.z, 0.0f, 1.0f);
 
-	ImGui::Text("X : %f", m_player->GetPosZeroY().x);
-	ImGui::Text("Z : %f", m_player->GetPosZeroY().z);
+	//ImGui::Text("X : %f", m_player->GetPosZeroY().x);
+	//ImGui::Text("Z : %f", m_player->GetPosZeroY().z);
 
-	ImGui::End();
+	//ImGui::End();
 
 }
 

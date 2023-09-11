@@ -6,6 +6,8 @@
 #include"../KazLibrary/PostEffect/GaussianBlur.h"
 #include"../KazLibrary/Helper/Compute.h"
 #include"../PostEffect/Outline.h"
+#include"../KazLibrary/Easing/easing.h"
+#include"../Game/Effect/ChromaticAberration.h"
 #include <Helper/Compute.h>
 
 //ワールド座標、ラフネス、メタルネス、スぺキュラ、オブジェクトが反射するか屈折するか(インデックス)、Albedo、法線、カメラ座標(定数バッファでも可能)
@@ -133,12 +135,14 @@ GBufferMgr::GBufferMgr()
 		m_lensFlareComposeShader->Generate(ShaderOptionData(KazFilePathName::RelativeShaderPath + "PostEffect/LensFlare/" + "LensFlareComposeShader.hlsl", "main", "cs_6_4", SHADER_TYPE_COMPUTE), extraBuffer);
 	}
 	{
+		m_chromaticAberrationData = KazBufferHelper::SetConstBufferData(sizeof(KazMath::Vec4<float>));
 		//バックバッファ合成用シェーダーを用意。
 		std::vector<KazBufferHelper::BufferData>extraBuffer =
 		{
 			 m_backBufferCopyBuffer,
 			 m_raytracingGBuffer,
 			 m_backBufferCompositeBuffer,
+			 m_chromaticAberrationData,
 		};
 		extraBuffer[0].rangeType = GRAPHICS_RANGE_TYPE_UAV_DESC;
 		extraBuffer[0].rootParamType = GRAPHICS_PRAMTYPE_TEX;
@@ -146,6 +150,8 @@ GBufferMgr::GBufferMgr()
 		extraBuffer[1].rootParamType = GRAPHICS_PRAMTYPE_TEX2;
 		extraBuffer[2].rangeType = GRAPHICS_RANGE_TYPE_UAV_DESC;
 		extraBuffer[2].rootParamType = GRAPHICS_PRAMTYPE_TEX3;
+		extraBuffer[3].rangeType = GRAPHICS_RANGE_TYPE_CBV_VIEW;
+		extraBuffer[3].rootParamType = GRAPHICS_PRAMTYPE_DATA;
 		m_backBufferRaytracingCompositeShader = std::make_shared<ComputeShader>();
 		m_backBufferRaytracingCompositeShader->Generate(ShaderOptionData(KazFilePathName::RelativeShaderPath + "Raytracing/" + "BackBufferComposeShader.hlsl", "main", "cs_6_4", SHADER_TYPE_COMPUTE), extraBuffer);
 	}
@@ -216,6 +222,27 @@ void GBufferMgr::ComposeLensFlareAndScene()
 	composeData.y = static_cast<UINT>(720 / 16) + 1;
 	composeData.z = static_cast<UINT>(1);
 	m_lensFlareComposeShader->Compute(composeData);
+
+
+
+
+	//色収差の係数を求める。
+	float iroShuusaFacter = EasingMaker(In, Quart, ChromaticAberration::Instance()->m_facter);
+
+	//係数を決める、
+	const float IROSHUUSA_MIN_X = 2.0f;
+	const float IROSHUUSA_MIN_Y = 4.0f;
+	const float IROSHUUSA_MIN_Z = 8.0f;
+	const float IROSHUUSA_MAX_X = 30.0f;
+	const float IROSHUUSA_MAX_Y = 60.0f;
+	const float IROSHUUSA_MAX_Z = 90.0f;
+
+	//色収差のやつを更新。
+	m_iroShuusa.x = IROSHUUSA_MIN_X + (IROSHUUSA_MAX_X - IROSHUUSA_MIN_X) * iroShuusaFacter;
+	m_iroShuusa.y = IROSHUUSA_MIN_Y + (IROSHUUSA_MAX_Y - IROSHUUSA_MIN_Y) * iroShuusaFacter;
+	m_iroShuusa.z = IROSHUUSA_MIN_Z + (IROSHUUSA_MAX_Z - IROSHUUSA_MIN_Z) * iroShuusaFacter;
+	m_iroShuusa.a = 1.0f;
+	m_chromaticAberrationData.bufferWrapper->TransData(&m_iroShuusa, sizeof(m_iroShuusa));
 
 }
 

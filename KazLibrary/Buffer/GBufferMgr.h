@@ -4,6 +4,11 @@
 #include"../KazLibrary/Math/KazMath.h"
 #include<memory>
 
+struct DessolveOutline {
+	KazMath::Vec4<float> m_dissolve;
+	KazMath::Vec4<float> m_outline;
+};
+
 namespace PostEffect {
 	class GaussianBlur;
 	class Outline;
@@ -122,6 +127,10 @@ public:
 	std::shared_ptr<PostEffect::Outline> m_outline;
 
 	KazBufferHelper::BufferData m_outlineBuffer;
+
+
+	KazBufferHelper::BufferData m_chromaticAberrationData;
+	KazMath::Vec4<float> m_iroShuusa;
 
 private:
 	//G-Buffer用のレンダーターゲット

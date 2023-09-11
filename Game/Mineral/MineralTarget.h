@@ -4,6 +4,7 @@
 class Rock;
 class EnemyMgr;
 class MineKuji;
+class MineTsumuri;
 class DestructibleTree;
 class BuildingMaterialMgr;
 class BuildingMaterial;
@@ -20,6 +21,10 @@ private:
 	int m_oldTargetMineKujiIndex;
 	int m_targetMinekujiIndex;	//ターゲットがミネクジの場合のインデックス。ターゲットじゃないときは-1を入れることでミネクジか敵のどれがターゲットされているのかを判断する。
 	float m_targetMinekujiDistance;
+	//ミネツムリ関連
+	int m_oldTargetMineTsumuriIndex;
+	int m_targetMineTsumuriIndex;	//ターゲットがミネクジの場合のインデックス。ターゲットじゃないときは-1を入れることでミネクジか敵のどれがターゲットされているのかを判断する。
+	float m_targetMineTsumuriDistance;
 	//破壊可能木関連
 	int m_oldTargetTreeIndex;
 	int m_targetTreeIndex;	//ターゲットがミネクジの場合のインデックス。ターゲットじゃないときは-1を入れることでミネクジか敵のどれがターゲットされているのかを判断する。
@@ -66,6 +71,7 @@ public:
 	//ターゲット可能な岩の参照を返す。
 	std::weak_ptr<Rock> GetTargetRock();
 	std::weak_ptr<MineKuji> GetTargetMinekuji();
+	std::weak_ptr<MineTsumuri> GetTargetMineTsumuri();
 	std::weak_ptr<DestructibleTree> GetTargetTree();
 	std::weak_ptr<BuildingMaterial> GetTargetMaterial();
 

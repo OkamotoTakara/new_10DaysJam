@@ -26,7 +26,7 @@ private:
 	const float GRAVITY = 0.1f;
 	const float STRONG_DAIPAN_POWER = 1.0f;
 	int m_hp;
-	std::array<int, 3> MAX_HP = { 3, 6, 9 };
+	std::array<int, 3> MAX_HP = { 1, 3, 6 };
 	KazMath::Vec3<float> m_reactionVec;
 
 	//ステータス

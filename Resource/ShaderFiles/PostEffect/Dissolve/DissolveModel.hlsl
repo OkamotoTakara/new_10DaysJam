@@ -326,26 +326,31 @@ RWTexture2D<float4> outlineTexutre : register(u0);
 GBufferOutput PSDefferdAnimationMainDissolve(PosUvNormalTangentBinormalOutput input) : SV_TARGET
 {
     
-    int octave = 6;
-    float persitance = 2.0f;
-    float lacunarity = 1.25f;
+    //int octave = 6;
+    //float persitance = 2.0f;
+    //float lacunarity = 1.25f;
     
-    float noise = PerlinNoise(input.uv, octave, persitance, lacunarity, m_dissolveStrength.x);
+    //float noise = PerlinNoise(input.uv, octave, persitance, lacunarity, m_dissolveStrength.x);
     
-    if (noise <= 0.01f)
-    {
+    //if (noise <= 0.01f)
+    //{
     
-        if (0 < input.worldPos.y)
-        {
-            outlineTexutre[uint2(input.svpos.xy)] = m_outlineColor;
-        }
+    //    if (0 < input.worldPos.y)
+    //    {
+    //        outlineTexutre[uint2(input.svpos.xy)] = m_outlineColor;
+    //    }
         
-        discard;
-    }
+    //    discard;
+    //}
     
-    if (0 < m_dissolveStrength.x)
+    //if (0 < m_dissolveStrength.x)
+    //{
+    //    outlineTexutre[uint2(input.svpos.xy)] = float4(1, 0, 0, 1);
+    //}
+    
+    if (1.0f < input.worldPos.y)
     {
-        outlineTexutre[uint2(input.svpos.xy)] = float4(1, 0, 0, 1);
+        outlineTexutre[uint2(input.svpos.xy)] = m_outlineColor;
     }
     
     float4 normalColor = NormalTex.Sample(smp, input.uv);

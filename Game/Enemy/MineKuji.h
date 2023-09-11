@@ -20,13 +20,14 @@ private:
 	const float GRAVITY = 0.1f;
 	int m_hp;
 	const int HP = 9;
-	const float SCALE = 5.0f;
+	const float SCALE = 3.0f;
 
 	//状態ごとの変数
 	enum Mode {
 		CoreAttack,
 		MineralAttack,
 		WallAttack,
+		PlayerAttack,
 	}m_mode;
 
 	//コアを攻撃する変数
@@ -37,20 +38,25 @@ private:
 	int m_coreAttackDelay;
 	const int MIN_CORE_ATTACK_DELAY = 60;
 	const int MAX_CORE_ATTACK_DELAY = 90;
-	const float ADD_CORE_ATTACK_SPEED = 0.05f;
-	const float MAX_CORE_ATTACK_SPEED = 1.0f;
+	const float ADD_CORE_ATTACK_SPEED = 0.1f;
+	const float MAX_CORE_ATTACK_SPEED = 2.0f;
 	enum ATTACK_ID {
 		ATTACK,
 		STAY,
 	}m_attackID;
 
+	//探知範囲
+	const float ENEMY_SEARCH_RANGE = 40.0f;
+	const float ENEMY_SEARCH_END_RANGE = 60.0f;
+
 	//コアに向かっていく変数
 	const float CORE_MOVE_SPEED = 1.0f;	//コアに向かって行く初速度
-	const float CORE_MOVE_DELAY = 90.0f;
+	const float CORE_MOVE_DELAY = 60.0f;
 	float m_coreMoveDelayTimer;
 	float m_coreMoveSpeed;
 	bool m_isAttackCore;
 	bool m_isAttackMineral;
+	bool m_isAttackPlayer;
 
 	//攻撃された場合の変数
 	bool m_isAttackedMineral;
@@ -92,12 +98,19 @@ public:
 	KazMath::Vec3<float> GetScale() { return m_transform.scale; }
 	KazMath::Vec3<float> GetTargetScale() { return KazMath::Vec3<float>(10.0f, 10.0f, 10.0f); }
 
+	void CounterOverlap(KazMath::Vec3<float> arg_centerPos, KazMath::Vec3<float> arg_mineralPos, float arg_scale);
+
 private:
 
 	void AttackCore(std::weak_ptr<Core> arg_core);
 	void AttackMineral();
+	void AttackPlayer(std::weak_ptr<Player> arg_player);
 	void AttackWall();
 	void CheckHitPlayer(std::weak_ptr<Player> arg_player);
 	KazMath::Vec3<float> SearchRoute();
+
+	void Move();
+	void Rotation(std::weak_ptr<Core> arg_core, std::weak_ptr<Player> arg_player);
+	void CheckHit(std::weak_ptr<Player> arg_player);
 
 };

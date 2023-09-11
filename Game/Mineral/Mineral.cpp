@@ -7,6 +7,8 @@
 #include "../KazLibrary/Easing/easing.h"
 #include "../Game/BuildingMaterial/BuildingMaterial.h"
 #include "../Game/Collision/StageCollision.h"
+#include "../Game/Enemy/MineTsumuri.h"
+#include "../Game/Building/BuildingMgr.h"
 
 Mineral::Mineral()
 {
@@ -17,16 +19,16 @@ Mineral::Mineral()
 	m_canGathering = false;
 	m_isGoToGetMaterial = false;
 	m_gravity = 0;
-	m_mineralID = BIG;
+	m_mineralID = MEDIUM;
 
 	m_transform.pos = { 10000,-10000,10000 };
 	m_transform.scale = { 0,0,0 };
 
-	m_model[0].Load("Resource/Mineral/Small/", "Mineral_S.gltf");
-	m_model[1].Load("Resource/Mineral/Medium/", "Mineral_M.gltf");
-	m_model[2].Load("Resource/Mineral/Lerge/", "Mineral_L.gltf");
+	m_model[0].LoadOutline("Resource/Mineral/Small/", "Mineral_S.gltf");
+	m_model[1].LoadOutline("Resource/Mineral/Medium/", "Mineral_M.gltf");
+	m_model[2].LoadOutline("Resource/Mineral/Lerge/", "Mineral_L.gltf");
 
-	m_surprisedModel.Load("Resource/Mineral/Surprised/", "Surprised.gltf");
+	m_surprisedModel.LoadNoLighting("Resource/Mineral/Surprised/", "Surprised.gltf");
 	m_surpisedTransform.pos = m_transform.pos;
 	m_surpisedTransform.scale = { 1,1,1 };
 
@@ -43,7 +45,7 @@ void Mineral::Init() {
 	m_isGoToGetMaterial = false;
 	m_isAttack = false;
 	m_gravity = 0;
-	m_mineralID = BIG;
+	m_mineralID = MEDIUM;
 	m_attackReactionVec = {};
 	m_haveMaterial.reset();
 
@@ -66,6 +68,10 @@ void Mineral::Generate(std::weak_ptr<Mineral> arg_thisMineral, KazMath::Vec3<flo
 	m_thisMineral = arg_thisMineral;
 	m_oldTransform = m_transform;
 	m_haveMaterial.reset();
+	m_moveVec = {};
+	m_moveSpan = 0;
+	m_randomMoveSpan = MOVE_SPAN + KazMath::Rand(0, 1);
+	m_wallJump = {};
 
 	m_hp = HP[static_cast<int>(arg_mineralID)];
 
@@ -128,12 +134,19 @@ void Mineral::Update(std::weak_ptr<Player> arg_player, std::vector<std::pair<Kaz
 		//追尾する座標
 		Vec3<float> playerPos = arg_player.lock()->GetMineralCenterPos();
 		Vec3<float> mineralPos = GetPosZeroY();
-		mineralPos.y = 0.0f;
 
-		//追尾する。
-		mineralPos += (playerPos - mineralPos) / 30.0f;
-		m_transform.pos.x = mineralPos.x;
-		m_transform.pos.z = mineralPos.z;
+		++m_moveSpan;
+		if (m_randomMoveSpan <= m_moveSpan) {
+
+			//追尾する。
+			m_moveVec = (playerPos - mineralPos).GetNormal();
+			m_moveVec.y = 1.0f;
+			m_moveVec.Normalize();
+			m_moveVec *= MOVE_SPEED + KazMath::Rand(0.0f, MOVE_SPEED);
+
+			m_moveSpan = 0;
+
+		}
 
 	}
 
@@ -176,10 +189,10 @@ void Mineral::Update(std::weak_ptr<Player> arg_player, std::vector<std::pair<Kaz
 
 	//プレイヤーとの当たり判定を行う。
 	m_isOldGathering = m_isGathering;
-	if (m_canGathering && arg_player.lock()->GetIsDaipanTrigger()) {
+	if (arg_player.lock()->GetIsDaipanTrigger()) {
 
 		//当たり判定チェック 隊列を組んでいる状態だったらキャンセル。
-		bool isHit = Vec3<float>(arg_player.lock()->GetTransform().pos - GetPosZeroY()).Length() <= arg_player.lock()->GetMineralAffectRange();
+		bool isHit = Vec3<float>(arg_player.lock()->GetPosZeroY() - GetPosZeroY()).Length() <= arg_player.lock()->GetMineralAffectRange();
 		if (isHit) {
 
 			if (!m_isGathering) {
@@ -214,9 +227,6 @@ void Mineral::Update(std::weak_ptr<Player> arg_player, std::vector<std::pair<Kaz
 				break;
 			case Mineral::MEDIUM:
 				id = SMALL;
-				break;
-			case Mineral::BIG:
-				id = MEDIUM;
 				break;
 			default:
 				break;
@@ -258,9 +268,6 @@ void Mineral::Update(std::weak_ptr<Player> arg_player, std::vector<std::pair<Kaz
 	case Mineral::MEDIUM:
 		m_transform.scale = { MINERAL_DRAW_SIZE_MEDIUM,MINERAL_DRAW_SIZE_MEDIUM ,MINERAL_DRAW_SIZE_MEDIUM };
 		break;
-	case Mineral::BIG:
-		m_transform.scale = { MINERAL_DRAW_SIZE_BIG,MINERAL_DRAW_SIZE_BIG ,MINERAL_DRAW_SIZE_BIG };
-		break;
 	default:
 		break;
 	}
@@ -277,6 +284,18 @@ void Mineral::Update(std::weak_ptr<Player> arg_player, std::vector<std::pair<Kaz
 		m_attackReactionVec = {};
 
 	}
+	//移動する
+	if (0.01f < m_moveVec.Length()) {
+
+		m_transform.pos += m_moveVec;
+		m_moveVec -= m_moveVec / 10.0f;
+
+	}
+	else {
+
+		m_moveVec = {};
+
+	}
 
 	//傾ける。
 	KazMath::Vec3<float> nowPos = GetPosZeroY();
@@ -290,6 +309,9 @@ void Mineral::Update(std::weak_ptr<Player> arg_player, std::vector<std::pair<Kaz
 		}
 		else if (!m_attackTargetMineKuji.expired()) {
 			nowPos = m_attackTargetMineKuji.lock()->GetPos();
+		}
+		else if (!m_attackTargetMineTsumuri.expired()) {
+			nowPos = m_attackTargetMineTsumuri.lock()->GetPos();
 		}
 		else if (!m_attackDestrutibleTree.expired()) {
 			nowPos = m_attackDestrutibleTree.lock()->GetPos();
@@ -412,6 +434,39 @@ void Mineral::Update(std::weak_ptr<Player> arg_player, std::vector<std::pair<Kaz
 
 	}
 
+	//壁との当たり判定。
+	int wallIndex = 0;
+	KazMath::Vec3<float> movedVecZeroY = KazMath::Vec3<float>(m_transform.pos - m_oldTransform.pos).GetNormal();
+	movedVecZeroY.y = 0.0f;
+	movedVecZeroY.Normalize();
+	MeshCollision::CheckHitResult collisionResult = BuildingMgr::Instance()->CheckHitWall(m_transform.pos, movedVecZeroY, 20.0f, wallIndex);
+	if (collisionResult.m_isHit) {
+
+		//そっち側に大ジャンプ。
+		if (m_wallJump.Length() <= 0.01f) {
+
+			m_wallJump = movedVecZeroY;
+			m_wallJump.y = 3.0f;
+			m_wallJump.Normalize();
+			m_wallJump *= 10.0f;
+
+		}
+
+	}
+
+	//壁超えをする。
+	if (0.01f < m_wallJump.Length()) {
+
+		m_transform.pos += m_wallJump;
+		m_wallJump -= m_wallJump / 10.0f;
+
+	}
+	else {
+
+		m_wallJump = {};
+
+	}
+
 }
 
 void Mineral::Draw(DrawingByRasterize& arg_rasterize, Raytracing::BlasVector& arg_blasVec) {
@@ -426,6 +481,23 @@ void Mineral::Draw(DrawingByRasterize& arg_rasterize, Raytracing::BlasVector& ar
 	else {
 		m_surpisedTransform.pos = { 0,-10000,0 };
 	}
+
+
+	DessolveOutline outline;
+	if (m_isAttack) {
+		outline.m_outline = KazMath::Vec4<float>(0.4f, 0, 0, 1);
+	}
+	else if (m_isGathering) {
+		outline.m_outline = KazMath::Vec4<float>(0.1f, 0, 0, 1);
+	}
+	else {
+		outline.m_outline = KazMath::Vec4<float>(0.3f, 0, 0, 1);
+	}
+	m_model[static_cast<int>(m_mineralID)].m_model.extraBufferArray[4].bufferWrapper->TransData(&outline, sizeof(DessolveOutline));
+
+	m_model[static_cast<int>(m_mineralID)].m_model.extraBufferArray.back() = GBufferMgr::Instance()->m_outlineBuffer;
+	m_model[static_cast<int>(m_mineralID)].m_model.extraBufferArray.back().rangeType = GRAPHICS_RANGE_TYPE_UAV_DESC;
+	m_model[static_cast<int>(m_mineralID)].m_model.extraBufferArray.back().rootParamType = GRAPHICS_PRAMTYPE_TEX;
 
 	m_model[static_cast<int>(m_mineralID)].Draw(arg_rasterize, arg_blasVec, m_transform);
 	m_surprisedModel.Draw(arg_rasterize, arg_blasVec, m_surpisedTransform);
@@ -499,9 +571,6 @@ void Mineral::BreakUP(KazMath::Vec3<float> arg_forwardVec) {
 	case Mineral::MEDIUM:
 		rotateAngle = DirectX::XM_PI;
 		break;
-	case Mineral::BIG:
-		rotateAngle = DirectX::XM_PI + (DirectX::XM_PI / 4.0f);
-		break;
 	default:
 		break;
 	}
@@ -522,6 +591,7 @@ void Mineral::Attack(std::weak_ptr<Rock> arg_attackTargetRock)
 	m_attackTargetRock.reset();
 	m_attackTargetMineKuji.reset();
 	m_attackDestrutibleTree.reset();
+	m_attackTargetMineTsumuri.reset();
 	m_attackTargetRock = arg_attackTargetRock;
 	m_attackID = ATTACK;
 	m_attackMoveSpeed = 0.0f;
@@ -545,7 +615,32 @@ void Mineral::Attack(std::weak_ptr<MineKuji> arg_attackTargetMinekuji)
 	m_attackTargetRock.reset();
 	m_attackTargetMineKuji.reset();
 	m_attackDestrutibleTree.reset();
+	m_attackTargetMineTsumuri.reset();
 	m_attackTargetMineKuji = arg_attackTargetMinekuji;
+	m_attackID = ATTACK;
+	m_attackMoveSpeed = 0.0f;
+	m_attackReactionVec = {};
+
+	m_stayDelayTimer = 0;
+	m_stayDelay = KazMath::Rand(MIN_STAY_DELAY, MAX_STAY_DELAY);
+
+	if (!m_haveMaterial.expired()) {
+
+		m_haveMaterial.lock()->Release();
+		m_haveMaterial.reset();
+
+	}
+
+}
+void Mineral::Attack(std::weak_ptr<MineTsumuri> arg_attackTargetMinetsumuri)
+{
+
+	m_isAttack = true;
+	m_attackTargetRock.reset();
+	m_attackTargetMineKuji.reset();
+	m_attackDestrutibleTree.reset();
+	m_attackTargetMineTsumuri.reset();
+	m_attackTargetMineTsumuri = arg_attackTargetMinetsumuri;
 	m_attackID = ATTACK;
 	m_attackMoveSpeed = 0.0f;
 	m_attackReactionVec = {};
@@ -567,6 +662,7 @@ void Mineral::Attack(std::weak_ptr<DestructibleTree> arg_destructibleTree) {
 	m_attackTargetRock.reset();
 	m_attackTargetMineKuji.reset();
 	m_attackDestrutibleTree.reset();
+	m_attackTargetMineTsumuri.reset();
 	m_attackDestrutibleTree = arg_destructibleTree;
 	m_attackID = ATTACK;
 	m_attackMoveSpeed = 0.0f;
@@ -616,9 +712,6 @@ float Mineral::GetCollisionScale() {
 	case Mineral::MEDIUM:
 		return MINERAL_COLLISION_SIZE_MEDIUM;
 		break;
-	case Mineral::BIG:
-		return MINERAL_COLLISION_SIZE_BIG;
-		break;
 	default:
 		break;
 	}
@@ -646,24 +739,42 @@ void Mineral::UpdateAttack(std::weak_ptr<Player> arg_player)
 			targetPos = m_attackTargetMineKuji.lock()->GetPos();
 			targetScale = m_attackTargetMineKuji.lock()->GetScale();
 		}
+		else if (!m_attackTargetMineTsumuri.expired()) {
+			targetPos = m_attackTargetMineTsumuri.lock()->GetPos();
+			targetScale = m_attackTargetMineTsumuri.lock()->GetScale();
+		}
 		else if (!m_attackDestrutibleTree.expired()) {
 			targetPos = m_attackDestrutibleTree.lock()->GetPosZeroY();
 			targetScale = m_attackDestrutibleTree.lock()->GetScale();
 		}
 
 		//移動速度を上げる。
-		m_attackMoveSpeed = std::clamp(m_attackMoveSpeed + ADD_ATTACK_SPEED, 0.0f, MAX_ATTACK_SPEED);
+		//m_attackMoveSpeed = std::clamp(m_attackMoveSpeed + ADD_ATTACK_SPEED, 0.0f, MAX_ATTACK_SPEED);
+
+
+		++m_moveSpan;
+		if (m_randomMoveSpan <= m_moveSpan) {
+
+			//追尾する。
+			m_moveVec = (targetPos - GetPosZeroY()).GetNormal();
+			m_moveVec.y = 1.0f;
+			m_moveVec.Normalize();
+			m_moveVec *= MOVE_SPEED;
+
+			m_moveSpan = 0;
+
+		}
 
 		//移動するベクトルを求める。
-		KazMath::Vec3<float> moveDir = KazMath::Vec3<float>(targetPos - m_transform.pos);
+		KazMath::Vec3<float> moveDir = KazMath::Vec3<float>(targetPos - GetPosZeroY());
 		float distance = moveDir.Length();
 		moveDir.Normalize();
 
 		//移動速度が距離を超えていたら範囲に収める。
-		m_attackMoveSpeed = std::clamp(m_attackMoveSpeed, 0.0f, distance);
+		//m_attackMoveSpeed = std::clamp(m_attackMoveSpeed, 0.0f, distance);
 
 		//移動させる。
-		m_transform.pos += moveDir * m_attackMoveSpeed;
+		//m_transform.pos += moveDir * m_attackMoveSpeed;
 
 		//距離が一定以下になったら待機状態へ
 		if (KazMath::Vec3<float>(targetPos - m_transform.pos).Length() <= targetScale.x + m_transform.scale.x) {
@@ -675,7 +786,7 @@ void Mineral::UpdateAttack(std::weak_ptr<Player> arg_player)
 			reactionDir *= -1.0f;
 			reactionDir.y = 1.0f;
 			reactionDir.Normalize();
-			m_attackReactionVec = reactionDir * (m_attackMoveSpeed * 3.0f);
+			m_attackReactionVec = reactionDir * (4.0f + KazMath::Rand(0.0f, 4.0f));
 
 			//岩だったら
 			if (!m_attackTargetRock.expired()) {
@@ -694,9 +805,7 @@ void Mineral::UpdateAttack(std::weak_ptr<Player> arg_player)
 						m_mineralID = MEDIUM;
 						break;
 					case Mineral::MEDIUM:
-						m_mineralID = BIG;
-						break;
-					case Mineral::BIG:
+						//m_mineralID = BIG;
 						break;
 					default:
 						break;
@@ -706,7 +815,7 @@ void Mineral::UpdateAttack(std::weak_ptr<Player> arg_player)
 
 					//プレイヤーの影響範囲外だったら隊列状態を解除。
 					float playerDistance = KazMath::Vec3<float>(arg_player.lock()->GetPosZeroY() - GetPosZeroY()).Length();
-					if (arg_player.lock()->GetMineralAffectRange() < playerDistance) {
+					if (arg_player.lock()->GetMineralBreakUpRange() < playerDistance) {
 
 						m_isGathering = false;
 
@@ -718,6 +827,11 @@ void Mineral::UpdateAttack(std::weak_ptr<Player> arg_player)
 			else if (!m_attackTargetMineKuji.expired()) {
 
 				m_attackTargetMineKuji.lock()->Damage(m_thisMineral);
+
+			}
+			else if (!m_attackTargetMineTsumuri.expired()) {
+
+				m_attackTargetMineTsumuri.lock()->Damage(m_thisMineral);
 
 			}
 			else if (!m_attackDestrutibleTree.expired()) {
@@ -755,7 +869,7 @@ void Mineral::UpdateAttack(std::weak_ptr<Player> arg_player)
 
 		//プレイヤーの影響範囲外だったら隊列状態を解除。
 		float playerDistance = KazMath::Vec3<float>(arg_player.lock()->GetPosZeroY() - GetPosZeroY()).Length();
-		if (arg_player.lock()->GetMineralAffectRange() < playerDistance) {
+		if (arg_player.lock()->GetMineralBreakUpRange() < playerDistance) {
 
 			m_isGathering = false;
 
@@ -769,7 +883,21 @@ void Mineral::UpdateAttack(std::weak_ptr<Player> arg_player)
 
 		//プレイヤーの影響範囲外だったら隊列状態を解除。
 		float playerDistance = KazMath::Vec3<float>(arg_player.lock()->GetPosZeroY() - GetPosZeroY()).Length();
-		if (arg_player.lock()->GetMineralAffectRange() < playerDistance) {
+		if (arg_player.lock()->GetMineralBreakUpRange() < playerDistance) {
+
+			m_isGathering = false;
+
+		}
+
+	}
+	//ミネクジのHPが0になっていたら攻撃を終える。
+	if (!m_attackTargetMineTsumuri.expired() && m_attackTargetMineTsumuri.lock()->GetHP() <= 0) {
+
+		m_isAttack = false;
+
+		//プレイヤーの影響範囲外だったら隊列状態を解除。
+		float playerDistance = KazMath::Vec3<float>(arg_player.lock()->GetPosZeroY() - GetPosZeroY()).Length();
+		if (arg_player.lock()->GetMineralBreakUpRange() < playerDistance) {
 
 			m_isGathering = false;
 
@@ -783,7 +911,7 @@ void Mineral::UpdateAttack(std::weak_ptr<Player> arg_player)
 
 		//プレイヤーの影響範囲外だったら隊列状態を解除。
 		float playerDistance = KazMath::Vec3<float>(arg_player.lock()->GetPosZeroY() - GetPosZeroY()).Length();
-		if (arg_player.lock()->GetMineralAffectRange() < playerDistance) {
+		if (arg_player.lock()->GetMineralBreakUpRange() < playerDistance) {
 
 			m_isGathering = false;
 

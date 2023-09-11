@@ -137,6 +137,7 @@
     <ClCompile Include="Game\Enemy\EnemyMgr.cpp" />
     <ClCompile Include="Game\Enemy\EnemyRoute.cpp" />
     <ClCompile Include="Game\Enemy\MineKuji.cpp" />
+    <ClCompile Include="Game\Enemy\MineTsumuri.cpp" />
     <ClCompile Include="Game\Enemy\VirusEnemy.cpp" />
     <ClCompile Include="Game\GameRenderTarget.cpp" />
     <ClCompile Include="Game\Helper\CameraWork.cpp" />
@@ -282,6 +283,7 @@
     <ClInclude Include="Game\DestructibleObject\DestructibleTree.h" />
     <ClInclude Include="Game\DrawCallSet.h" />
     <ClInclude Include="Game\DrawCallUISet.h" />
+    <ClInclude Include="Game\Effect\ChromaticAberration.h" />
     <ClInclude Include="Game\Effect\EnemyDeadParticle.h" />
     <ClInclude Include="Game\Effect\EnemyDissolveParam.h" />
     <ClInclude Include="Game\Effect\InstanceMeshParticleData.h" />
@@ -296,6 +298,7 @@
     <ClInclude Include="Game\Enemy\EnemyMgr.h" />
     <ClInclude Include="Game\Enemy\EnemyRoute.h" />
     <ClInclude Include="Game\Enemy\MineKuji.h" />
+    <ClInclude Include="Game\Enemy\MineTsumuri.h" />
     <ClInclude Include="Game\Enemy\VirusEnemy.h" />
     <ClInclude Include="Game\GameRenderTarget.h" />
     <ClInclude Include="Game\Helper\CameraWork.h" />

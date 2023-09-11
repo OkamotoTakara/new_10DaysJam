@@ -13,7 +13,7 @@ private:
 	bool m_isActive;
 	bool m_isHeld;
 
-	const float SCALE = 5.0f;
+	const float SCALE = 3.0f;
 
 public:
 

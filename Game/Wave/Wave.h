@@ -8,10 +8,16 @@ class Wave {
 
 public:
 
+	enum class ENEMY_ID {
+		MINEKUJI,
+		MINETSUMURI,
+	};
+
 	struct EnemyWaveInfo {
 		EnemyRoute::ROUTE_ID m_routeID;	//“G‚ª—N‚­êŠ‚ÌID
+		ENEMY_ID m_enemyID;
 		int m_spawnFrame; //“G‚ª—N‚­ƒtƒŒ[ƒ€
-		EnemyWaveInfo(EnemyRoute::ROUTE_ID arg_routeID, int arg_spawnFrame) : m_routeID(arg_routeID), m_spawnFrame(arg_spawnFrame) {};
+		EnemyWaveInfo(EnemyRoute::ROUTE_ID arg_routeID, ENEMY_ID arg_enemyID, int arg_spawnFrame) : m_routeID(arg_routeID), m_enemyID(arg_enemyID), m_spawnFrame(arg_spawnFrame) {};
 	};
 
 private:

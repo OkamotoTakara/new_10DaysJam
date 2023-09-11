@@ -6,6 +6,7 @@
 #include "../Game/BuildingMaterial/BuildingMaterial.h"
 #include "../Game/Building/BuildingMgr.h"
 #include "../Game/Rock/RockMgr.h"
+#include "../Game/Enemy/MineTsumuri.h"
 
 MineralTarget::MineralTarget()
 {
@@ -16,8 +17,8 @@ MineralTarget::MineralTarget()
 
 	Init();
 
-	m_model.Load("Resource/Player/HandCircle/", "HandCircleStrong.gltf");
-	m_targetModel.Load("Resource/Mineral/Target/", "Target.gltf");
+	m_model.LoadNoLighting("Resource/Player/HandCircle/", "HandCircleStrong.gltf");
+	m_targetModel.LoadNoLighting("Resource/Mineral/Target/", "Target.gltf");
 
 }
 
@@ -28,18 +29,21 @@ void MineralTarget::Init()
 	m_targetTreeIndex = -1;
 	m_targetMaterialIndex = -1;
 	m_targetBuildingIndex = -1;
+	m_targetMineTsumuriIndex = -1;
 
 	m_oldTargetRockIndex = -1;
 	m_oldTargetMineKujiIndex = -1;
 	m_oldTargetTreeIndex = -1;
 	m_oldTargetMaterialIndex = -1;
 	m_oldTargetBuildingIndex = -1;
+	m_oldTargetMineTsumuriIndex = -1;
 
 	m_targetRockDistance = 1000000.0f;
 	m_targetMinekujiDistance = 1000000.0f;
 	m_targetTreeDistance = 1000000.0f;
 	m_targetMaterialDistance = 1000000.0f;
 	m_targetBuildingDistance = 1000000.0f;
+	m_targetMineTsumuriDistance = 1000000.0f;
 
 	m_targetSineWaveTimer = 0.0f;
 }
@@ -67,12 +71,17 @@ void MineralTarget::Update(KazMath::Vec3<float> arg_playerPos, float arg_targetR
 	m_oldTargetBuildingIndex = m_targetBuildingIndex;
 	m_targetBuildingIndex = BuildingMgr::Instance()->GetTargetWallIndex(arg_playerPos, arg_targetRange, m_targetBuildingDistance);
 
+	//ミネクジを計算
+	m_oldTargetMineTsumuriIndex = m_targetMineTsumuriIndex;
+	m_targetMineTsumuriIndex = arg_enemyMgr.lock()->GetTargetMineTsumuriIndex(arg_playerPos, arg_targetRange, m_targetMineTsumuriDistance);
+
 	//ターゲットが変わった瞬間にTargetとかのスケールを小さくする。
 	if ((m_oldTargetRockIndex != m_targetRockIndex) || 
 		(m_oldTargetMineKujiIndex != m_targetMinekujiIndex) || 
 		(m_oldTargetTreeIndex != m_targetTreeIndex) || 
 		(m_oldTargetMaterialIndex != m_targetMaterialIndex) ||
-		(m_oldTargetBuildingIndex != m_targetBuildingIndex)) {
+		(m_oldTargetBuildingIndex != m_targetBuildingIndex) ||
+		(m_oldTargetMineTsumuriIndex != m_targetMineTsumuriIndex)) {
 
 		m_targetTransform.scale = {};
 		m_transform.scale = {};
@@ -175,11 +184,28 @@ void MineralTarget::Draw(DrawingByRasterize& arg_rasterize, Raytracing::BlasVect
 		m_targetTransform.pos.y += TARGET_HEIGHT + (sinf(m_targetSineWaveTimer) * TARGET_SINE_WAVE_LENGTH);
 
 	}
+	else if (targetIndex == 6) {
+
+		//大きさを設定
+		const float SCALE = 1.0f;
+		m_transform.scale += ((arg_enemyMgr.lock()->GetMineTsumuriTargetScale(m_targetMineTsumuriIndex) + KazMath::Vec3<float>(SCALE, SCALE, SCALE)) - m_transform.scale) / 3.0f;
+		const float TARGET_SCALE = 10.0f;
+		m_targetTransform.scale += (KazMath::Vec3<float>(TARGET_SCALE, TARGET_SCALE, TARGET_SCALE) - m_targetTransform.scale) / 5.0f;
+
+		//座標を設定。
+		m_transform.pos = arg_enemyMgr.lock()->GetMineTsumuriPos(m_targetMineTsumuriIndex);
+		m_transform.pos.y = 0.0f;
+		m_targetTransform.pos = arg_enemyMgr.lock()->GetMineTsumuriPos(m_targetMineTsumuriIndex);
+		const float TARGET_HEIGHT = 20.0f;
+		m_targetTransform.pos.y += TARGET_HEIGHT + (sinf(m_targetSineWaveTimer) * TARGET_SINE_WAVE_LENGTH);
+
+	}
 	else {
 		m_transform.scale += (KazMath::Vec3<float>(0, 0, 0) - m_transform.scale) / 3.0f;
 		m_targetTransform.scale += (KazMath::Vec3<float>(0, 0, 0) - m_targetTransform.scale) / 3.0f;
 	}
 
+	m_transform.pos.y = 2.0f;
 	m_model.Draw(arg_rasterize, arg_blasVec, m_transform);
 	m_targetModel.Draw(arg_rasterize, arg_blasVec, m_targetTransform);
 
@@ -193,7 +219,8 @@ int MineralTarget::GetCanTarget()
 		100000 <= m_targetRockDistance && 
 		100000 <= m_targetTreeDistance && 
 		100000 <= m_targetMaterialDistance &&
-		100000 <= m_targetBuildingDistance) {
+		100000 <= m_targetBuildingDistance &&
+		100000 <= m_targetMineTsumuriDistance) {
 		return 0;
 	}
 
@@ -204,6 +231,7 @@ int MineralTarget::GetCanTarget()
 	distanceVector.emplace_back(m_targetTreeDistance);
 	distanceVector.emplace_back(m_targetMaterialDistance);
 	distanceVector.emplace_back(m_targetBuildingDistance);
+	distanceVector.emplace_back(m_targetMineTsumuriDistance);
 
 	//昇順にソート
 	std::sort(distanceVector.begin(), distanceVector.end());
@@ -223,6 +251,9 @@ int MineralTarget::GetCanTarget()
 	if (distanceVector.front() == m_targetBuildingDistance) {
 		return 5;
 	}
+	if (distanceVector.front() == m_targetMineTsumuriDistance) {
+		return 6;
+	}
 	return 0;
 }
 
@@ -234,6 +265,11 @@ std::weak_ptr<Rock> MineralTarget::GetTargetRock()
 std::weak_ptr<MineKuji> MineralTarget::GetTargetMinekuji()
 {
 	return m_enemyMgr.lock()->GetMineKuji(m_targetMinekujiIndex);
+}
+
+std::weak_ptr<MineTsumuri> MineralTarget::GetTargetMineTsumuri()
+{
+	return m_enemyMgr.lock()->GetMineTsumuri(m_targetMineTsumuriIndex);
 }
 
 std::weak_ptr<DestructibleTree> MineralTarget::GetTargetTree()

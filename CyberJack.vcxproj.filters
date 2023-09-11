@@ -156,6 +156,7 @@
     <ClCompile Include="Game\Wave\WaveMgr.cpp" />
     <ClCompile Include="Game\DrawCallUISet.cpp" />
     <ClCompile Include="Game\PointLightMgr.cpp" />
+    <ClCompile Include="Game\Enemy\MineTsumuri.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Game\Debug\ParameterMgr.h" />
@@ -333,6 +334,8 @@
     <ClInclude Include="Game\Wave\WaveMgr.h" />
     <ClInclude Include="Game\DrawCallUISet.h" />
     <ClInclude Include="Game\PointLightMgr.h" />
+    <ClInclude Include="Game\Enemy\MineTsumuri.h" />
+    <ClInclude Include="Game\Effect\ChromaticAberration.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

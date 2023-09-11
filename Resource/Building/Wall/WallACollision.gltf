@@ -15,7 +15,7 @@
     "nodes" : [
         {
             "mesh" : 0,
-            "name" : "\u5e73\u9762"
+            "name" : "WallACollision"
         }
     ],
     "materials" : [
@@ -26,7 +26,7 @@
                 0,
                 0
             ],
-            "name" : "\u30de\u30c6\u30ea\u30a2\u30eb",
+            "name" : "Wall.005",
             "pbrMetallicRoughness" : {
                 "baseColorTexture" : {
                     "index" : 0,
@@ -39,7 +39,7 @@
     ],
     "meshes" : [
         {
-            "name" : "\u5e73\u9762",
+            "name" : "WallACollison",
             "primitives" : [
                 {
                     "attributes" : {
@@ -69,29 +69,29 @@
         {
             "bufferView" : 0,
             "componentType" : 5126,
-            "count" : 8,
+            "count" : 10,
             "max" : [
-                5.376464366912842,
-                3.2864344120025635,
-                0.49412235617637634
+                10.125571250915527,
+                7.55702543258667,
+                2.353644609451294
             ],
             "min" : [
-                -5.376464366912842,
-                -3.2864344120025635,
-                -0.4955643117427826
+                -9.089460372924805,
+                -1.0696479082107544,
+                -2.216341972351074
             ],
             "type" : "VEC3"
         },
         {
             "bufferView" : 1,
             "componentType" : 5126,
-            "count" : 8,
+            "count" : 10,
             "type" : "VEC3"
         },
         {
             "bufferView" : 2,
             "componentType" : 5126,
-            "count" : 8,
+            "count" : 10,
             "type" : "VEC2"
         },
         {
@@ -104,28 +104,28 @@
     "bufferViews" : [
         {
             "buffer" : 0,
-            "byteLength" : 96,
+            "byteLength" : 120,
             "byteOffset" : 0
         },
         {
             "buffer" : 0,
-            "byteLength" : 96,
-            "byteOffset" : 96
+            "byteLength" : 120,
+            "byteOffset" : 120
         },
         {
             "buffer" : 0,
-            "byteLength" : 64,
-            "byteOffset" : 192
+            "byteLength" : 80,
+            "byteOffset" : 240
         },
         {
             "buffer" : 0,
             "byteLength" : 24,
-            "byteOffset" : 256
+            "byteOffset" : 320
         }
     ],
     "buffers" : [
         {
-            "byteLength" : 280,
+            "byteLength" : 344,
             "uri" : "WallACollision.bin"
         }
     ]

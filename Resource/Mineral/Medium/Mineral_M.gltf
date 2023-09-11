@@ -69,15 +69,15 @@
         {
             "bufferView" : 0,
             "componentType" : 5126,
-            "count" : 5939,
+            "count" : 586,
             "max" : [
-                1.3730651140213013,
+                1.049911379814148,
                 1.587443232536316,
                 1.0008841753005981
             ],
             "min" : [
-                -1.3965861797332764,
-                -1.2720787525177002,
+                -1.0463550090789795,
+                -1.0691438913345337,
                 -1.1384172439575195
             ],
             "type" : "VEC3"
@@ -85,42 +85,42 @@
         {
             "bufferView" : 1,
             "componentType" : 5126,
-            "count" : 5939,
+            "count" : 586,
             "type" : "VEC3"
         },
         {
             "bufferView" : 2,
             "componentType" : 5126,
-            "count" : 5939,
+            "count" : 586,
             "type" : "VEC2"
         },
         {
             "bufferView" : 3,
             "componentType" : 5123,
-            "count" : 6072,
+            "count" : 717,
             "type" : "SCALAR"
         }
     ],
     "bufferViews" : [
         {
             "buffer" : 0,
-            "byteLength" : 71268,
+            "byteLength" : 7032,
             "byteOffset" : 0
         },
         {
             "buffer" : 0,
-            "byteLength" : 71268,
-            "byteOffset" : 71268
+            "byteLength" : 7032,
+            "byteOffset" : 7032
         },
         {
             "buffer" : 0,
-            "byteLength" : 47512,
-            "byteOffset" : 142536
+            "byteLength" : 4688,
+            "byteOffset" : 14064
         },
         {
             "buffer" : 0,
-            "byteLength" : 12144,
-            "byteOffset" : 190048
+            "byteLength" : 1434,
+            "byteOffset" : 18752
         }
     ],
     "samplers" : [
@@ -131,7 +131,7 @@
     ],
     "buffers" : [
         {
-            "byteLength" : 202192,
+            "byteLength" : 20188,
             "uri" : "Mineral_M.bin"
         }
     ]

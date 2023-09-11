@@ -8,11 +8,11 @@
 Wall::Wall()
 {
 
-	m_model[0].Load("Resource/Building/Wall/", "WallA.gltf");
-	m_model[1].Load("Resource/Building/Wall/", "WallB.gltf");
-	m_model[2].Load("Resource/Building/Wall/", "WallC.gltf");
-	m_buildingBoxModel.Load("Resource/Building/", "BuildingBox.gltf");
-	m_numberModel.Load("Resource/UI/NumFont/", "number.gltf");
+	m_model[0].LoadOutline("Resource/Building/Wall/", "WallA.gltf");
+	m_model[1].LoadOutline("Resource/Building/Wall/", "WallB.gltf");
+	m_model[2].LoadOutline("Resource/Building/Wall/", "WallC.gltf");
+	m_buildingBoxModel.LoadOutline("Resource/Building/", "BuildingBox.gltf");
+	m_numberModel.LoadNoLighting("Resource/UI/NumFont/", "number.gltf");
 
 
 	m_wallTransform.pos.y = -10000.0f;
@@ -263,6 +263,18 @@ void Wall::Draw(DrawingByRasterize& arg_rasterize, Raytracing::BlasVector& arg_b
 	}
 
 	m_numberModel.m_model.materialBuffer.front().front() = NumberFont::Instance()->m_font[MATERIAL_COUNT - m_materialCounter];
+
+	DessolveOutline outline;
+	outline.m_outline = KazMath::Vec4<float>(0.5f, 0, 0, 1);
+	m_buildingBoxModel.m_model.extraBufferArray[4].bufferWrapper->TransData(&outline, sizeof(DessolveOutline));
+	m_buildingBoxModel.m_model.extraBufferArray.back() = GBufferMgr::Instance()->m_outlineBuffer;
+	m_buildingBoxModel.m_model.extraBufferArray.back().rangeType = GRAPHICS_RANGE_TYPE_UAV_DESC;
+	m_buildingBoxModel.m_model.extraBufferArray.back().rootParamType = GRAPHICS_PRAMTYPE_TEX;
+
+	m_model[m_modelIndex].m_model.extraBufferArray[4].bufferWrapper->TransData(&outline, sizeof(DessolveOutline));
+	m_model[m_modelIndex].m_model.extraBufferArray.back() = GBufferMgr::Instance()->m_outlineBuffer;
+	m_model[m_modelIndex].m_model.extraBufferArray.back().rangeType = GRAPHICS_RANGE_TYPE_UAV_DESC;
+	m_model[m_modelIndex].m_model.extraBufferArray.back().rootParamType = GRAPHICS_PRAMTYPE_TEX;
 
 	m_model[m_modelIndex].Draw(arg_rasterize, arg_blasVec, modelTransform);
 	m_buildingBoxModel.Draw(arg_rasterize, arg_blasVec, boxTransform);

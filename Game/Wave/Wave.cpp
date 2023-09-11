@@ -32,7 +32,16 @@ void Wave::Update(std::weak_ptr<EnemyMgr> arg_enemyMgr)
 			if (enemy.m_spawnFrame != m_nowTime) continue;
 
 			//“G‚ğ—N‚©‚¹‚éB
-			arg_enemyMgr.lock()->Generate(enemy.m_routeID);
+			if (enemy.m_enemyID == ENEMY_ID::MINEKUJI) {
+
+				arg_enemyMgr.lock()->GenerateMinekuji(enemy.m_routeID);
+
+			}
+			else if (enemy.m_enemyID == ENEMY_ID::MINETSUMURI) {
+
+				arg_enemyMgr.lock()->GenerateMinetsumuri(enemy.m_routeID);
+
+			}
 
 		}
 

@@ -12,9 +12,9 @@ Rock::Rock()
 	m_transform.pos = { 10000,-10000,10000 };
 	m_transform.scale = { 0,0,0 };
 
-	m_model[0].Load("Resource/Rock/", "Rock_S_01.gltf");
-	m_model[1].Load("Resource/Rock/", "Rock_S_02.gltf");
-	m_model[2].Load("Resource/Rock/", "Rock_S_03.gltf");
+	m_model[0].LoadOutline("Resource/Rock/", "Rock_S_01.gltf");
+	m_model[1].LoadOutline("Resource/Rock/", "Rock_S_02.gltf");
+	m_model[2].LoadOutline("Resource/Rock/", "Rock_S_03.gltf");
 	m_modelIndex = 0;
 
 }
@@ -232,6 +232,14 @@ void Rock::Draw(DrawingByRasterize& arg_rasterize, Raytracing::BlasVector& arg_b
 		m_transform.scale = { 0,0,0 };
 
 	}
+
+	DessolveOutline outline;
+	outline.m_outline = KazMath::Vec4<float>(0.5f, 0, 0, 1);
+	m_model[m_modelIndex].m_model.extraBufferArray[4].bufferWrapper->TransData(&outline, sizeof(DessolveOutline));
+
+	m_model[m_modelIndex].m_model.extraBufferArray.back() = GBufferMgr::Instance()->m_outlineBuffer;
+	m_model[m_modelIndex].m_model.extraBufferArray.back().rangeType = GRAPHICS_RANGE_TYPE_UAV_DESC;
+	m_model[m_modelIndex].m_model.extraBufferArray.back().rootParamType = GRAPHICS_PRAMTYPE_TEX;
 
 	m_model[m_modelIndex].Draw(arg_rasterize, arg_blasVec, m_transform);
 
