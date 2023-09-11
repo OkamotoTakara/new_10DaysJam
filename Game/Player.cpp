@@ -321,7 +321,8 @@ void Player::Update()
 	m_transform.pos += m_damageShakePos;
 
 
-	ChromaticAberration::Instance()->m_facter = 1.0f - (m_hp / HP);
+	float baseFacter = 1.0f - (m_hp / HP);
+	ChromaticAberration::Instance()->m_facter += (baseFacter - ChromaticAberration::Instance()->m_facter) / 20.0f;
 
 
 
