@@ -40,8 +40,6 @@ void BuildingMgr::Update(std::weak_ptr<Player> arg_player)
 
 	for (auto& index : m_walls) {
 
-		if (!index->GetIsActive()) continue;
-
 		index->Update(arg_player);
 
 	}

@@ -78,14 +78,10 @@ void EnemyMgr::Update(std::weak_ptr<Core> arg_core, std::weak_ptr<Player> arg_pl
 
 	for (auto& index : m_minekujis) {
 
-		if (!index->GetIsActive()) continue;
-
 		index->Update(arg_core, arg_player);
 
 	}
 	for (auto& index : m_minetsumuri) {
-
-		if (!index->GetIsActive()) continue;
 
 		index->Update(arg_core, arg_player);
 

@@ -14,9 +14,9 @@ void WaveMgr::Setting()
 	//1ウェーブ目 -----------------------------------------------------------------------------------------
 	int dayTime = 10;		//日中の時間 フレーム数
 	int nightTime = 6000;	//夜の時間 フレーム数
-	std::vector<int> tree = { 1, 3 };		//有効化時に生成される木のIndex 1スタート
-	std::vector<int> rock = { 1 };		//有効化時に生成される岩のIndex 1スタート
-	std::vector<int> mineralRock = { 2, 3 };		//有効化時に生成されるミネラル岩のIndex 1スタート
+	std::vector<int> tree = {1};		//有効化時に生成される木の数
+	std::vector<int> rock = {3};		//有効化時に生成される岩の数
+	std::vector<int> mineralRock{1,2};
 	//敵を追加していく。
 	enemyInfo.emplace_back(EnemyRoute::A, Wave::ENEMY_ID::MINEKUJI, 120);
 	enemyInfo.emplace_back(EnemyRoute::A, Wave::ENEMY_ID::MINEKUJI, 120);
@@ -141,4 +141,9 @@ void WaveMgr::GameStart()
 
 	m_waves.front()->Active();
 
+}
+
+bool WaveMgr::GetIsNight()
+{
+	return m_waves[m_nowWaveIndex]->GetIsNight();
 }

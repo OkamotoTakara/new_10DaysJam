@@ -105,6 +105,17 @@ private:
 
 public:
 
+	/*オカモトゾーン*/
+	DrawCallSet m_hpBoxModel;
+	DrawCallSet m_gardHpBoxModel;
+	KazMath::Transform3D m_hpBoxTransform;
+	KazMath::Transform3D m_gardHpBoxTransform;
+	int m_hpBoxDrawTimer;
+	const int HP_BOX_DRAW_TIME_MAX = 60;
+	const float SCALE_MAG = 10.0f;
+	bool isDrawHpBox;
+	/*オカモトゾーン*/
+
 	MineTsumuri();
 
 	void Init();

@@ -20,6 +20,20 @@ public:
 	bool m_isReady;		//建築可能状態
 	bool m_isBuild;
 
+	/*オカモトゾーン*/
+	float damageAmount;
+	DrawCallSet m_hpBoxModel;
+	KazMath::Transform3D m_hpBoxTransform;
+	int m_hpBoxDrawTimer;
+	const int HP_BOX_DRAW_TIME_MAX = 60;
+	float hpBoxScaleStart;
+	float hpBoxScaleEnd;
+	bool isDrawHpBox;
+	float hpBoxEaseTime;
+	const float HP_BOX_EASE_TIME_MAX = 30.0f;
+	float ease_scale;
+	/*オカモトゾーン*/
+
 	int m_hp;
 	const int HP = 10;
 
@@ -87,7 +101,7 @@ public:
 
 	MeshCollision::CheckHitResult CheckHitMesh(KazMath::Vec3<float> arg_pos, KazMath::Vec3<float> arg_dir);
 
-	void Damage(int arg_damage = 1) { m_hp = std::clamp(m_hp - arg_damage, 0, HP); }
+	void Damage(int arg_damage = 1);
 	int GetHP() { return m_hp; }
 
 	bool GetIsActive() { return m_isActive; }
