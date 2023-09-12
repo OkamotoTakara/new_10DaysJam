@@ -15,6 +15,7 @@ Rock::Rock()
 	m_model[0].LoadOutline("Resource/Rock/", "Rock_S_01.gltf");
 	m_model[1].LoadOutline("Resource/Rock/", "Rock_S_02.gltf");
 	m_model[2].LoadOutline("Resource/Rock/", "Rock_S_03.gltf");
+	m_model[3].LoadOutline("Resource/Mineral/Lerge/", "Mineral_L.gltf");
 	m_modelIndex = 0;
 
 }
@@ -28,7 +29,7 @@ void Rock::Init()
 
 }
 
-void Rock::Generate(KazMath::Vec3<float> arg_pos, KazMath::Vec3<float> arg_respawnVec, int arg_rockID)
+void Rock::Generate(KazMath::Vec3<float> arg_pos, KazMath::Vec3<float> arg_respawnVec, bool arg_isMineralRock, int arg_rockID)
 {
 
 	m_rockID = static_cast<ROCK_ID>(arg_rockID);
@@ -39,8 +40,14 @@ void Rock::Generate(KazMath::Vec3<float> arg_pos, KazMath::Vec3<float> arg_respa
 	m_canOldCollision = false;
 	m_gravity = 0;
 	m_reactionVec = {};
+	m_isMineralRock = arg_isMineralRock;
 
-	m_hp = MAX_HP[static_cast<int>(m_rockID)];
+	if (m_isMineralRock) {
+		m_hp = 1;
+	}
+	else {
+		m_hp = MAX_HP[static_cast<int>(m_rockID)];
+	}
 
 	m_modelIndex = KazMath::Rand(0, 2);
 
@@ -129,7 +136,7 @@ void Rock::Update(std::weak_ptr<Player> arg_player, std::vector<std::pair<KazMat
 						ShakeMgr::Instance()->m_shakeAmount = 2.0f;
 						break;
 					case ROCK_ID::BIG:
-						id = MEDIUM;
+						id = SMALL;
 						//強力なシェイクをかける。
 						ShakeMgr::Instance()->m_shakeAmount = 3.0f;
 						break;
@@ -137,18 +144,39 @@ void Rock::Update(std::weak_ptr<Player> arg_player, std::vector<std::pair<KazMat
 						break;
 					}
 
-					//分散させる。
-					for (int index = 0; index < 2; ++index) {
-						std::pair<KazMath::Vec3<float>, int> respawnData;
-						respawnData.first = { Vec3<float>(KazMath::Rand(-1.0f, 1.0f) ,KazMath::Rand(-0.0f, 2.0f) ,KazMath::Rand(-1.0f, 1.0f)) };
-						respawnData.first.GetNormal();
-						respawnData.first *= STRONG_DAIPAN_POWER;
-						respawnData.second = id;
-						arg_respawnVec.emplace_back(respawnData);
+					//ミネラル岩だったら
+					if (m_isMineralRock) {
+
+						//分散させる。
+						for (int index = 0; index < 3; ++index) {
+							std::pair<KazMath::Vec3<float>, int> respawnData;
+							respawnData.first = { Vec3<float>(KazMath::Rand(-1.0f, 1.0f) ,KazMath::Rand(-0.0f, 2.0f) ,KazMath::Rand(-1.0f, 1.0f)) };
+							respawnData.first.GetNormal();
+							respawnData.first *= STRONG_DAIPAN_POWER;
+							respawnData.second = id;
+							arg_respawnVec.emplace_back(respawnData);
+						}
+
+					}
+					else {
+
+
+						//分散させる。
+						for (int index = 0; index < 3; ++index) {
+							std::pair<KazMath::Vec3<float>, int> respawnData;
+							respawnData.first = { Vec3<float>(KazMath::Rand(-1.0f, 1.0f) ,KazMath::Rand(-0.0f, 2.0f) ,KazMath::Rand(-1.0f, 1.0f)) };
+							respawnData.first.GetNormal();
+							respawnData.first *= STRONG_DAIPAN_POWER;
+							respawnData.second = id;
+							arg_respawnVec.emplace_back(respawnData);
+						}
+
 					}
 
 					//こいつ本体は消す。
 					Init();
+
+					return;
 
 
 				}
@@ -191,7 +219,7 @@ void Rock::Update(std::weak_ptr<Player> arg_player, std::vector<std::pair<KazMat
 				ShakeMgr::Instance()->m_shakeAmount = 2.0f;
 				break;
 			case ROCK_ID::BIG:
-				id = MEDIUM;
+				id = SMALL;
 				//強力なシェイクをかける。
 				ShakeMgr::Instance()->m_shakeAmount = 3.0f;
 				break;
@@ -199,14 +227,33 @@ void Rock::Update(std::weak_ptr<Player> arg_player, std::vector<std::pair<KazMat
 				break;
 			}
 
-			//分散させる。
-			for (int index = 0; index < 2; ++index) {
-				std::pair<KazMath::Vec3<float>, int> respawnData;
-				respawnData.first = { Vec3<float>(KazMath::Rand(-1.0f, 1.0f) ,KazMath::Rand(-0.0f, 2.0f) ,KazMath::Rand(-1.0f, 1.0f)) };
-				respawnData.first.GetNormal();
-				respawnData.first *= STRONG_DAIPAN_POWER;
-				respawnData.second = id;
-				arg_respawnVec.emplace_back(respawnData);
+			//ミネラル岩だったら
+			if (m_isMineralRock) {
+
+				//分散させる。
+				for (int index = 0; index < 3; ++index) {
+					std::pair<KazMath::Vec3<float>, int> respawnData;
+					respawnData.first = { Vec3<float>(KazMath::Rand(-1.0f, 1.0f) ,KazMath::Rand(-0.0f, 2.0f) ,KazMath::Rand(-1.0f, 1.0f)) };
+					respawnData.first.GetNormal();
+					respawnData.first *= STRONG_DAIPAN_POWER;
+					respawnData.second = id;
+					arg_respawnVec.emplace_back(respawnData);
+				}
+
+			}
+			else {
+
+
+				//分散させる。
+				for (int index = 0; index < 3; ++index) {
+					std::pair<KazMath::Vec3<float>, int> respawnData;
+					respawnData.first = { Vec3<float>(KazMath::Rand(-1.0f, 1.0f) ,KazMath::Rand(-0.0f, 2.0f) ,KazMath::Rand(-1.0f, 1.0f)) };
+					respawnData.first.GetNormal();
+					respawnData.first *= STRONG_DAIPAN_POWER;
+					respawnData.second = id;
+					arg_respawnVec.emplace_back(respawnData);
+				}
+
 			}
 
 		}
@@ -235,13 +282,32 @@ void Rock::Draw(DrawingByRasterize& arg_rasterize, Raytracing::BlasVector& arg_b
 
 	DessolveOutline outline;
 	outline.m_outline = KazMath::Vec4<float>(0.5f, 0, 0, 1);
-	m_model[m_modelIndex].m_model.extraBufferArray[4].bufferWrapper->TransData(&outline, sizeof(DessolveOutline));
 
-	m_model[m_modelIndex].m_model.extraBufferArray.back() = GBufferMgr::Instance()->m_outlineBuffer;
-	m_model[m_modelIndex].m_model.extraBufferArray.back().rangeType = GRAPHICS_RANGE_TYPE_UAV_DESC;
-	m_model[m_modelIndex].m_model.extraBufferArray.back().rootParamType = GRAPHICS_PRAMTYPE_TEX;
+	if (m_isMineralRock) {
 
-	m_model[m_modelIndex].Draw(arg_rasterize, arg_blasVec, m_transform);
+		m_model.back().m_model.extraBufferArray[4].bufferWrapper->TransData(&outline, sizeof(DessolveOutline));
+		
+		m_model.back().m_model.extraBufferArray.back() = GBufferMgr::Instance()->m_outlineBuffer;
+		m_model.back().m_model.extraBufferArray.back().rangeType = GRAPHICS_RANGE_TYPE_UAV_DESC;
+		m_model.back().m_model.extraBufferArray.back().rootParamType = GRAPHICS_PRAMTYPE_TEX;
+		
+		KazMath::Transform3D transform = m_transform;
+		transform.rotation.x = 180.0f;
+		transform.pos.y += 10.0f;
+		m_model.back().Draw(arg_rasterize, arg_blasVec, transform);
+
+	}
+	else {
+
+		m_model[m_modelIndex].m_model.extraBufferArray[4].bufferWrapper->TransData(&outline, sizeof(DessolveOutline));
+
+		m_model[m_modelIndex].m_model.extraBufferArray.back() = GBufferMgr::Instance()->m_outlineBuffer;
+		m_model[m_modelIndex].m_model.extraBufferArray.back().rangeType = GRAPHICS_RANGE_TYPE_UAV_DESC;
+		m_model[m_modelIndex].m_model.extraBufferArray.back().rootParamType = GRAPHICS_PRAMTYPE_TEX;
+
+		m_model[m_modelIndex].Draw(arg_rasterize, arg_blasVec, m_transform);
+
+	}
 
 }
 

@@ -22,7 +22,7 @@ public:
 
 	void DebugGenerate();
 
-	void Generate(KazMath::Vec3<float> arg_pos, KazMath::Vec3<float> arg_respawnDir, int arg_mineralID);
+	void Generate(KazMath::Vec3<float> arg_pos, KazMath::Vec3<float> arg_respawnDir, bool m_isMineralRock, int arg_mineralID);
 
 	void Init();
 

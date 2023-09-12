@@ -16,6 +16,7 @@ void WaveMgr::Setting()
 	int nightTime = 6000;	//夜の時間 フレーム数
 	int treeCount = 3;		//有効化時に生成される木の数
 	int rockCount = 3;		//有効化時に生成される岩の数
+	int mineralRockCount = 3;		//有効化時に生成されるミネラル岩の数
 	//敵を追加していく。
 	enemyInfo.emplace_back(EnemyRoute::A, Wave::ENEMY_ID::MINEKUJI, 0);
 	enemyInfo.emplace_back(EnemyRoute::A, Wave::ENEMY_ID::MINEKUJI, 30);
@@ -32,7 +33,7 @@ void WaveMgr::Setting()
 	//enemyInfo.emplace_back(EnemyRoute::ROUTE_ID::B, 1200);
 	//enemyInfo.emplace_back(EnemyRoute::ROUTE_ID::C, 1200);
 	//ウェーブを追加。
-	m_waves.emplace_back(std::make_shared<Wave>(dayTime, nightTime, treeCount, rockCount, enemyInfo));
+	m_waves.emplace_back(std::make_shared<Wave>(dayTime, nightTime, treeCount, rockCount, mineralRockCount, enemyInfo));
 	enemyInfo.clear();
 
 
@@ -41,6 +42,7 @@ void WaveMgr::Setting()
 	nightTime = 6000;	//夜の時間 フレーム数
 	treeCount = 3;		//有効化時に生成される木の数
 	rockCount = 3;		//有効化時に生成される岩の数
+	mineralRockCount = 3;		//有効化時に生成されるミネラル岩の数
 	//敵を追加していく。
 	//enemyInfo.emplace_back(EnemyRoute::ROUTE_ID::A, 0);	//第一引数 生成場所  第二引数 夜時間での生成フレーム(dayTimeを考慮する必要はなく、0からnightTimeの範囲でお願いします。)
 	//enemyInfo.emplace_back(EnemyRoute::ROUTE_ID::B, 0);
@@ -52,7 +54,7 @@ void WaveMgr::Setting()
 	//enemyInfo.emplace_back(EnemyRoute::ROUTE_ID::B, 1200);
 	//enemyInfo.emplace_back(EnemyRoute::ROUTE_ID::C, 1200);
 	//ウェーブを追加。
-	m_waves.emplace_back(std::make_shared<Wave>(dayTime, nightTime, treeCount, rockCount, enemyInfo));
+	m_waves.emplace_back(std::make_shared<Wave>(dayTime, nightTime, treeCount, rockCount, mineralRockCount, enemyInfo));
 	enemyInfo.clear();
 
 
