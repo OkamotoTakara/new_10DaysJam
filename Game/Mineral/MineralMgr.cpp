@@ -119,36 +119,6 @@ void MineralMgr::Update(std::weak_ptr<Player> arg_player, std::weak_ptr<MineralT
 	//プレイヤーが台パン状態だったら
 	if (arg_player.lock()->GetIsDaipanTrigger() && arg_mineralTarget.lock()->GetCanTarget()) {
 
-		//どのミネラルを攻撃させるかを決める。
-		bool isSmallMineral = false;
-		bool isMediumMineral = false;
-		bool isLergeMineral = false;
-		for (auto& index : m_minerals) {
-
-			if (!index->GetIsAlive()) continue;
-			if (index->GetIsAttack()) continue;
-			if (!index->GetIsGathering()) continue;
-			if (index->GetIsGatheringTrigger()) continue;
-
-			//ミネラルの種類を検索。
-			isSmallMineral |= index->GetMineralID() == 0;
-			isMediumMineral |= index->GetMineralID() == 1;
-			isLergeMineral |= index->GetMineralID() == 2;
-
-		}
-
-		//生成するミネラルのID
-		int generateMineralID = 0;
-		if (isSmallMineral) {
-			generateMineralID = 0;
-		}
-		else if (isMediumMineral) {
-			generateMineralID = 1;
-		}
-		else if (isLergeMineral) {
-			generateMineralID = 2;
-		}
-
 		//攻撃させる。
 		for (auto& index : m_minerals) {
 
@@ -181,9 +151,6 @@ void MineralMgr::Update(std::weak_ptr<Player> arg_player, std::weak_ptr<MineralT
 
 				}
 			}
-
-			//ミネラルの種類によって処理を省く。
-			if (generateMineralID != index->GetMineralID()) continue;
 
 			//攻撃させる。
 			if (targetIndex == 1) {
