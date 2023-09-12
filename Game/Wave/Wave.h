@@ -33,7 +33,7 @@ private:
 
 public:
 
-	Wave(int arg_dayTime, int arg_nightTime, int arg_treeCount, int arg_rockCount, std::vector<EnemyWaveInfo> arg_enemyWaveInfo);
+	Wave(int a, int arg_nightTime, int arg_treeCount, int arg_rockCount, std::vector<EnemyWaveInfo> arg_enemyWaveInfo);
 
 	void Update(std::weak_ptr<EnemyMgr> arg_enemyMgr);
 

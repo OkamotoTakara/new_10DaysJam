@@ -6,12 +6,17 @@
 #include "../Game/Mineral/Mineral.h"
 #include "../Game/Building/BuildingMgr.h"
 #include "../Game/Mineral/MineralMgr.h"
+#include "../KazLibrary/Easing/easing.h"
 
 MineTsumuri::MineTsumuri()
 {
 
 	m_model.LoadOutline("Resource/Enemy/MineKuji/", "Minekuzi.gltf");
 	m_shellModel.LoadOutline("Resource/Enemy/MineTsumuri/", "Minetsumuri.gltf");
+	/*オカモトゾーン*/
+	m_hpBoxModel.LoadNoLighting("Resource/HpBox/", "Hp_Box.gltf");
+	m_gardHpBoxModel.LoadNoLighting("Resource/HpBox/", "Gard_Hp_Box.gltf");
+	/*オカモトゾーン*/
 	m_attackedScale = 0.0f;
 	m_scale = 0.0f;
 
@@ -26,6 +31,26 @@ void MineTsumuri::Init()
 	m_isAttackWall = false;
 	m_attackedScale = 0.0f;
 
+	m_hp = HP;
+	m_shellHP = 0.0f;
+
+	/*オカモトゾーン*/
+	damageAmount = 1.0f;
+	isDrawHpBox = false;
+	hpBoxScaleStart = 0.0f;
+	hpBoxScaleEnd = static_cast<float>(HP);
+	gardHpBoxScaleStart = 0.0f;
+	gardHpBoxScaleEnd = 0.0f;
+	m_hpBoxDrawTimer = HP_BOX_DRAW_TIME_MAX;
+	hpBoxEaseTime = HP_BOX_EASE_TIME_MAX;
+	ease_scale = 0.0f;
+	m_gardHpBoxTransform.scale.y = 2.0f;
+	m_gardHpBoxTransform.scale.z = 2.0f;
+	m_gardHpBoxTransform.scale.x = static_cast<float> (SHELL_HP);
+	m_hpBoxTransform.scale.y = 2.0f;
+	m_hpBoxTransform.scale.z = 2.0f;
+	m_hpBoxTransform.scale.x = static_cast<float> (HP);
+	/*オカモトゾーン*/
 }
 
 void MineTsumuri::Generate(std::vector<KazMath::Vec3<float>> arg_route)
@@ -82,6 +107,10 @@ void MineTsumuri::Update(std::weak_ptr<Core> arg_core, std::weak_ptr<Player> arg
 {
 
 	using namespace KazMath;
+
+	if (!m_isActive) {
+		return;
+	}
 
 	//座標を保存しておく。
 	m_oldTransform = m_transform;
@@ -272,6 +301,43 @@ void MineTsumuri::Draw(DrawingByRasterize& arg_rasterize, Raytracing::BlasVector
 	m_shellModel.m_model.extraBufferArray.back().rootParamType = GRAPHICS_PRAMTYPE_TEX;
 	m_shellModel.Draw(arg_rasterize, arg_blasVec, m_shellTransform);
 
+	/*オカモトゾーン*/
+	m_gardHpBoxTransform.pos = m_transform.pos;
+	m_gardHpBoxTransform.pos.y += 35.0f;
+	m_gardHpBoxTransform.rotation.y = 45.0f;
+
+	m_hpBoxTransform.pos = m_transform.pos;
+	m_hpBoxTransform.pos.y += 30.0f;
+	m_hpBoxTransform.rotation.y = 45.0f;
+
+	float shell_base_hp = (m_shellHP / SHELL_HP) * SCALE_MAG;
+	float mine_base_hp = (static_cast<float>(m_hp) / HP) * SCALE_MAG;
+	m_gardHpBoxTransform.scale.x += (shell_base_hp - m_gardHpBoxTransform.scale.x) / 5.0f;
+	if (fabs(mine_base_hp - m_hpBoxTransform.scale.x) > 0)
+	{
+		m_hpBoxTransform.scale.x += (mine_base_hp - m_hpBoxTransform.scale.x) / 5.0f;
+	}
+
+	if (m_isActive && isDrawHpBox)
+	{
+		if (m_hpBoxDrawTimer > 0)
+		{
+			if (m_shellHP >= 0.05f)
+			{
+				m_gardHpBoxModel.Draw(arg_rasterize, arg_blasVec, m_gardHpBoxTransform, 0, false);
+			}
+			if (m_hp >= 0.05f)
+			{
+				m_hpBoxModel.Draw(arg_rasterize, arg_blasVec, m_hpBoxTransform, 0, false);
+			}
+			m_hpBoxDrawTimer--;
+		}
+		else
+		{
+			isDrawHpBox = false;
+		}
+	}
+	/*オカモトゾーン*/
 }
 
 void MineTsumuri::Damage(std::weak_ptr<Mineral> arg_mineral, int arg_damage)
@@ -282,9 +348,15 @@ void MineTsumuri::Damage(std::weak_ptr<Mineral> arg_mineral, int arg_damage)
 		m_attackedMineral = arg_mineral;
 	}
 
+	/*オカモトゾーン*/
+	isDrawHpBox = true;
+	m_hpBoxDrawTimer = HP_BOX_DRAW_TIME_MAX;
+	/*オカモトゾーン*/
+
 	//殻があったら
 	if (m_isShell) {
-
+		gardHpBoxScaleStart = static_cast <float>(m_shellHP);
+		gardHpBoxScaleEnd = static_cast<float> (m_shellHP - arg_damage);
 		m_shellHP = std::clamp(m_shellHP - arg_damage, 0.0f, SHELL_HP);
 		if (m_shellHP <= 0.0f) {
 
@@ -302,17 +374,16 @@ void MineTsumuri::Damage(std::weak_ptr<Mineral> arg_mineral, int arg_damage)
 				m_shellBreakRotation = 0;
 
 			}
-
 			m_isShell = false;
 			m_inShell = false;
-
 		}
-
 	}
+
 	else {
+		hpBoxScaleStart = static_cast <float>(m_hp);
+		hpBoxScaleEnd = static_cast<float> (m_hp - arg_damage);
 		m_hp = std::clamp(m_hp - arg_damage, 0, HP);
 	}
-
 }
 
 void MineTsumuri::AttackCore(std::weak_ptr<Core> arg_core)
@@ -640,6 +711,10 @@ void MineTsumuri::CheckHitPlayer(std::weak_ptr<Player> arg_player)
 		//当たり判定チェック
 		bool isHit = Vec3<float>(arg_player.lock()->GetTransform().pos - m_transform.pos).Length() <= arg_player.lock()->GetMineralAffectStrongRange() + 30.0f;
 		if (isHit) {
+			/*オカモトゾーン*/
+			isDrawHpBox = true;
+			m_hpBoxDrawTimer = HP_BOX_DRAW_TIME_MAX;
+			/*オカモトゾーン*/
 
 			//殻がついていたら。
 			if (m_isShell) {
@@ -669,11 +744,8 @@ void MineTsumuri::CheckHitPlayer(std::weak_ptr<Player> arg_player)
 				m_attackedScale = ATTACKED_SCALE;
 
 			}
-
 		}
-
 	}
-
 }
 
 KazMath::Vec3<float> MineTsumuri::SearchRoute()
@@ -949,7 +1021,7 @@ void MineTsumuri::UpdateShell() {
 		const float SHELL_POS_Z = 2.0f;
 		m_shellTransform.pos -= m_forwardVec * SHELL_POS_Z;
 		m_shellTransform.pos += KazMath::Vec3<float>(0, 1, 0) * m_shellPosY;
-	
+
 		return;
 	}
 

@@ -51,7 +51,7 @@ private:
 
 	//コアに向かっていく変数
 	const float CORE_MOVE_SPEED = 1.0f;	//コアに向かって行く初速度
-	const float CORE_MOVE_DELAY = 60.0f;
+	const float CORE_MOVE_DELAY = 5.0f;
 	float m_coreMoveDelayTimer;
 	float m_coreMoveSpeed;
 	bool m_isAttackCore;
@@ -78,6 +78,20 @@ private:
 
 
 public:
+
+	/*オカモトゾーン*/
+	float damageAmount;
+	DrawCallSet m_hpBoxModel;
+	KazMath::Transform3D m_hpBoxTransform;
+	int m_hpBoxDrawTimer;
+	const int HP_BOX_DRAW_TIME_MAX = 60;
+	float hpBoxScaleStart;
+	float hpBoxScaleEnd;
+	bool isDrawHpBox;
+	float hpBoxEaseTime;
+	const float HP_BOX_EASE_TIME_MAX = 30.0f;
+	float ease_scale;
+	/*オカモトゾーン*/
 
 	MineKuji();
 

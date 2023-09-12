@@ -17,12 +17,7 @@ void WaveMgr::Setting()
 	int treeCount = 3;		//—LŒø‰»Žž‚É¶¬‚³‚ê‚é–Ø‚Ì”
 	int rockCount = 3;		//—LŒø‰»Žž‚É¶¬‚³‚ê‚éŠâ‚Ì”
 	//“G‚ð’Ç‰Á‚µ‚Ä‚¢‚­B
-	enemyInfo.emplace_back(EnemyRoute::A, Wave::ENEMY_ID::MINEKUJI, 0);
-	enemyInfo.emplace_back(EnemyRoute::A, Wave::ENEMY_ID::MINEKUJI, 30);
-	enemyInfo.emplace_back(EnemyRoute::A, Wave::ENEMY_ID::MINEKUJI, 60);
-	enemyInfo.emplace_back(EnemyRoute::A, Wave::ENEMY_ID::MINEKUJI, 90);
-	enemyInfo.emplace_back(EnemyRoute::A, Wave::ENEMY_ID::MINEKUJI, 120);
-	enemyInfo.emplace_back(EnemyRoute::B, Wave::ENEMY_ID::MINETSUMURI, 0);
+	enemyInfo.emplace_back(EnemyRoute::A, Wave::ENEMY_ID::MINETSUMURI, 0);
 	//enemyInfo.emplace_back(EnemyRoute::ROUTE_ID::B, 0);
 	//enemyInfo.emplace_back(EnemyRoute::ROUTE_ID::C, 0);
 	//enemyInfo.emplace_back(EnemyRoute::ROUTE_ID::A, 600);
@@ -133,4 +128,9 @@ void WaveMgr::GameStart()
 
 	m_waves.front()->Active();
 
+}
+
+bool WaveMgr::GetIsNight()
+{
+	return m_waves[m_nowWaveIndex]->GetIsNight();
 }

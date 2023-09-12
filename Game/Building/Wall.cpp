@@ -13,7 +13,9 @@ Wall::Wall()
 	m_model[2].LoadOutline("Resource/Building/Wall/", "WallC.gltf");
 	m_buildingBoxModel.LoadOutline("Resource/Building/", "BuildingBox.gltf");
 	m_numberModel.LoadNoLighting("Resource/UI/NumFont/", "number.gltf");
-
+	/*オカモトゾーン*/
+	m_hpBoxModel.LoadNoLighting("Resource/HpBox/", "Hp_Box.gltf");
+	/*オカモトゾーン*/
 
 	m_wallTransform.pos.y = -10000.0f;
 	m_meshCollisionModel[0].Load("Resource/Building/Wall/", "WallACollision.gltf");
@@ -43,6 +45,17 @@ void Wall::Init()
 	m_meshCollider[m_modelIndex].Transform(m_wallTransform);
 	m_hp = HP;
 
+	/*オカモトゾーン*/
+	isDrawHpBox = false;
+	hpBoxScaleStart = 0.0f;
+	hpBoxScaleEnd = 0.0f;
+	m_hpBoxDrawTimer = HP_BOX_DRAW_TIME_MAX;
+	hpBoxEaseTime = HP_BOX_EASE_TIME_MAX;
+	ease_scale = 0.0f;
+	m_hpBoxTransform.scale.y = 2.0f;
+	m_hpBoxTransform.scale.z = 2.0f;
+	m_hpBoxTransform.scale.x = m_hp * 1.5f;
+	/*オカモトゾーン*/
 }
 
 void Wall::Genrate(KazMath::Vec3<float> arg_generatePos, float arg_rotateY, int arg_modelIndex)
@@ -61,6 +74,38 @@ void Wall::Genrate(KazMath::Vec3<float> arg_generatePos, float arg_rotateY, int 
 
 void Wall::Update(std::weak_ptr<Player> arg_player)
 {
+
+
+
+	/*オカモトゾーン*/
+	if (isDrawHpBox)
+	{
+		if (m_hpBoxDrawTimer >= 0)
+		{
+			m_hpBoxDrawTimer--;
+			//スケールのイージング
+			if (hpBoxEaseTime > 0)
+			{
+				ease_scale = hpBoxScaleStart - (damageAmount - EasingMaker(In, Circ, hpBoxEaseTime / HP_BOX_EASE_TIME_MAX) * damageAmount);
+				ease_scale *= 1.5f;
+				m_hpBoxTransform.scale.x = ease_scale;
+				hpBoxEaseTime--;
+			}
+
+			else
+			{
+				m_hpBoxTransform.scale.x = hpBoxScaleEnd * 1.5f;
+			}
+		}
+
+		else
+		{
+			isDrawHpBox = false;
+		}
+	}
+	/*オカモトゾーン*/
+
+	if (!m_isActive) return;
 
 	//建築したら
 	if (m_isBuild) {
@@ -209,7 +254,6 @@ void Wall::Update(std::weak_ptr<Player> arg_player)
 	if (m_hp <= 0) {
 		Init();
 	}
-
 }
 
 void Wall::Draw(DrawingByRasterize& arg_rasterize, Raytracing::BlasVector& arg_blasVec)
@@ -280,6 +324,16 @@ void Wall::Draw(DrawingByRasterize& arg_rasterize, Raytracing::BlasVector& arg_b
 	m_buildingBoxModel.Draw(arg_rasterize, arg_blasVec, boxTransform);
 	m_numberModel.Draw(arg_rasterize, arg_blasVec, m_numberModelTransform, 0, false);
 
+	/*オカモトゾーン*/
+	m_hpBoxTransform.pos = m_transform.pos;
+	m_hpBoxTransform.pos.y += 30.0f;
+	m_hpBoxTransform.rotation.y = 45.0f;
+
+	if (isDrawHpBox)
+	{
+		m_hpBoxModel.Draw(arg_rasterize, arg_blasVec, m_hpBoxTransform, 0, false);
+	}
+	/*オカモトゾーン*/
 }
 
 MeshCollision::CheckHitResult Wall::CheckHitMesh(KazMath::Vec3<float> arg_pos, KazMath::Vec3<float> arg_dir) {
@@ -291,4 +345,19 @@ MeshCollision::CheckHitResult Wall::CheckHitMesh(KazMath::Vec3<float> arg_pos, K
 KazMath::Vec3<float> Wall::GetPosZeroY()
 {
 	return KazMath::Vec3<float>(m_initPos.x, 0.0f, m_initPos.z);
+}
+
+void Wall::Damage(int arg_damage)
+{
+	/*オカモトゾーン*/
+	damageAmount = static_cast<float>(arg_damage);
+	isDrawHpBox = true;
+	m_hpBoxDrawTimer = HP_BOX_DRAW_TIME_MAX;
+	hpBoxScaleStart = static_cast <float>(m_hp);
+	hpBoxScaleEnd = static_cast<float> (m_hp - arg_damage);
+	hpBoxEaseTime = HP_BOX_EASE_TIME_MAX;
+	/*オカモトゾーン*/
+
+	//hpが引かれる処理
+	m_hp = std::clamp(m_hp - arg_damage, 0, HP);
 }
