@@ -710,7 +710,7 @@ void MineTsumuri::AttackWall()
 			m_coreAttackReactionVec = reactionDir * (m_coreAttackMoveSpeed * 3.0f);
 
 			//コアにダメージを与える。
-			BuildingMgr::Instance()->DamageWall(1);
+			BuildingMgr::Instance()->DamageWall(m_wallIndex);
 
 			ShakeMgr::Instance()->m_shakeAmount = 1.0f;
 
