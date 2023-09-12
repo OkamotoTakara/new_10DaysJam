@@ -12,11 +12,19 @@ void WaveMgr::Setting()
 	std::vector<Wave::EnemyWaveInfo> enemyInfo;
 
 	//1ウェーブ目 -----------------------------------------------------------------------------------------
+<<<<<<< HEAD
 	int dayTime = 600;		//日中の時間 フレーム数
 	int nightTime = 1800;	//夜の時間 フレーム数
 	std::vector<int> tree = {  };		//有効化時に生成される木のIndex 1スタート
 	std::vector<int> rock = {  };		//有効化時に生成される岩のIndex 1スタート
 	std::vector<int> mineralRock = {  };		//有効化時に生成されるミネラル岩のIndex 1スタート
+=======
+	int dayTime = 10;		//日中の時間 フレーム数
+	int nightTime = 6000;	//夜の時間 フレーム数
+	std::vector<int> tree = {1};		//有効化時に生成される木の数
+	std::vector<int> rock = {3};		//有効化時に生成される岩の数
+	std::vector<int> mineralRock{1,2};
+>>>>>>> origin/master
 	//敵を追加していく。
 	enemyInfo.emplace_back(EnemyRoute::A, Wave::ENEMY_ID::MINEKUJI, 0);
 	enemyInfo.emplace_back(EnemyRoute::A, Wave::ENEMY_ID::MINEKUJI, 180);

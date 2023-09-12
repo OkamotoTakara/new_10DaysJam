@@ -32,4 +32,5 @@ public:
 	//1Wave–Ú‚ğ—LŒø‰»‚·‚éB
 	void GameStart();
 
+	bool GetIsNight();
 };

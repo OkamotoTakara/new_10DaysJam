@@ -15,25 +15,25 @@
     "nodes" : [
         {
             "mesh" : 0,
-            "name" : "Stage_Stone"
+            "name" : "Cube.001"
         }
     ],
     "materials" : [
         {
             "doubleSided" : true,
-            "name" : "Stage_Rock",
+            "name" : "Gard_Hp_Box",
             "pbrMetallicRoughness" : {
                 "baseColorTexture" : {
                     "index" : 0
                 },
                 "metallicFactor" : 0,
-                "roughnessFactor" : 0.5
+                "roughnessFactor" : 0.4000000059604645
             }
         }
     ],
     "meshes" : [
         {
-            "name" : "\u7acb\u65b9\u4f53.199",
+            "name" : "Cube.001",
             "primitives" : [
                 {
                     "attributes" : {
@@ -56,66 +56,66 @@
     "images" : [
         {
             "mimeType" : "image/png",
-            "name" : "Stage_Rock",
-            "uri" : "Stage_Rock.png"
+            "name" : "Gard_Hp_Box",
+            "uri" : "Gard_Hp_Box.png"
         }
     ],
     "accessors" : [
         {
             "bufferView" : 0,
             "componentType" : 5126,
-            "count" : 58818,
+            "count" : 24,
             "max" : [
-                111.77094268798828,
-                35.471595764160156,
-                140.94631958007812
+                1,
+                1,
+                1
             ],
             "min" : [
-                -71.89779663085938,
-                -13.09252643585205,
-                -99.40643310546875
+                -1,
+                -1,
+                -1
             ],
             "type" : "VEC3"
         },
         {
             "bufferView" : 1,
             "componentType" : 5126,
-            "count" : 58818,
+            "count" : 24,
             "type" : "VEC3"
         },
         {
             "bufferView" : 2,
             "componentType" : 5126,
-            "count" : 58818,
+            "count" : 24,
             "type" : "VEC2"
         },
         {
             "bufferView" : 3,
             "componentType" : 5123,
-            "count" : 58818,
+            "count" : 36,
             "type" : "SCALAR"
         }
     ],
     "bufferViews" : [
         {
             "buffer" : 0,
-            "byteLength" : 705816,
+            "byteLength" : 288,
             "byteOffset" : 0
         },
         {
             "buffer" : 0,
-            "byteLength" : 705816,
-            "byteOffset" : 705816
+            "byteLength" : 288,
+            "byteOffset" : 288
         },
         {
             "buffer" : 0,
-            "byteLength" : 470544,
-            "byteOffset" : 1411632
+            "byteLength" : 192,
+            "byteOffset" : 576
         },
         {
             "buffer" : 0,
-            "byteLength" : 117636,
-            "byteOffset" : 1882176
+            "byteLength" : 72,
+            "byteOffset" : 768
         }
     ],
     "samplers" : [
@@ -126,8 +126,8 @@
     ],
     "buffers" : [
         {
-            "byteLength" : 1999812,
-            "uri" : "Stage_Rock.bin"
+            "byteLength" : 840,
+            "uri" : "Gard_Hp_Box.bin"
         }
     ]
 }

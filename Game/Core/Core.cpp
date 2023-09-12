@@ -1,10 +1,13 @@
 #include "Core.h"
+#include "../KazLibrary/Easing/easing.h"
+#include "../Game/Wave/WaveMgr.h"
 
 Core::Core()
 {
 
 	m_model.LoadOutline("Resource/Core/", "Core.gltf");
 	m_crownModel.LoadOutline("Resource/Core/", "Crown.gltf");
+	m_hpBoxModel.LoadNoLighting("Resource/HpBox/", "Hp_Box.gltf");
 	m_crownPos = KazMath::Vec3<float>(0.6f, 17.6f, -5.2f);
 	m_hp = MAX_HP;
 
@@ -15,6 +18,17 @@ void Core::Init()
 
 	m_hp = MAX_HP;
 
+	/*オカモトゾーン*/
+	isDrawHpBox = false;
+	hpBoxScaleStart = 0.0f;
+	hpBoxScaleEnd = 0.0f;
+	m_hpBoxDrawTimer = HP_BOX_DRAW_TIME_MAX;
+	hpBoxEaseTime = HP_BOX_EASE_TIME_MAX;
+	ease_scale = 0.0f;
+	m_hpBoxTransform.scale.y = 2.0f;
+	m_hpBoxTransform.scale.z = 2.0f;
+	m_hpBoxTransform.scale.x = m_hp * 1.5f;
+	/*オカモトゾーン*/
 }
 
 void Core::Update()
@@ -23,14 +37,42 @@ void Core::Update()
 	m_transform.scale = { SCALE ,SCALE ,SCALE };
 	m_transform.rotation.y = 270.0f;
 
+	//昼のとき
+	if (!WaveMgr::Instance()->GetIsNight())
+	{
+		m_hp = MAX_HP;
+	}
+
+	/*オカモトゾーン*/
+	if (isDrawHpBox)
+	{
+		if (m_hpBoxDrawTimer >= 0)
+		{
+			m_hpBoxDrawTimer--;
+			//スケールのイージング
+			if (hpBoxEaseTime > 0)
+			{
+				ease_scale = hpBoxScaleStart - (1.0f - EasingMaker(In, Circ, hpBoxEaseTime / HP_BOX_EASE_TIME_MAX));
+				ease_scale *= 1.5f;
+				m_hpBoxTransform.scale.x = ease_scale;
+				hpBoxEaseTime--;
+			}
+
+			else
+			{
+				m_hpBoxTransform.scale.x = hpBoxScaleEnd * 1.5f;
+			}
+		}
+		else
+		{
+			isDrawHpBox = false;
+		}
+	}
+	/*オカモトゾーン*/
 }
 
 void Core::Draw(DrawingByRasterize& arg_rasterize, Raytracing::BlasVector& arg_blasVec)
 {
-
-
-
-
 	DessolveOutline outline;
 	outline.m_outline = KazMath::Vec4<float>(0.1f, 0, 0, 1);
 	m_model.m_model.extraBufferArray[4].bufferWrapper->TransData(&outline, sizeof(DessolveOutline));
@@ -52,4 +94,25 @@ void Core::Draw(DrawingByRasterize& arg_rasterize, Raytracing::BlasVector& arg_b
 	crownTransform.pos += m_crownPos;
 	m_crownModel.Draw(arg_rasterize, arg_blasVec, crownTransform);
 
+	/*オカモトゾーン*/
+	m_hpBoxTransform.pos = m_transform.pos;
+	m_hpBoxTransform.pos.y += 30.0f;
+	m_hpBoxTransform.rotation.y = 45.0f;
+
+	m_hpBoxModel.Draw(arg_rasterize, arg_blasVec, m_hpBoxTransform, 0, false);
+	/*オカモトゾーン*/
+
+}
+
+void Core::Damage(int arg_damage)
+{
+	/*オカモトゾーン*/
+	isDrawHpBox = true;
+	m_hpBoxDrawTimer = HP_BOX_DRAW_TIME_MAX;
+	hpBoxScaleStart = static_cast <float>(m_hp);
+	hpBoxScaleEnd = static_cast<float> (m_hp - arg_damage);
+	hpBoxEaseTime = HP_BOX_EASE_TIME_MAX;
+	/*オカモトゾーン*/
+
+	m_hp = std::clamp(m_hp - arg_damage, 0, MAX_HP);
 }

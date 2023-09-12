@@ -64,58 +64,58 @@
         {
             "bufferView" : 0,
             "componentType" : 5126,
-            "count" : 40422,
+            "count" : 56022,
             "max" : [
-                137.0331573486328,
-                8.941962242126465,
-                148.6762237548828
+                153.54454040527344,
+                16.575382232666016,
+                160.97119140625
             ],
             "min" : [
-                -2.99368953704834,
-                -4.885624885559082,
-                -50.34881591796875
+                -128.99517822265625,
+                -12.070975303649902,
+                -122.27587890625
             ],
             "type" : "VEC3"
         },
         {
             "bufferView" : 1,
             "componentType" : 5126,
-            "count" : 40422,
+            "count" : 56022,
             "type" : "VEC3"
         },
         {
             "bufferView" : 2,
             "componentType" : 5126,
-            "count" : 40422,
+            "count" : 56022,
             "type" : "VEC2"
         },
         {
             "bufferView" : 3,
             "componentType" : 5123,
-            "count" : 40422,
+            "count" : 56022,
             "type" : "SCALAR"
         }
     ],
     "bufferViews" : [
         {
             "buffer" : 0,
-            "byteLength" : 485064,
+            "byteLength" : 672264,
             "byteOffset" : 0
         },
         {
             "buffer" : 0,
-            "byteLength" : 485064,
-            "byteOffset" : 485064
+            "byteLength" : 672264,
+            "byteOffset" : 672264
         },
         {
             "buffer" : 0,
-            "byteLength" : 323376,
-            "byteOffset" : 970128
+            "byteLength" : 448176,
+            "byteOffset" : 1344528
         },
         {
             "buffer" : 0,
-            "byteLength" : 80844,
-            "byteOffset" : 1293504
+            "byteLength" : 112044,
+            "byteOffset" : 1792704
         }
     ],
     "samplers" : [
@@ -126,7 +126,7 @@
     ],
     "buffers" : [
         {
-            "byteLength" : 1374348,
+            "byteLength" : 1904748,
             "uri" : "Stage_Tree.bin"
         }
     ]

@@ -600,12 +600,12 @@ void Mineral::Attack(std::weak_ptr<Rock> arg_attackTargetRock)
 	m_stayDelayTimer = 0;
 	m_stayDelay = KazMath::Rand(MIN_STAY_DELAY, MAX_STAY_DELAY);
 
-	if (!m_haveMaterial.expired()) {
+	//if (!m_haveMaterial.expired()) {
 
-		m_haveMaterial.lock()->Release();
-		m_haveMaterial.reset();
+	//	m_haveMaterial.lock()->Release();
+	//	m_haveMaterial.reset();
 
-	}
+	//}
 
 }
 void Mineral::Attack(std::weak_ptr<MineKuji> arg_attackTargetMinekuji)
@@ -624,12 +624,12 @@ void Mineral::Attack(std::weak_ptr<MineKuji> arg_attackTargetMinekuji)
 	m_stayDelayTimer = 0;
 	m_stayDelay = KazMath::Rand(MIN_STAY_DELAY, MAX_STAY_DELAY);
 
-	if (!m_haveMaterial.expired()) {
+	//if (!m_haveMaterial.expired()) {
 
-		m_haveMaterial.lock()->Release();
-		m_haveMaterial.reset();
+	//	m_haveMaterial.lock()->Release();
+	//	m_haveMaterial.reset();
 
-	}
+	//}
 
 }
 void Mineral::Attack(std::weak_ptr<MineTsumuri> arg_attackTargetMinetsumuri)
@@ -648,12 +648,12 @@ void Mineral::Attack(std::weak_ptr<MineTsumuri> arg_attackTargetMinetsumuri)
 	m_stayDelayTimer = 0;
 	m_stayDelay = KazMath::Rand(MIN_STAY_DELAY, MAX_STAY_DELAY);
 
-	if (!m_haveMaterial.expired()) {
+	//if (!m_haveMaterial.expired()) {
 
-		m_haveMaterial.lock()->Release();
-		m_haveMaterial.reset();
+	//	m_haveMaterial.lock()->Release();
+	//	m_haveMaterial.reset();
 
-	}
+	//}
 
 }
 void Mineral::Attack(std::weak_ptr<DestructibleTree> arg_destructibleTree) {
@@ -671,12 +671,12 @@ void Mineral::Attack(std::weak_ptr<DestructibleTree> arg_destructibleTree) {
 	m_stayDelayTimer = 0;
 	m_stayDelay = KazMath::Rand(MIN_STAY_DELAY, MAX_STAY_DELAY);
 
-	if (!m_haveMaterial.expired()) {
+	//if (!m_haveMaterial.expired()) {
 
-		m_haveMaterial.lock()->Release();
-		m_haveMaterial.reset();
+	//	m_haveMaterial.lock()->Release();
+	//	m_haveMaterial.reset();
 
-	}
+	//}
 
 }
 

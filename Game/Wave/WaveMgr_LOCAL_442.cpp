@@ -245,8 +245,3 @@ void WaveMgr::GameStart()
 	m_waves.front()->Active();
 
 }
-
-bool WaveMgr::GetIsNight()
-{
-	return m_waves[m_nowWaveIndex]->GetIsNight();
-}

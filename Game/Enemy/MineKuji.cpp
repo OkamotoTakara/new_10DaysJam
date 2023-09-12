@@ -6,11 +6,15 @@
 #include "../Game/Mineral/Mineral.h"
 #include "../Game/Building/BuildingMgr.h"
 #include "../Game/Mineral/MineralMgr.h"
+#include "../KazLibrary/Easing/easing.h"
 
 MineKuji::MineKuji()
 {
 
 	m_model.LoadOutline("Resource/Enemy/MineKuji/", "Minekuzi.gltf");
+	/*オカモトゾーン*/
+	m_hpBoxModel.LoadNoLighting("Resource/HpBox/", "Hp_Box.gltf");
+	/*オカモトゾーン*/
 	m_attackedScale = 0.0f;
 	m_scale = 0.0f;
 
@@ -22,7 +26,18 @@ void MineKuji::Init()
 	m_isActive = false;
 	m_isAttackWall = false;
 	m_attackedScale = 0.0f;
-
+	/*オカモトゾーン*/
+	damageAmount = 1.0f;
+	isDrawHpBox = false;
+	hpBoxScaleStart = 0.0f;
+	hpBoxScaleEnd = 0.0f;
+	m_hpBoxDrawTimer = HP_BOX_DRAW_TIME_MAX;
+	hpBoxEaseTime = HP_BOX_EASE_TIME_MAX;
+	ease_scale = 0.0f;
+	m_hpBoxTransform.scale.y = 2.0f;
+	m_hpBoxTransform.scale.z = 2.0f;
+	m_hpBoxTransform.scale.x = static_cast<float> (HP);
+	/*オカモトゾーン*/
 }
 
 void MineKuji::Generate(std::vector<KazMath::Vec3<float>> arg_route)
@@ -75,6 +90,45 @@ void MineKuji::Update(std::weak_ptr<Core> arg_core, std::weak_ptr<Player> arg_pl
 {
 
 	using namespace KazMath;
+
+
+	/*オカモトゾーン*/
+	if (isDrawHpBox)
+	{
+		if (m_hpBoxDrawTimer >= 0)
+		{
+			m_hpBoxDrawTimer--;
+			//スケールのイージング
+			if (hpBoxEaseTime > 0)
+			{
+				ease_scale = hpBoxScaleStart - (damageAmount - EasingMaker(In, Circ, hpBoxEaseTime / HP_BOX_EASE_TIME_MAX) * damageAmount);
+				m_hpBoxTransform.scale.x = ease_scale;
+				hpBoxEaseTime--;
+			}
+
+			else
+			{
+				m_hpBoxTransform.scale.x = hpBoxScaleEnd;
+			}
+			if (m_hpBoxTransform.scale.x <= 0.1f)
+			{
+				m_hpBoxTransform.scale.x = 0.0f;
+				isDrawHpBox = false;
+			}
+		}
+
+		else
+		{
+			isDrawHpBox = false;
+		}
+	}
+	/*オカモトゾーン*/
+
+	if (!m_isActive) {
+
+		return;
+
+	}
 
 	//座標を保存しておく。
 	m_oldTransform = m_transform;
@@ -201,7 +255,6 @@ void MineKuji::Draw(DrawingByRasterize& arg_rasterize, Raytracing::BlasVector& a
 	if (m_isActive) {
 
 		m_scale += (SCALE - m_scale) / 5.0f;
-
 	}
 	else {
 
@@ -231,6 +284,16 @@ void MineKuji::Draw(DrawingByRasterize& arg_rasterize, Raytracing::BlasVector& a
 
 	m_model.Draw(arg_rasterize, arg_blasVec, m_transform);
 
+	/*オカモトゾーン*/
+	m_hpBoxTransform.pos = m_transform.pos;
+	m_hpBoxTransform.pos.y += 30.0f;
+	m_hpBoxTransform.rotation.y = 45.0f;
+
+	if (isDrawHpBox)
+	{
+		m_hpBoxModel.Draw(arg_rasterize, arg_blasVec, m_hpBoxTransform, 0, false);
+	}
+	/*オカモトゾーン*/
 }
 
 void MineKuji::Damage(std::weak_ptr<Mineral> arg_mineral, int arg_damage)
@@ -240,6 +303,16 @@ void MineKuji::Damage(std::weak_ptr<Mineral> arg_mineral, int arg_damage)
 	if (m_attackedMineral.expired()) {
 		m_attackedMineral = arg_mineral;
 	}
+
+	/*オカモトゾーン*/
+	damageAmount = static_cast<float>(arg_damage);
+	isDrawHpBox = true;
+	m_hpBoxDrawTimer = HP_BOX_DRAW_TIME_MAX;
+	hpBoxScaleStart = static_cast <float>(m_hp);
+	hpBoxScaleEnd = static_cast<float> (m_hp - arg_damage);
+	hpBoxEaseTime = HP_BOX_EASE_TIME_MAX;
+	/*オカモトゾーン*/
+
 	m_hp = std::clamp(m_hp - arg_damage, 0, HP);
 
 }
@@ -621,6 +694,7 @@ void MineKuji::CheckHitPlayer(std::weak_ptr<Player> arg_player)
 			dir.Normalize();
 
 			//HPを減らす。
+			hpBoxScaleStart = static_cast <float>(m_hp);
 			m_hp = std::clamp(m_hp - 3, 0, HP);
 
 			//攻撃の反動を追加。
@@ -628,10 +702,15 @@ void MineKuji::CheckHitPlayer(std::weak_ptr<Player> arg_player)
 			ShakeMgr::Instance()->m_shakeAmount = 2.0f;
 			m_attackedScale = ATTACKED_SCALE;
 
+			/*オカモトゾーン*/
+			damageAmount = 3.0f;
+			isDrawHpBox = true;
+			m_hpBoxDrawTimer = HP_BOX_DRAW_TIME_MAX;
+			hpBoxScaleEnd = static_cast<float> (m_hp);
+			hpBoxEaseTime = HP_BOX_EASE_TIME_MAX;
+			/*オカモトゾーン*/
 		}
-
 	}
-
 }
 
 KazMath::Vec3<float> MineKuji::SearchRoute()

@@ -145,7 +145,7 @@ void MineralMgr::Update(std::weak_ptr<Player> arg_player, std::weak_ptr<MineralT
 					else {
 
 						//’n–Ê‚É’u‚­B
-						index->DropMaterial();
+						//index->DropMaterial();
 
 					}
 
