@@ -1,12 +1,15 @@
 #pragma once
 #include "../Game/DrawCallSet.h"
 #include "../Enemy/EnemyRoute.h"
+#include "../KazLibrary/Sound/SoundManager.h"
 
 class EnemyMgr;
 
 class Wave {
 
 public:
+
+	SoundData night_start;
 
 	enum class ENEMY_ID {
 		MINEKUJI,

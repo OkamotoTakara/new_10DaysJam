@@ -18,6 +18,11 @@ Rock::Rock()
 	m_model[3].LoadOutline("Resource/Mineral/Lerge/", "Mineral_L.gltf");
 	m_modelIndex = 0;
 
+	//SE
+	rock_break01 = SoundManager::Instance()->SoundLoadWave("Resource/Sound/rock.wav");
+	rock_break02 = SoundManager::Instance()->SoundLoadWave("Resource/Sound/break.wav");
+	rock_break01.volume = 0.1f;
+	rock_break02.volume = 0.1f;
 }
 
 void Rock::Init()
@@ -205,7 +210,8 @@ void Rock::Update(std::weak_ptr<Player> arg_player, std::vector<std::pair<KazMat
 
 	//HP‚ª0‚É‚È‚Á‚½‚ç‰Šú‰»
 	if (m_hp <= 0) {
-
+		SoundManager::Instance()->SoundPlayerWave(rock_break01, 0);
+		SoundManager::Instance()->SoundPlayerWave(rock_break02, 0);
 		if (m_rockID != SMALL) {
 
 			int id = 0;
@@ -286,11 +292,11 @@ void Rock::Draw(DrawingByRasterize& arg_rasterize, Raytracing::BlasVector& arg_b
 	if (m_isMineralRock) {
 
 		m_model.back().m_model.extraBufferArray[4].bufferWrapper->TransData(&outline, sizeof(DessolveOutline));
-		
+
 		m_model.back().m_model.extraBufferArray.back() = GBufferMgr::Instance()->m_outlineBuffer;
 		m_model.back().m_model.extraBufferArray.back().rangeType = GRAPHICS_RANGE_TYPE_UAV_DESC;
 		m_model.back().m_model.extraBufferArray.back().rootParamType = GRAPHICS_PRAMTYPE_TEX;
-		
+
 		KazMath::Transform3D transform = m_transform;
 		transform.rotation.x = 180.0f;
 		transform.pos.y += 10.0f;

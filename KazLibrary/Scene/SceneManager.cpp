@@ -131,7 +131,7 @@ SceneManager::SceneManager() :gameFirstInitFlag(false)
 	m_debugLineScale = 0;
 
 	m_BGN = SoundManager::Instance()->SoundLoadWave("Resource/Sound/bgm.wav");
-	m_BGN.volume = 0.005f;
+	m_BGN.volume = 0.05f;
 	SoundManager::Instance()->SoundPlayerWave(m_BGN, 100);
 }
 
