@@ -6,6 +6,7 @@
 #include "../Game/Collision/StageCollision.h"
 #include "../Game/Effect/ChromaticAberration.h"
 #include <Imgui/imgui.h>
+#include "../Game/TitleFlag.h"
 
 Player::Player()
 {
@@ -78,7 +79,7 @@ void Player::Update()
 	m_oldTransform = m_transform;
 
 	//スタン中は動かさない。
-	if (!m_isStun) {
+	if (!m_isStun && !TitleFlag::Instance()->m_isTitle) {
 
 		//プレイヤーを動かす。
 		const float MOVE_SPEED = 1.0f;
@@ -467,12 +468,16 @@ void Player::Draw(DrawingByRasterize& arg_rasterize, Raytracing::BlasVector& arg
 		dadanIndex = 1;
 	}
 
-	//UIを描画。
-	m_hpFrameUI.Draw(arg_rasterize);
-	m_hpUI.Draw(arg_rasterize);
-	m_hpBackGroundUI.Draw(arg_rasterize);
-	m_dadanUI[dadanIndex].Draw(arg_rasterize);
-	m_dadanBackGroundUI.Draw(arg_rasterize);
+	if (!TitleFlag::Instance()->m_isTitle) {
+
+		//UIを描画。
+		m_hpFrameUI.Draw(arg_rasterize);
+		m_hpUI.Draw(arg_rasterize);
+		m_hpBackGroundUI.Draw(arg_rasterize);
+		m_dadanUI[dadanIndex].Draw(arg_rasterize);
+		m_dadanBackGroundUI.Draw(arg_rasterize);
+
+	}/*
 
 	ImGui::Begin("UI");
 
@@ -486,7 +491,7 @@ void Player::Draw(DrawingByRasterize& arg_rasterize, Raytracing::BlasVector& arg
 	ImGui::DragFloat("BAR_POS_SCALE", &UI_HPBAR_SCALE.x, 0.1f);
 	ImGui::DragFloat("BAR_POS_SCALE", &UI_HPBAR_SCALE.y, 0.1f);
 
-	ImGui::End();
+	ImGui::End();*/
 
 
 }

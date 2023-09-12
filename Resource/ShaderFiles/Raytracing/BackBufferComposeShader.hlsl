@@ -48,7 +48,7 @@ void main(uint3 DTid : SV_DispatchThreadID)
     else
     {
         float alpha = BackBuffer[DTid.xy].w;
-        OutputImg[DTid.xy] = BackBuffer[DTid.xy] * alpha + Raytracing[DTid.xy] * (1.0f - alpha);
+        OutputImg[DTid.xy] = BackBuffer[DTid.xy] + Raytracing[DTid.xy] * (1.0f - alpha);
     
     }
     

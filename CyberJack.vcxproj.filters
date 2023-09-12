@@ -336,6 +336,7 @@
     <ClInclude Include="Game\PointLightMgr.h" />
     <ClInclude Include="Game\Enemy\MineTsumuri.h" />
     <ClInclude Include="Game\Effect\ChromaticAberration.h" />
+    <ClInclude Include="Game\TitleFlag.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

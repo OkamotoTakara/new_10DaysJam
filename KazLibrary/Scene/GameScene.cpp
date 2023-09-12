@@ -21,6 +21,7 @@
 #include"../Game/Enemy/EnemyRoute.h"
 #include"../Game/WallAndTreeGeneratePos.h"
 #include"../Game/Wave/WaveMgr.h"
+#include"../Game/TitleFlag.h"
 
 GameScene::GameScene()
 {
@@ -64,6 +65,24 @@ GameScene::GameScene()
 	m_tree.Load("Resource/Stage/", "Stage_Tree.gltf");
 	m_rock.Load("Resource/Stage/", "Stage_Rock.gltf");
 
+	//タイトルロゴをロード
+	m_titleLogoUI.Load("Resource/Title/TitleLogo.png");
+	m_titleBackGroundUI.Load("Resource/Title/Title_1.png");
+	m_titleStartUI.Load("Resource/Title/Title_2.png");
+	m_titleQuitUI.Load("Resource/Title/Title_3.png");
+
+	//タイトルロゴの場所を設定。
+	m_titleLogoUI.m_transform.pos = { 1280.0f / 2.0f, 720.0f / 2.0f };
+	m_titleLogoUI.m_transform.scale = { 1280.0f / 2.0f, 720.0f / 2.0f };
+	m_titleBackGroundUI.m_transform.pos = { 1280.0f / 2.0f, 720.0f / 2.0f };
+	m_titleBackGroundUI.m_transform.scale = { 1280.0f, 720.0f };
+	m_titleStartUI.m_transform.pos = { 640.0f, 440.0f };
+	m_titleStartUI.m_transform.scale = UI_MAX_START_SCALE;
+	m_titleQuitUI.m_transform.pos = { 640.0f, 545.0f };
+	m_titleQuitUI.m_transform.scale = { UI_DEF_QUIT_SCALE };
+	m_selectTitleNum = 0;
+	m_selectTitleUISine = 0.0f;
+
 	NumberFont::Instance()->Load();
 }
 
@@ -99,6 +118,8 @@ void GameScene::Init()
 	//太陽の方向を昼に設定
 	GBufferMgr::Instance()->m_lightConstData.m_dirLight.m_dir = KazMath::Vec3<float>(0.0f, -0.894f, 0.4472f);
 
+	TitleFlag::Instance()->m_isTitle = true;
+
 
 }
 
@@ -120,6 +141,9 @@ void GameScene::Update()
 
 	if (KeyBoradInputManager::Instance()->InputTrigger(DIK_R)) {
 		Init();
+	}
+	if (KeyBoradInputManager::Instance()->InputTrigger(DIK_I)) {
+		TitleFlag::Instance()->m_isTitle = false;
 	}
 
 	//ウェーブを更新。
@@ -161,6 +185,76 @@ void GameScene::Update()
 
 	//シェイクを更新。
 	ShakeMgr::Instance()->Update();
+
+	//タイトル画面だったら。
+	if (TitleFlag::Instance()->m_isTitle) {
+
+
+		if (KeyBoradInputManager::Instance()->InputState(DIK_W) ||
+			KeyBoradInputManager::Instance()->InputState(DIK_UP) ||
+			ControllerInputManager::Instance()->InputStickTrigger(ControllerStickSide::LEFT_STICK, ControllerSide::UP_SIDE)) {
+
+			m_selectTitleNum = std::clamp(m_selectTitleNum - 1, 0, 1);
+
+		}
+
+		if (KeyBoradInputManager::Instance()->InputState(DIK_S) ||
+			KeyBoradInputManager::Instance()->InputState(DIK_DOWN) ||
+			ControllerInputManager::Instance()->InputStickTrigger(ControllerStickSide::LEFT_STICK, ControllerSide::DOWN_SIDE)) {
+
+			m_selectTitleNum = std::clamp(m_selectTitleNum + 1, 0, 1);
+
+		}
+
+		//決定キーが入力されたら
+		if (KeyBoradInputManager::Instance()->InputState(DIK_SPACE) ||
+			KeyBoradInputManager::Instance()->InputState(DIK_RETURN) ||
+			ControllerInputManager::Instance()->InputTrigger(XINPUT_GAMEPAD_A)) {
+
+			//Startを選択していたら。
+			if (m_selectTitleNum == 0) {
+
+				TitleFlag::Instance()->m_isTitle = false;
+
+			}
+			//Quitを選択していたら
+			else if (m_selectTitleNum) {
+
+				TitleFlag::Instance()->m_isQuit = true;
+
+			}
+
+		}
+
+
+		m_selectTitleUISine += ADD_SELECT_TITLE_SINE;
+
+
+		//const float MOVE_SPEED = 1.0f;
+		//m_transform.pos.z += (KeyBoradInputManager::Instance()->InputState(DIK_W)) * MOVE_SPEED;
+		//m_transform.pos.z -= (KeyBoradInputManager::Instance()->InputState(DIK_S)) * MOVE_SPEED;
+		//m_transform.pos.x += (KeyBoradInputManager::Instance()->InputState(DIK_D)) * MOVE_SPEED;
+		//m_transform.pos.x -= (KeyBoradInputManager::Instance()->InputState(DIK_A)) * MOVE_SPEED;
+
+		////コントローラーも対応。
+		//float inputStickX = ControllerInputManager::Instance()->GetJoyStickLXNum() / 32767.0f;
+		//float inputStickY = ControllerInputManager::Instance()->GetJoyStickLYNum() / 32767.0f;
+		//const float STICK_DEADLINE = 0.3f;
+		//if (STICK_DEADLINE <= fabs(inputStickX)) {
+		//	m_transform.pos.x += inputStickX * MOVE_SPEED;
+		//}
+		//if (STICK_DEADLINE <= fabs(inputStickY)) {
+		//	m_transform.pos.z += inputStickY * MOVE_SPEED;
+		//}
+
+		////隊列を操作する。
+		//m_mineralCenterPos.z += (KeyBoradInputManager::Instance()->InputState(DIK_UP)) * MINERAL_MOVE_SPEED;
+		//m_mineralCenterPos.z -= (KeyBoradInputManager::Instance()->InputState(DIK_DOWN)) * MINERAL_MOVE_SPEED;
+		//m_mineralCenterPos.x += (KeyBoradInputManager::Instance()->InputState(DIK_RIGHT)) * MINERAL_MOVE_SPEED;
+		//m_mineralCenterPos.x -= (KeyBoradInputManager::Instance()->InputState(DIK_LEFT)) * MINERAL_MOVE_SPEED;
+
+	}
+
 }
 
 void GameScene::Draw(DrawingByRasterize& arg_rasterize, Raytracing::BlasVector& arg_blasVec)
@@ -223,29 +317,48 @@ void GameScene::Draw(DrawingByRasterize& arg_rasterize, Raytracing::BlasVector& 
 	m_rock.Draw(arg_rasterize, arg_blasVec, m_stageTransform);
 
 
-	//ImGui::Begin("Stage");
+	ImGui::Begin("UI");
 
-	////ImGui::DragFloat("POS_X", &BuildingMgr::Instance()->GetWall(2).lock()->m_initPos.x, 1.0f);
-	////ImGui::DragFloat("POS_Y", &BuildingMgr::Instance()->GetWall(2).lock()->m_initPos.y, 1.0f);
-	////ImGui::DragFloat("POS_Z", &BuildingMgr::Instance()->GetWall(2).lock()->m_initPos.z, 1.0f);
-	////ImGui::DragFloat("SCALE_X", &BuildingMgr::Instance()->GetWall(0).lock()->m_transform.scale.x, 0.01f);
-	////ImGui::DragFloat("SCALE_Y", &BuildingMgr::Instance()->GetWall(0).lock()->m_transform.scale.y, 0.01f);
-	////ImGui::DragFloat("SCALE_Z", &BuildingMgr::Instance()->GetWall(0).lock()->m_transform.scale.z, 0.01f);
-	////ImGui::DragFloat("ROTATE_X", &BuildingMgr::Instance()->GetWall(0).lock()->m_transform.rotation.x, 0.1f);
-	////ImGui::DragFloat("ROTATE_Y", &BuildingMgr::Instance()->GetWall(2).lock()->m_rotateY, 0.1f);
-	////ImGui::DragFloat("ROTATE_Z", &BuildingMgr::Instance()->GetWall(0).lock()->m_transform.rotation.z, 0.1f);
+	//ImGui::DragFloat("POS_X", &BuildingMgr::Instance()->GetWall(2).lock()->m_initPos.x, 1.0f);
+	//ImGui::DragFloat("POS_Y", &BuildingMgr::Instance()->GetWall(2).lock()->m_initPos.y, 1.0f);
+	//ImGui::DragFloat("POS_Z", &BuildingMgr::Instance()->GetWall(2).lock()->m_initPos.z, 1.0f);
+	//ImGui::DragFloat("SCALE_X", &BuildingMgr::Instance()->GetWall(0).lock()->m_transform.scale.x, 0.01f);
+	//ImGui::DragFloat("SCALE_Y", &BuildingMgr::Instance()->GetWall(0).lock()->m_transform.scale.y, 0.01f);
+	//ImGui::DragFloat("SCALE_Z", &BuildingMgr::Instance()->GetWall(0).lock()->m_transform.scale.z, 0.01f);
+	//ImGui::DragFloat("ROTATE_X", &BuildingMgr::Instance()->GetWall(0).lock()->m_transform.rotation.x, 0.1f);
+	//ImGui::DragFloat("ROTATE_Y", &BuildingMgr::Instance()->GetWall(2).lock()->m_rotateY, 0.1f);
+	//ImGui::DragFloat("ROTATE_Z", &BuildingMgr::Instance()->GetWall(0).lock()->m_transform.rotation.z, 0.1f);
 
-	////ImGui::Text(" ");
+	//ImGui::Text(" ");
 
-	////ImGui::DragFloat("EyeDistance", &m_cameraEyeDistance, 1.0f);
-	//ImGui::SliderFloat("DirLight_X", &GBufferMgr::Instance()->m_lightConstData.m_dirLight.m_dir.x, 0.0f, 1.0f);
-	//ImGui::SliderFloat("DirLight_Y", &GBufferMgr::Instance()->m_lightConstData.m_dirLight.m_dir.y, 0.0f, 1.0f);
-	//ImGui::SliderFloat("DirLight_Z", &GBufferMgr::Instance()->m_lightConstData.m_dirLight.m_dir.z, 0.0f, 1.0f);
+	//ImGui::DragFloat("EyeDistance", &m_cameraEyeDistance, 1.0f);
+	ImGui::DragFloat("START_UI_X", &m_titleStartUI.m_transform.pos.x, 1.0f);
+	ImGui::DragFloat("START_UI_Y", &m_titleStartUI.m_transform.pos.y, 1.0f);
+	ImGui::DragFloat("QUIT_UI_X", &m_titleQuitUI.m_transform.pos.x, 1.0f);
+	ImGui::DragFloat("QUIT_UI_Y", &m_titleQuitUI.m_transform.pos.y, 1.0f);
+	//ImGui::SliderFloat("UI_Z", &GBufferMgr::Instance()->m_lightConstData.m_dirLight.m_dir.z, 0.0f, 1.0f);
 
-	//ImGui::Text("X : %f", m_player->GetPosZeroY().x);
-	//ImGui::Text("Z : %f", m_player->GetPosZeroY().z);
+	ImGui::End();
 
-	//ImGui::End();
+	//タイトルのUIをロード
+	if (TitleFlag::Instance()->m_isTitle) {
+
+		//Startを選択していたら。
+		if (m_selectTitleNum == 0) {
+			m_titleStartUI.m_transform.scale += ((UI_MAX_START_SCALE + sinf(m_selectTitleUISine) * SELECT_TITLE_SINE_SCALE) - m_titleStartUI.m_transform.scale) / 3.0f;
+			m_titleQuitUI.m_transform.scale += (UI_DEF_QUIT_SCALE - m_titleQuitUI.m_transform.scale) / 3.0f;
+		}
+		else {
+			m_titleStartUI.m_transform.scale += (UI_DEF_START_SCALE - m_titleStartUI.m_transform.scale) / 3.0f;
+			m_titleQuitUI.m_transform.scale += ((UI_MAX_QUIT_SCALE + sinf(m_selectTitleUISine) * SELECT_TITLE_SINE_SCALE) - m_titleQuitUI.m_transform.scale) / 3.0f;
+		}
+
+		//m_titleLogoUI.Draw(arg_rasterize);
+		m_titleStartUI.Draw(arg_rasterize);
+		m_titleQuitUI.Draw(arg_rasterize);
+		m_titleBackGroundUI.Draw(arg_rasterize);
+
+	}
 
 }
 

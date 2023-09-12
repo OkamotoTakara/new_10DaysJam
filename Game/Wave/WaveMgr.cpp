@@ -1,6 +1,7 @@
 #include "WaveMgr.h"
 #include "Wave.h"
 #include "../Game/Enemy/EnemyMgr.h"
+#include "../Game/TitleFlag.h"
 
 void WaveMgr::Setting()
 {
@@ -233,9 +234,13 @@ void WaveMgr::Update(std::weak_ptr<EnemyMgr> arg_enemyMgr)
 void WaveMgr::Draw(DrawingByRasterize& arg_rasterize, Raytracing::BlasVector& arg_blasVec)
 {
 
-	//UI‚ð•`‰æ
-	m_frameUI.Draw(arg_rasterize);
-	m_timerUI.Draw(arg_rasterize);
+	if (!TitleFlag::Instance()->m_isTitle) {
+
+		//UI‚ð•`‰æ
+		m_frameUI.Draw(arg_rasterize);
+		m_timerUI.Draw(arg_rasterize);
+
+	}
 
 }
 

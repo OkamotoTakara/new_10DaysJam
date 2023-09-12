@@ -1,6 +1,7 @@
 #include "Core.h"
 #include "../KazLibrary/Easing/easing.h"
 #include "../Game/Wave/WaveMgr.h"
+#include "../Game/TitleFlag.h"
 
 Core::Core()
 {
@@ -94,13 +95,17 @@ void Core::Draw(DrawingByRasterize& arg_rasterize, Raytracing::BlasVector& arg_b
 	crownTransform.pos += m_crownPos;
 	m_crownModel.Draw(arg_rasterize, arg_blasVec, crownTransform);
 
-	/*オカモトゾーン*/
-	m_hpBoxTransform.pos = m_transform.pos;
-	m_hpBoxTransform.pos.y += 30.0f;
-	m_hpBoxTransform.rotation.y = 45.0f;
+	if (!TitleFlag::Instance()->m_isTitle) {
 
-	m_hpBoxModel.Draw(arg_rasterize, arg_blasVec, m_hpBoxTransform, 0, false);
-	/*オカモトゾーン*/
+		/*オカモトゾーン*/
+		m_hpBoxTransform.pos = m_transform.pos;
+		m_hpBoxTransform.pos.y += 30.0f;
+		m_hpBoxTransform.rotation.y = 45.0f;
+
+		m_hpBoxModel.Draw(arg_rasterize, arg_blasVec, m_hpBoxTransform, 0, false);
+		/*オカモトゾーン*/
+
+	}
 
 }
 

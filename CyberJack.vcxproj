@@ -316,6 +316,7 @@
     <ClInclude Include="Game\Rock\Rock.h" />
     <ClInclude Include="Game\Rock\RockMgr.h" />
     <ClInclude Include="Game\Stage\ChildOfEdenStage.h" />
+    <ClInclude Include="Game\TitleFlag.h" />
     <ClInclude Include="Game\Tool\SplineRail.h" />
     <ClInclude Include="Game\Tool\ModelTool.h" />
     <ClInclude Include="Game\Tutorial\DirectX12MoviePlayer.h" />
