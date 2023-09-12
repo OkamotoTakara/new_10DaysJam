@@ -54,6 +54,7 @@ void Wall::Genrate(KazMath::Vec3<float> arg_generatePos, float arg_rotateY, int 
 
 	m_isActive = true;
 	m_rotateY = arg_rotateY;
+	m_initRotateY = arg_rotateY;
 	m_boxTransform.rotation.y = arg_rotateY;
 	m_modelIndex = arg_modelIndex;
 
@@ -207,7 +208,12 @@ void Wall::Update(std::weak_ptr<Player> arg_player)
 
 	//HP‚ª0‚É‚È‚Á‚½‚ç‰Šú‰»
 	if (m_hp <= 0) {
+		m_transform.pos = m_initPos;
 		Init();
+
+		m_isActive = true;
+		m_rotateY = m_initRotateY;
+		m_boxTransform.rotation.y = m_initRotateY;
 	}
 
 }
