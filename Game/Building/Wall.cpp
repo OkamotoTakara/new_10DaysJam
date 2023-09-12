@@ -4,6 +4,7 @@
 #include "../KazLibrary/Easing/easing.h"
 #include "../Game/Effect/ShakeMgr.h"
 #include "../Game/UI/NumberFont.h"
+#include "../Game/Wave/WaveMgr.h"
 
 Wall::Wall()
 {
@@ -102,6 +103,12 @@ void Wall::Update(std::weak_ptr<Player> arg_player)
 		{
 			isDrawHpBox = false;
 		}
+	}
+
+	//昼になったらHPを全快
+	if (!WaveMgr::Instance()->GetIsNight())
+	{
+		m_hp = HP;
 	}
 	/*オカモトゾーン*/
 
