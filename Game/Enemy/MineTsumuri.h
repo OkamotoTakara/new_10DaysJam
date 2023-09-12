@@ -33,7 +33,7 @@ private:
 	}m_mode;
 
 	//ƒRƒA‚ğUŒ‚‚·‚é•Ï”
-	const float CORE_ATTACK_RANGE = 40.0f;
+	const float CORE_ATTACK_RANGE = 60.0f;
 	KazMath::Vec3<float> m_coreAttackReactionVec;
 	float m_coreAttackMoveSpeed;
 	int m_coreAttackDelayTimer;

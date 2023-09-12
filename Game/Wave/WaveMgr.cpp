@@ -18,12 +18,12 @@ void WaveMgr::Setting()
 	std::vector<int> rock = { 1 };		//有効化時に生成される岩のIndex 1スタート
 	std::vector<int> mineralRock = { 2, 3 };		//有効化時に生成されるミネラル岩のIndex 1スタート
 	//敵を追加していく。
-	enemyInfo.emplace_back(EnemyRoute::A, Wave::ENEMY_ID::MINEKUJI, 0);
+	enemyInfo.emplace_back(EnemyRoute::A, Wave::ENEMY_ID::MINEKUJI, 0);/*
 	enemyInfo.emplace_back(EnemyRoute::A, Wave::ENEMY_ID::MINEKUJI, 30);
 	enemyInfo.emplace_back(EnemyRoute::A, Wave::ENEMY_ID::MINEKUJI, 60);
 	enemyInfo.emplace_back(EnemyRoute::A, Wave::ENEMY_ID::MINEKUJI, 90);
 	enemyInfo.emplace_back(EnemyRoute::A, Wave::ENEMY_ID::MINEKUJI, 120);
-	enemyInfo.emplace_back(EnemyRoute::B, Wave::ENEMY_ID::MINETSUMURI, 0);
+	enemyInfo.emplace_back(EnemyRoute::B, Wave::ENEMY_ID::MINETSUMURI, 0);*/
 	//enemyInfo.emplace_back(EnemyRoute::ROUTE_ID::B, 0);
 	//enemyInfo.emplace_back(EnemyRoute::ROUTE_ID::C, 0);
 	//enemyInfo.emplace_back(EnemyRoute::ROUTE_ID::A, 600);
