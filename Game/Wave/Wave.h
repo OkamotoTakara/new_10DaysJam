@@ -27,13 +27,14 @@ private:
 	int m_nowTime;		//現在の経過フレーム
 	int m_treeCount;
 	int m_rockCount;
+	int m_mineralRockCount;
 	bool m_isNight;
 	bool m_isActiveWave;
 	std::vector<EnemyWaveInfo> m_enemyWaveInfo;	//敵を湧かせるフレーム数
 
 public:
 
-	Wave(int arg_dayTime, int arg_nightTime, int arg_treeCount, int arg_rockCount, std::vector<EnemyWaveInfo> arg_enemyWaveInfo);
+	Wave(int arg_dayTime, int arg_nightTime, int arg_treeCount, int arg_rockCount, int arg_mineralRockCount, std::vector<EnemyWaveInfo> arg_enemyWaveInfo);
 
 	void Update(std::weak_ptr<EnemyMgr> arg_enemyMgr);
 

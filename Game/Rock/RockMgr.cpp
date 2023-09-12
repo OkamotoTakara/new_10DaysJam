@@ -1,6 +1,7 @@
 #include "../Game/Rock/Rock.h"
 #include "RockMgr.h"
 #include "../Player.h"
+#include "../Game/Mineral/MineralMgr.h"
 
 void RockMgr::Setting()
 {
@@ -25,7 +26,7 @@ void RockMgr::DebugGenerate() {
 
 			if (index->GetIsAlive()) continue;
 
-			index->Generate(param, {});
+			index->Generate(param, {}, true, Rock::MEDIUM);
 
 			break;
 
@@ -45,13 +46,13 @@ void RockMgr::Init() {
 
 }
 
-void RockMgr::Generate(KazMath::Vec3<float> arg_pos, KazMath::Vec3<float> arg_respawnDir, int arg_mineralID) {
+void RockMgr::Generate(KazMath::Vec3<float> arg_pos, KazMath::Vec3<float> arg_respawnDir, bool m_isMineralRock, int arg_mineralID) {
 
 	for (auto& index : m_rocks) {
 
 		if (index->GetIsAlive()) continue;
 
-		index->Generate(arg_pos, arg_respawnDir, arg_mineralID);
+		index->Generate(arg_pos, arg_respawnDir, m_isMineralRock, arg_mineralID);
 
 		break;
 
@@ -72,10 +73,19 @@ void RockMgr::Update(std::weak_ptr<Player> arg_player) {
 		index->Update(arg_player, breakUpPos);
 
 		//•ª—ô‚µ‚½ê‡A¶¬‚·‚éB
-		for (auto& breakUp : breakUpPos) {
+		if (index->GetIsMineralRock()) {
+			for (auto& breakUp : breakUpPos) {
 
-			Generate(index->GetPos(), breakUp.first, breakUp.second);
+				MineralMgr::Instance()->Generate(index->GetPos(), breakUp.first, 0);
 
+			}
+		}
+		else {
+			for (auto& breakUp : breakUpPos) {
+
+				Generate(index->GetPos(), breakUp.first, false, breakUp.second);
+
+			}
 		}
 
 	}

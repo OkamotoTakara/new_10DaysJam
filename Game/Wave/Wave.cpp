@@ -5,13 +5,14 @@
 #include "../PointLightMgr.h"
 #include "../Game/Rock/RockMgr.h"
 
-Wave::Wave(int arg_dayTime, int arg_nightTime, int arg_treeCount, int arg_rockCount, std::vector<EnemyWaveInfo> arg_enemyWaveInfo)
+Wave::Wave(int arg_dayTime, int arg_nightTime, int arg_treeCount, int arg_rockCount, int arg_mineralRockCount, std::vector<EnemyWaveInfo> arg_enemyWaveInfo)
 {
 
 	m_dayTime = arg_dayTime;
 	m_nighTime = arg_nightTime;
 	m_treeCount = arg_treeCount;
 	m_rockCount = arg_rockCount;
+	m_mineralRockCount = arg_mineralRockCount;
 	m_enemyWaveInfo = arg_enemyWaveInfo;
 	m_nowTime = 0;
 	m_isNight = false;
@@ -96,11 +97,28 @@ void Wave::Active()
 	m_isNight = false;
 	m_nowTime = 0;
 
+	std::vector<bool> treeSpawnPos;
+	treeSpawnPos.resize(WallAndTreeGeneratePos::Instance()->m_treeCount);
+	for (auto& index : treeSpawnPos) {
+		index = false;
+	}
+	std::vector<bool> rockSpawnPos;
+	rockSpawnPos.resize(WallAndTreeGeneratePos::Instance()->m_rockCount);
+	for (auto& index : rockSpawnPos) {
+		index = false;
+	}
+
 	//木と岩をランダムで配置。
 	for (int index = 0; index < m_treeCount; ++index) {
 
 		//生成位置を決定して生成。
 		int generatePos = KazMath::Rand(0, WallAndTreeGeneratePos::Instance()->m_treeCount - 1);
+
+		//生成済みの場所だったら正しい座標が出るまで繰り返す。
+		while (treeSpawnPos[generatePos]) {
+			generatePos = KazMath::Rand(0, WallAndTreeGeneratePos::Instance()->m_treeCount - 1);
+		}
+		treeSpawnPos[generatePos] = true;
 
 		DestructibleObjectMgr::Instance()->GenerateTree(WallAndTreeGeneratePos::Instance()->m_treePos[generatePos]);
 
@@ -110,7 +128,27 @@ void Wave::Active()
 		//生成位置を決定して生成。
 		int generatePos = KazMath::Rand(0, WallAndTreeGeneratePos::Instance()->m_rockCount - 1);
 
-		RockMgr::Instance()->Generate(WallAndTreeGeneratePos::Instance()->m_rockPos[generatePos], {}, 2);
+		//生成済みの場所だったら正しい座標が出るまで繰り返す。
+		while (rockSpawnPos[generatePos]) {
+			generatePos = KazMath::Rand(0, WallAndTreeGeneratePos::Instance()->m_rockCount - 1);
+		}
+		rockSpawnPos[generatePos] = true;
+
+		RockMgr::Instance()->Generate(WallAndTreeGeneratePos::Instance()->m_rockPos[generatePos], {}, false, 2);
+
+	}
+	for (int index = 0; index < m_mineralRockCount; ++index) {
+
+		//生成位置を決定して生成。
+		int generatePos = KazMath::Rand(0, WallAndTreeGeneratePos::Instance()->m_rockCount - 1);
+
+		//生成済みの場所だったら正しい座標が出るまで繰り返す。
+		while (rockSpawnPos[generatePos]) {
+			generatePos = KazMath::Rand(0, WallAndTreeGeneratePos::Instance()->m_rockCount - 1);
+		}
+		rockSpawnPos[generatePos] = true;
+
+		RockMgr::Instance()->Generate(WallAndTreeGeneratePos::Instance()->m_rockPos[generatePos], {}, true, 2);
 
 	}
 

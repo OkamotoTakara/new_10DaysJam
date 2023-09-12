@@ -11,12 +11,13 @@ public:
 		SMALL,
 		MEDIUM,
 		BIG,
+		MINERAL,
 	};
 
 private:
 
 	//基本情報
-	std::array<DrawCallSet, 3> m_model;
+	std::array<DrawCallSet, 4> m_model;
 	int m_modelIndex;
 	KazMath::Transform3D m_transform;
 	KazMath::Vec3<float> m_respawnVec;
@@ -26,12 +27,13 @@ private:
 	const float GRAVITY = 0.1f;
 	const float STRONG_DAIPAN_POWER = 1.0f;
 	int m_hp;
-	std::array<int, 3> MAX_HP = { 1, 3, 6 };
+	std::array<int, 4> MAX_HP = { 1, 3, 6, 1 };
 	KazMath::Vec3<float> m_reactionVec;
 
 	//ステータス
 	bool m_isAlive;
 	ROCK_ID m_rockID;
+	bool m_isMineralRock;
 
 	//サイズ関係 描画
 	const float DRAW_SIZE_BIG = 6.5f;
@@ -49,7 +51,7 @@ public:
 
 	void Init();
 
-	void Generate(KazMath::Vec3<float> arg_pos, KazMath::Vec3<float> arg_respawnVec, int arg_rockID = BIG);
+	void Generate(KazMath::Vec3<float> arg_pos, KazMath::Vec3<float> arg_respawnVec, bool arg_isMineralRock, int arg_rockID);
 
 	void Update(std::weak_ptr<Player> arg_player, std::vector<std::pair<KazMath::Vec3<float>, int>>& arg_respawnVec);
 
@@ -59,6 +61,7 @@ public:
 	void Damage(KazMath::Vec3<float> arg_reactionVec, int arg_damage = 1);
 
 	bool GetIsAlive() { return m_isAlive; }
+	bool GetIsMineralRock() { return m_isMineralRock; }
 	ROCK_ID GetRockID() { return m_rockID; }
 	KazMath::Vec3<float> GetPos() { return m_transform.pos; }
 	KazMath::Vec3<float> GetScale() { return m_transform.scale; }
