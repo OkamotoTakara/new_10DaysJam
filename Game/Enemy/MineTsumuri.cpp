@@ -85,6 +85,9 @@ void MineTsumuri::Generate(std::vector<KazMath::Vec3<float>> arg_route, bool arg
 	m_shellGravity = 0.0f;
 	m_shellBreakVel = {};
 
+	//出現地点をランダム化。
+	m_transform.pos += KazMath::Vec3<float>(KazMath::Rand(-RANDOM_SPAWN_RANGE, RANDOM_SPAWN_RANGE), 0.0f, KazMath::Rand(-RANDOM_SPAWN_RANGE, RANDOM_SPAWN_RANGE));
+
 }
 
 void MineTsumuri::Update(std::weak_ptr<Core> arg_core, std::weak_ptr<Player> arg_player)
