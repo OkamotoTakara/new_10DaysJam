@@ -80,6 +80,10 @@ void MineKuji::Generate(std::vector<KazMath::Vec3<float>> arg_route)
 	m_forwardVec = { 0,0,1 };
 	m_isAttackWall = false;
 
+
+	//出現地点をランダム化。
+	m_transform.pos += KazMath::Vec3<float>(KazMath::Rand(-RANDOM_SPAWN_RANGE, RANDOM_SPAWN_RANGE), 0.0f, KazMath::Rand(-RANDOM_SPAWN_RANGE, RANDOM_SPAWN_RANGE));
+
 }
 
 void MineKuji::Update(std::weak_ptr<Core> arg_core, std::weak_ptr<Player> arg_player)

@@ -20,7 +20,7 @@
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
-    <ConfigurationType>Application</ConfigurationType>
+    <ConfigurationType>Mineral (.exe)</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v143</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
@@ -48,6 +48,7 @@
     <LinkIncremental>true</LinkIncremental>
     <IncludePath>$(ProjectDir)lib\fbx_sdk\include;$(ProjectDir)DirectXTex\include;$(ProjectDir)lib\glTF-SDK-master\GLTFSDK\Inc;$(ProjectDir)lib\GLTFSDK\inc;$(IncludePath)</IncludePath>
     <LibraryPath>$(ProjectDir)lib\shader\dxil.dll;$(ProjectDir)lib\fbx_sdk\lib;$(ProjectDir)DirectXTex\lib\$(Configuration);$(ProjectDir)lib\GLTFSDK\lib\$(Configuration);$(LibraryPath)</LibraryPath>
+    <TargetName>$(ProjectName)</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>

@@ -17,6 +17,7 @@ MineTsumuri::MineTsumuri()
 	m_hpBoxModel.LoadNoLighting("Resource/HpBox/", "Hp_Box.gltf");
 	m_gardHpBoxModel.LoadNoLighting("Resource/HpBox/", "Gard_Hp_Box.gltf");
 	/*オカモトゾーン*/
+	m_kingShellModel.LoadOutline("Resource/Enemy/MineKing/", "MineKing.gltf");
 	m_attackedScale = 0.0f;
 	m_scale = 0.0f;
 
@@ -35,15 +36,6 @@ void MineTsumuri::Init()
 	m_shellHP = 0.0f;
 
 	/*オカモトゾーン*/
-	damageAmount = 1.0f;
-	isDrawHpBox = false;
-	hpBoxScaleStart = 0.0f;
-	hpBoxScaleEnd = static_cast<float>(HP);
-	gardHpBoxScaleStart = 0.0f;
-	gardHpBoxScaleEnd = 0.0f;
-	m_hpBoxDrawTimer = HP_BOX_DRAW_TIME_MAX;
-	hpBoxEaseTime = HP_BOX_EASE_TIME_MAX;
-	ease_scale = 0.0f;
 	m_gardHpBoxTransform.scale.y = 2.0f;
 	m_gardHpBoxTransform.scale.z = 2.0f;
 	m_gardHpBoxTransform.scale.x = static_cast<float> (SHELL_HP);
@@ -53,7 +45,7 @@ void MineTsumuri::Init()
 	/*オカモトゾーン*/
 }
 
-void MineTsumuri::Generate(std::vector<KazMath::Vec3<float>> arg_route)
+void MineTsumuri::Generate(std::vector<KazMath::Vec3<float>> arg_route, bool arg_isKing)
 {
 
 	m_route = arg_route;
@@ -76,7 +68,16 @@ void MineTsumuri::Generate(std::vector<KazMath::Vec3<float>> arg_route)
 	m_coreAttackDelayTimer = 0;
 	m_coreAttackDelay = KazMath::Rand(MIN_CORE_ATTACK_DELAY, MAX_CORE_ATTACK_DELAY);
 
-	m_hp = HP;
+	m_isMineking = arg_isKing;
+
+	if (m_isMineking) {
+		m_hp = MINEKING_HP;
+		m_shellHP = MINEKING_SHELL_HP;
+	}
+	else {
+		m_hp = HP;
+		m_shellHP = SHELL_HP;
+	}
 	m_attackedReactionVec = {};
 	m_attackedMineral.reset();
 
@@ -98,8 +99,10 @@ void MineTsumuri::Generate(std::vector<KazMath::Vec3<float>> arg_route)
 	m_inShellTimer = 0.0f;
 	m_shellPosY = SHELL_POS_Y;
 	m_shellGravity = 0.0f;
-	m_shellHP = SHELL_HP;
 	m_shellBreakVel = {};
+
+	//出現地点をランダム化。
+	m_transform.pos += KazMath::Vec3<float>(KazMath::Rand(-RANDOM_SPAWN_RANGE, RANDOM_SPAWN_RANGE), 0.0f, KazMath::Rand(-RANDOM_SPAWN_RANGE, RANDOM_SPAWN_RANGE));
 
 }
 
@@ -138,37 +141,41 @@ void MineTsumuri::Update(std::weak_ptr<Core> arg_core, std::weak_ptr<Player> arg
 
 				}
 
-				//近くにミネラルが居るか？
-				int mineralIndex = 0;
-				if (MineralMgr::Instance()->SearchNearMineral(GetPosZeroY(), ENEMY_SEARCH_RANGE, mineralIndex)) {
+				if (!m_isMineking) {
 
-					m_mode = MineralAttack;
-					m_isAttackedMineral = true;
-					m_isAttackMineral = false;
-					m_isAttackWall = false;
-					m_isAttackPlayer = false;
-					m_attackedMineral = MineralMgr::Instance()->GetMineral(mineralIndex);
-					break;
+					//近くにミネラルが居るか？
+					int mineralIndex = 0;
+					if (MineralMgr::Instance()->SearchNearMineral(GetPosZeroY(), ENEMY_SEARCH_RANGE, mineralIndex)) {
 
-				}
+						m_mode = MineralAttack;
+						m_isAttackedMineral = true;
+						m_isAttackMineral = false;
+						m_isAttackWall = false;
+						m_isAttackPlayer = false;
+						m_attackedMineral = MineralMgr::Instance()->GetMineral(mineralIndex);
+						break;
 
-				//近くにプレイヤーが居るか？
-				if (!arg_player.lock()->GetIsStun() && KazMath::Vec3<float>(arg_player.lock()->GetPosZeroY() - GetPosZeroY()).Length() <= ENEMY_SEARCH_RANGE) {
+					}
+
+					//近くにプレイヤーが居るか？
+					if (!arg_player.lock()->GetIsStun() && KazMath::Vec3<float>(arg_player.lock()->GetPosZeroY() - GetPosZeroY()).Length() <= ENEMY_SEARCH_RANGE) {
 
 
-					m_mode = PlayerAttack;
-					m_isAttackedMineral = false;
-					m_isAttackMineral = false;
-					m_isAttackWall = false;
-					m_isAttackPlayer = true;
-					break;
+						m_mode = PlayerAttack;
+						m_isAttackedMineral = false;
+						m_isAttackMineral = false;
+						m_isAttackWall = false;
+						m_isAttackPlayer = true;
+						break;
 
-				}
+					}
 
-				//敵に攻撃されたらすぐに迎撃状態に入る。
-				if (m_isAttackedMineral) {
+					//敵に攻撃されたらすぐに迎撃状態に入る。
+					if (m_isAttackedMineral) {
 
-					m_mode = MineralAttack;
+						m_mode = MineralAttack;
+
+					}
 
 				}
 
@@ -250,6 +257,14 @@ void MineTsumuri::Update(std::weak_ptr<Core> arg_core, std::weak_ptr<Player> arg
 void MineTsumuri::Draw(DrawingByRasterize& arg_rasterize, Raytracing::BlasVector& arg_blasVec)
 {
 
+	float useScale = SCALE;
+	if (m_isMineking) {
+
+		useScale = KING_SCALE;
+
+	}
+
+
 	//スケールをデフォルトの値に近づける。
 	if (m_inShell) {
 
@@ -258,7 +273,7 @@ void MineTsumuri::Draw(DrawingByRasterize& arg_rasterize, Raytracing::BlasVector
 	}
 	else if (m_isActive) {
 
-		m_scale += (SCALE - m_scale) / 5.0f;
+		m_scale += (useScale - m_scale) / 5.0f;
 
 	}
 	else {
@@ -280,7 +295,12 @@ void MineTsumuri::Draw(DrawingByRasterize& arg_rasterize, Raytracing::BlasVector
 
 	//殻のスケール
 	if (m_isActive) {
-		m_shellTransform.scale = { SCALE ,SCALE ,SCALE };
+		const float KING_SHELL_SCALE = 2.0f;
+		m_shellTransform.scale = { SCALE + KING_SHELL_SCALE ,SCALE + KING_SHELL_SCALE ,SCALE + KING_SHELL_SCALE };
+		m_shellTransform.pos -= m_forwardVec * 10.0f;
+
+		//ちょっとX軸に回転させる。
+		m_shellTransform.quaternion = DirectX::XMQuaternionMultiply(m_shellTransform.quaternion, DirectX::XMQuaternionRotationAxis(TransformVec3({ 0,0,1 }, m_shellTransform.quaternion).ConvertXMVECTOR(), 0.1f));
 	}
 	else {
 		m_shellTransform.scale = { 0 ,0 ,0 };
@@ -294,12 +314,24 @@ void MineTsumuri::Draw(DrawingByRasterize& arg_rasterize, Raytracing::BlasVector
 	m_model.m_model.extraBufferArray.back().rootParamType = GRAPHICS_PRAMTYPE_TEX;
 	m_model.Draw(arg_rasterize, arg_blasVec, m_transform);
 
-	outline.m_outline = KazMath::Vec4<float>(0.2f, 0, 0, 1);
-	m_shellModel.m_model.extraBufferArray[4].bufferWrapper->TransData(&outline, sizeof(DessolveOutline));
-	m_shellModel.m_model.extraBufferArray.back() = GBufferMgr::Instance()->m_outlineBuffer;
-	m_shellModel.m_model.extraBufferArray.back().rangeType = GRAPHICS_RANGE_TYPE_UAV_DESC;
-	m_shellModel.m_model.extraBufferArray.back().rootParamType = GRAPHICS_PRAMTYPE_TEX;
-	m_shellModel.Draw(arg_rasterize, arg_blasVec, m_shellTransform);
+	if (m_isMineking) {
+
+		outline.m_outline = KazMath::Vec4<float>(0.2f, 0, 0, 1);
+		m_kingShellModel.m_model.extraBufferArray[4].bufferWrapper->TransData(&outline, sizeof(DessolveOutline));
+		m_kingShellModel.m_model.extraBufferArray.back() = GBufferMgr::Instance()->m_outlineBuffer;
+		m_kingShellModel.m_model.extraBufferArray.back().rangeType = GRAPHICS_RANGE_TYPE_UAV_DESC;
+		m_kingShellModel.m_model.extraBufferArray.back().rootParamType = GRAPHICS_PRAMTYPE_TEX;
+		m_kingShellModel.Draw(arg_rasterize, arg_blasVec, m_shellTransform);
+
+	}
+	else {
+
+		outline.m_outline = KazMath::Vec4<float>(0.2f, 0, 0, 1);
+		m_shellModel.m_model.extraBufferArray[4].bufferWrapper->TransData(&outline, sizeof(DessolveOutline));
+		m_shellModel.m_model.extraBufferArray.back() = GBufferMgr::Instance()->m_outlineBuffer;
+		m_shellModel.m_model.extraBufferArray.back().rangeType = GRAPHICS_RANGE_TYPE_UAV_DESC;
+		m_shellModel.m_model.extraBufferArray.back().rootParamType = GRAPHICS_PRAMTYPE_TEX;
+		m_shellModel.Draw(arg_rasterize, arg_blasVec, m_shellTransform);
 
 	/*オカモトゾーン*/
 	m_gardHpBoxTransform.pos = m_transform.pos;
@@ -340,13 +372,17 @@ void MineTsumuri::Draw(DrawingByRasterize& arg_rasterize, Raytracing::BlasVector
 	/*オカモトゾーン*/
 }
 
+}
+
 void MineTsumuri::Damage(std::weak_ptr<Mineral> arg_mineral, int arg_damage)
 {
 
-	m_isAttackedMineral = true;
-	if (m_attackedMineral.expired()) {
-		m_attackedMineral = arg_mineral;
-	}
+	if (!m_isMineking) {
+
+		m_isAttackedMineral = true;
+		if (m_attackedMineral.expired()) {
+			m_attackedMineral = arg_mineral;
+		}
 
 	/*オカモトゾーン*/
 	isDrawHpBox = true;
@@ -355,8 +391,13 @@ void MineTsumuri::Damage(std::weak_ptr<Mineral> arg_mineral, int arg_damage)
 
 	//殻があったら
 	if (m_isShell) {
-		gardHpBoxScaleStart = static_cast <float>(m_shellHP);
-		gardHpBoxScaleEnd = static_cast<float> (m_shellHP - arg_damage);
+
+		if (m_isMineking) {
+			m_shellHP = std::clamp(m_shellHP - arg_damage, 0.0f, MINEKING_SHELL_HP);
+		}
+		else {
+			m_shellHP = std::clamp(m_shellHP - arg_damage, 0.0f, SHELL_HP);
+		}
 		m_shellHP = std::clamp(m_shellHP - arg_damage, 0.0f, SHELL_HP);
 		if (m_shellHP <= 0.0f) {
 
@@ -380,8 +421,14 @@ void MineTsumuri::Damage(std::weak_ptr<Mineral> arg_mineral, int arg_damage)
 	}
 
 	else {
-		hpBoxScaleStart = static_cast <float>(m_hp);
-		hpBoxScaleEnd = static_cast<float> (m_hp - arg_damage);
+		if (m_isMineking) {
+			m_hp = std::clamp(m_hp - arg_damage, 0, MINEKING_HP);
+		}
+		else {
+			m_hp = std::clamp(m_hp - arg_damage, 0, HP);
+		}
+	}
+
 		m_hp = std::clamp(m_hp - arg_damage, 0, HP);
 	}
 }
@@ -716,10 +763,9 @@ void MineTsumuri::CheckHitPlayer(std::weak_ptr<Player> arg_player)
 			m_hpBoxDrawTimer = HP_BOX_DRAW_TIME_MAX;
 			/*オカモトゾーン*/
 
-			//殻がついていたら。
 			if (m_isShell) {
 
-				if (!m_inShell) {
+				if (!m_inShell && !m_isMineking) {
 
 					//殻にこもる。
 					m_inShell = true;
@@ -736,7 +782,12 @@ void MineTsumuri::CheckHitPlayer(std::weak_ptr<Player> arg_player)
 				dir.Normalize();
 
 				//HPを減らす。
-				m_hp = std::clamp(m_hp - 3, 0, HP);
+				if (m_isMineking) {
+					m_hp = std::clamp(m_hp - 3, 0, MINEKING_HP);
+				}
+				else {
+					m_hp = std::clamp(m_hp - 3, 0, HP);
+				}
 
 				//攻撃の反動を追加。
 				m_attackedReactionVec = dir / 5.0f;
@@ -981,7 +1032,13 @@ void MineTsumuri::UpdateShell() {
 		if (0.01f < m_shellBreakVel.Length()) {
 
 			m_shellTransform.pos += m_shellBreakVel;
-			m_shellBreakVel -= m_shellBreakVel / 10.0f;
+
+			if (m_isMineking) {
+				m_shellBreakVel -= m_shellBreakVel / 2.0f;
+			}
+			else {
+				m_shellBreakVel -= m_shellBreakVel / 10.0f;
+			}
 
 		}
 		else {
@@ -994,7 +1051,12 @@ void MineTsumuri::UpdateShell() {
 		const float UNDER_Y = -100.0f;
 		if (UNDER_Y < m_shellTransform.pos.y) {
 
-			m_shellGravity += GRAVITY;
+			if (m_isMineking) {
+				m_shellGravity += GRAVITY * 2.0f;
+			}
+			else {
+				m_shellGravity += GRAVITY;
+			}
 			m_shellTransform.pos.y -= m_shellGravity;
 
 		}
@@ -1006,7 +1068,12 @@ void MineTsumuri::UpdateShell() {
 		}
 
 		//回転をかける。
-		m_shellBreakRotation += 0.03f;
+		if (m_isMineking) {
+			//m_shellBreakRotation += 0.01f;
+		}
+		else {
+			m_shellBreakRotation += 0.03f;
+		}
 		m_shellTransform.quaternion = DirectX::XMQuaternionMultiply(m_shellTransform.quaternion, DirectX::XMQuaternionRotationAxis(m_shellBreakRightVec.ConvertXMVECTOR(), m_shellBreakRotation));
 
 
@@ -1038,4 +1105,11 @@ void MineTsumuri::UpdateShell() {
 	m_shellPosY += (SHELL_POS_Y - m_shellPosY) / 5.0f;
 	m_shellTransform.pos += KazMath::Vec3<float>(0, 1, 0) * m_shellPosY;
 
+}
+
+KazMath::Vec3<float> MineTsumuri::TransformVec3(KazMath::Vec3<float> arg_value, DirectX::XMVECTOR arg_quaternion)
+{
+	auto val = DirectX::XMVectorSet(arg_value.x, arg_value.y, arg_value.z, 1.0f);
+	val = DirectX::XMVector3Rotate(val, arg_quaternion);
+	return KazMath::Vec3<float>(val.m128_f32[0], val.m128_f32[1], val.m128_f32[2]);
 }

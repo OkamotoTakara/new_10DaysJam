@@ -31,7 +31,7 @@ private:
 	}m_mode;
 
 	//コアを攻撃する変数
-	const float CORE_ATTACK_RANGE = 40.0f;
+	const float CORE_ATTACK_RANGE = 60.0f;
 	KazMath::Vec3<float> m_coreAttackReactionVec;
 	float m_coreAttackMoveSpeed;
 	int m_coreAttackDelayTimer;
@@ -51,7 +51,7 @@ private:
 
 	//コアに向かっていく変数
 	const float CORE_MOVE_SPEED = 1.0f;	//コアに向かって行く初速度
-	const float CORE_MOVE_DELAY = 5.0f;
+	const float CORE_MOVE_DELAY = 10.0f;
 	float m_coreMoveDelayTimer;
 	float m_coreMoveSpeed;
 	bool m_isAttackCore;
@@ -75,6 +75,9 @@ private:
 	//壁攻撃
 	int m_wallIndex;
 	bool m_isAttackWall;
+
+	//出現地点をランダム化
+	const float RANDOM_SPAWN_RANGE = 30.0f;
 
 
 public:

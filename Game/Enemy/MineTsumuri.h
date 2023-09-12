@@ -12,6 +12,7 @@ private:
 	//基本情報
 	DrawCallSet m_model;
 	DrawCallSet m_shellModel;
+	DrawCallSet m_kingShellModel;
 	KazMath::Transform3D m_oldTransform;
 	KazMath::Transform3D m_transform;
 	KazMath::Transform3D m_shellTransform;
@@ -22,7 +23,10 @@ private:
 	const float GRAVITY = 0.1f;
 	int m_hp;
 	const int HP = 9;
+	const int MINEKING_HP = 20;
 	const float SCALE = 3.0f;
+	const float KING_SCALE = 10.0f;
+	bool m_isMineking;
 
 	//状態ごとの変数
 	enum Mode {
@@ -33,7 +37,7 @@ private:
 	}m_mode;
 
 	//コアを攻撃する変数
-	const float CORE_ATTACK_RANGE = 40.0f;
+	const float CORE_ATTACK_RANGE = 80.0f;
 	KazMath::Vec3<float> m_coreAttackReactionVec;
 	float m_coreAttackMoveSpeed;
 	int m_coreAttackDelayTimer;
@@ -53,7 +57,7 @@ private:
 
 	//コアに向かっていく変数
 	const float CORE_MOVE_SPEED = 1.0f;	//コアに向かって行く初速度
-	const float CORE_MOVE_DELAY = 60.0f;
+	const float CORE_MOVE_DELAY = 10.0f;
 	float m_coreMoveDelayTimer;
 	float m_coreMoveSpeed;
 	bool m_isAttackCore;
@@ -88,10 +92,15 @@ private:
 	float m_shellGravity;
 	float m_shellHP;
 	const float SHELL_HP = 10.0f;
+	const float MINEKING_SHELL_HP = 50.0f;
 	KazMath::Vec3<float> m_shellBreakVel;
 	const float SHELL_BRWAK_VEL = 5.0f;
 	KazMath::Vec3<float> m_shellBreakRightVec;
 	float m_shellBreakRotation;
+
+
+	//出現地点をランダム化
+	const float RANDOM_SPAWN_RANGE = 30.0f;
 
 
 public:
@@ -103,6 +112,7 @@ public:
 	KazMath::Transform3D m_gardHpBoxTransform;
 	int m_hpBoxDrawTimer;
 	const int HP_BOX_DRAW_TIME_MAX = 60;
+	const float SCALE_MAG = 10.0f;
 	bool isDrawHpBox;
 	/*オカモトゾーン*/
 
@@ -110,7 +120,7 @@ public:
 
 	void Init();
 
-	void Generate(std::vector<KazMath::Vec3<float>> arg_route);
+	void Generate(std::vector<KazMath::Vec3<float>> arg_route, bool arg_isKing);
 
 	void Update(std::weak_ptr<Core> arg_core, std::weak_ptr<Player> arg_player);
 
@@ -138,5 +148,7 @@ private:
 	void Rotation(std::weak_ptr<Core> arg_core, std::weak_ptr<Player> arg_player);
 	void CheckHit(std::weak_ptr<Player> arg_player);
 	void UpdateShell();
+
+	KazMath::Vec3<float> TransformVec3(KazMath::Vec3<float> arg_value, DirectX::XMVECTOR arg_quaternion);
 
 };

@@ -11,6 +11,7 @@ public:
 	enum class ENEMY_ID {
 		MINEKUJI,
 		MINETSUMURI,
+		MINEKING,
 	};
 
 	struct EnemyWaveInfo {
@@ -25,15 +26,16 @@ private:
 	int m_dayTime;		//日中のフレーム数 0からスタート
 	int m_nighTime;		//夜のフレーム数 0からスタート
 	int m_nowTime;		//現在の経過フレーム
-	int m_treeCount;
-	int m_rockCount;
+	std::vector<int> m_tree;
+	std::vector<int> m_rock;
+	std::vector<int> m_mineralRock;
 	bool m_isNight;
 	bool m_isActiveWave;
 	std::vector<EnemyWaveInfo> m_enemyWaveInfo;	//敵を湧かせるフレーム数
 
 public:
 
-	Wave(int a, int arg_nightTime, int arg_treeCount, int arg_rockCount, std::vector<EnemyWaveInfo> arg_enemyWaveInfo);
+	Wave(int arg_dayTime, int arg_nightTime, std::vector<int> arg_tree, std::vector<int> arg_rock, std::vector<int> arg_mineralRock, std::vector<EnemyWaveInfo> arg_enemyWaveInfo);
 
 	void Update(std::weak_ptr<EnemyMgr> arg_enemyMgr);
 

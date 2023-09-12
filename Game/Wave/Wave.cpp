@@ -5,13 +5,14 @@
 #include "../PointLightMgr.h"
 #include "../Game/Rock/RockMgr.h"
 
-Wave::Wave(int arg_dayTime, int arg_nightTime, int arg_treeCount, int arg_rockCount, std::vector<EnemyWaveInfo> arg_enemyWaveInfo)
+Wave::Wave(int arg_dayTime, int arg_nightTime, std::vector<int> arg_tree, std::vector<int> arg_rock, std::vector<int> arg_mineralRock, std::vector<EnemyWaveInfo> arg_enemyWaveInfo)
 {
 
 	m_dayTime = arg_dayTime;
 	m_nighTime = arg_nightTime;
-	m_treeCount = arg_treeCount;
-	m_rockCount = arg_rockCount;
+	m_tree = arg_tree;
+	m_rock = arg_rock;
+	m_mineralRock = arg_mineralRock;
 	m_enemyWaveInfo = arg_enemyWaveInfo;
 	m_nowTime = 0;
 	m_isNight = false;
@@ -39,7 +40,12 @@ void Wave::Update(std::weak_ptr<EnemyMgr> arg_enemyMgr)
 			}
 			else if (enemy.m_enemyID == ENEMY_ID::MINETSUMURI) {
 
-				arg_enemyMgr.lock()->GenerateMinetsumuri(enemy.m_routeID);
+				arg_enemyMgr.lock()->GenerateMinetsumuri(enemy.m_routeID, false);
+
+			}
+			else if (enemy.m_enemyID == ENEMY_ID::MINEKING) {
+
+				arg_enemyMgr.lock()->GenerateMinetsumuri(enemy.m_routeID, true);
 
 			}
 
@@ -96,21 +102,21 @@ void Wave::Active()
 	m_isNight = false;
 	m_nowTime = 0;
 
+
 	//木と岩をランダムで配置。
-	for (int index = 0; index < m_treeCount; ++index) {
+	for (auto& index : m_tree) {
 
-		//生成位置を決定して生成。
-		int generatePos = KazMath::Rand(0, WallAndTreeGeneratePos::Instance()->m_treeCount - 1);
-
-		DestructibleObjectMgr::Instance()->GenerateTree(WallAndTreeGeneratePos::Instance()->m_treePos[generatePos]);
+		DestructibleObjectMgr::Instance()->GenerateTree(WallAndTreeGeneratePos::Instance()->m_treePos[index - 1]);
 
 	}
-	for (int index = 0; index < m_rockCount; ++index) {
+	for (auto& index : m_rock) {
 
-		//生成位置を決定して生成。
-		int generatePos = KazMath::Rand(0, WallAndTreeGeneratePos::Instance()->m_rockCount - 1);
+		RockMgr::Instance()->Generate(WallAndTreeGeneratePos::Instance()->m_rockPos[index - 1], {}, false, 2);
 
-		RockMgr::Instance()->Generate(WallAndTreeGeneratePos::Instance()->m_rockPos[generatePos], {}, 2);
+	}
+	for (auto& index : m_mineralRock) {
+
+		RockMgr::Instance()->Generate(WallAndTreeGeneratePos::Instance()->m_rockPos[index - 1], {}, true, 2);
 
 	}
 

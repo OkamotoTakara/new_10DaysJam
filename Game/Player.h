@@ -72,7 +72,7 @@ private:
 
 	//ミネラルを集合させる範囲
 	const float MINERAL_AFFECT_RANGE = 60.0f;
-	const float MINERAL_AFFECT_STRONG_RANGE = 10.0f;
+	const float MINERAL_AFFECT_STRONG_RANGE = 20.0f;
 
 	//HP関連
 	float m_hp;
