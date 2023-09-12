@@ -22,6 +22,7 @@
 #include"../Game/WallAndTreeGeneratePos.h"
 #include"../Game/Wave/WaveMgr.h"
 #include"../Game/TitleFlag.h"
+#include"../Game/Tutorial.h"
 
 GameScene::GameScene()
 {
@@ -120,6 +121,7 @@ void GameScene::Init()
 
 	TitleFlag::Instance()->m_isTitle = true;
 
+	Tutorial::Instance()->Init();
 
 }
 
@@ -255,6 +257,8 @@ void GameScene::Update()
 
 	}
 
+	Tutorial::Instance()->Update();
+
 }
 
 void GameScene::Draw(DrawingByRasterize& arg_rasterize, Raytracing::BlasVector& arg_blasVec)
@@ -359,6 +363,9 @@ void GameScene::Draw(DrawingByRasterize& arg_rasterize, Raytracing::BlasVector& 
 		m_titleBackGroundUI.Draw(arg_rasterize);
 
 	}
+
+	//チュートリアルを描画。
+	Tutorial::Instance()->Draw(arg_rasterize, arg_blasVec);
 
 }
 
