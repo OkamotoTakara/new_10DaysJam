@@ -66,7 +66,7 @@ public:
 
 	//Y軸回転量
 	float m_rotateY;
-
+	float m_initRotateY;
 
 	//サイン波に必要な変数
 	float m_sineWaveTimer;
