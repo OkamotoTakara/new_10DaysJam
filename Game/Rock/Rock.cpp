@@ -136,7 +136,7 @@ void Rock::Update(std::weak_ptr<Player> arg_player, std::vector<std::pair<KazMat
 						ShakeMgr::Instance()->m_shakeAmount = 2.0f;
 						break;
 					case ROCK_ID::BIG:
-						id = MEDIUM;
+						id = SMALL;
 						//強力なシェイクをかける。
 						ShakeMgr::Instance()->m_shakeAmount = 3.0f;
 						break;
@@ -219,7 +219,7 @@ void Rock::Update(std::weak_ptr<Player> arg_player, std::vector<std::pair<KazMat
 				ShakeMgr::Instance()->m_shakeAmount = 2.0f;
 				break;
 			case ROCK_ID::BIG:
-				id = MEDIUM;
+				id = SMALL;
 				//強力なシェイクをかける。
 				ShakeMgr::Instance()->m_shakeAmount = 3.0f;
 				break;

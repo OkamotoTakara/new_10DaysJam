@@ -798,7 +798,7 @@ void Mineral::UpdateAttack(std::weak_ptr<Player> arg_player)
 				//倒した瞬間だったら。
 				if (0 < rockHP && m_attackTargetRock.lock()->GetHP() <= 0) {
 
-					if (!m_attackTargetRock.lock()->GetIsMineralRock()) {
+					if (!m_attackTargetRock.lock()->GetIsMineralRock() && m_attackTargetRock.lock()->IsSmall()) {
 
 						//一個でかいミネラルにする。
 						switch (m_mineralID)

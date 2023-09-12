@@ -62,6 +62,7 @@ public:
 
 	bool GetIsAlive() { return m_isAlive; }
 	bool GetIsMineralRock() { return m_isMineralRock; }
+	bool IsSmall() { return m_rockID == SMALL; }
 	ROCK_ID GetRockID() { return m_rockID; }
 	KazMath::Vec3<float> GetPos() { return m_transform.pos; }
 	KazMath::Vec3<float> GetScale() { return m_transform.scale; }

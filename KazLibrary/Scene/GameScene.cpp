@@ -77,11 +77,11 @@ void GameScene::Init()
 
 	m_player->Init();
 	MineralMgr::Instance()->Init();
-	MineralMgr::Instance()->DebugGenerate();
+	//MineralMgr::Instance()->DebugGenerate();
 	m_goldCore->Init();
 
 	m_enemyMgr->Init();
-	m_enemyMgr->DebugGenerate();
+	//m_enemyMgr->DebugGenerate();
 
 	RockMgr::Instance()->Init();
 	//m_rockMgr->DebugGenerate();
