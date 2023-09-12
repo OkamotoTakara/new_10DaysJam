@@ -18,7 +18,9 @@ Wave::Wave(int arg_dayTime, int arg_nightTime, std::vector<int> arg_tree, std::v
 	m_isNight = false;
 	m_isActiveWave = false;
 
-
+	//SE
+	night_start = SoundManager::Instance()->SoundLoadWave("Resource/Sound/night_start.wav");
+	night_start.volume = 0.1f;
 }
 
 void Wave::Update(std::weak_ptr<EnemyMgr> arg_enemyMgr)
@@ -75,7 +77,7 @@ void Wave::Update(std::weak_ptr<EnemyMgr> arg_enemyMgr)
 			//–éŽžŠÔ‚Ö
 			m_nowTime = 0;
 			m_isNight = true;
-
+			SoundManager::Instance()->SoundPlayerWave(night_start, 0);
 		}
 
 	}

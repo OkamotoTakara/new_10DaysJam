@@ -28,6 +28,11 @@ Player::Player()
 	m_dadanUI[2].Load("Resource/UI/Player/UI_HP6.png");
 	m_dadanBackGroundUI.Load("Resource/UI/Player/UI_HP7.png");
 
+	//SE
+	slap_se = SoundManager::Instance()->SoundLoadWave("Resource/Sound/slap.wav");
+	slap_se.volume = 0.1f;
+	slap_strong_se = SoundManager::Instance()->SoundLoadWave("Resource/Sound/slap_strong.wav");
+	slap_strong_se.volume = 0.2f;
 }
 
 void Player::Init()
@@ -219,7 +224,14 @@ void Player::Update()
 
 		//タイマーが上限に達したら通常状態に戻す。
 		if (daipanTimer <= m_daipanTimer) {
-
+			if (!m_isDaipanStrong)
+			{
+				SoundManager::Instance()->SoundPlayerWave(slap_se, 0);
+			}
+			else
+			{
+				SoundManager::Instance()->SoundPlayerWave(slap_strong_se, 0);
+			}
 			m_daipanStatus = Player::RETURN;
 
 			//強大パンだったらそれ用のシェイクにする。

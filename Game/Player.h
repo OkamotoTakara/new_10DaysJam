@@ -1,10 +1,13 @@
 #pragma once
 #include "DrawCallSet.h"
 #include "DrawCallUISet.h"
+#include "../KazLibrary/Sound/SoundManager.h"
 
 class Player {
 
 private:
+	SoundData slap_se;
+	SoundData slap_strong_se;
 
 	//プレイヤー描画関連
 	DrawCallSet m_model;

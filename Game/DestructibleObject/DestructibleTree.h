@@ -1,9 +1,11 @@
 #pragma once
 #include "../Game/DrawCallSet.h"
+#include "../KazLibrary/Sound/SoundManager.h"
 
 class DestructibleTree {
 
 private:
+	SoundData break_se;
 
 	DrawCallSet m_model;
 	KazMath::Transform3D m_transform;

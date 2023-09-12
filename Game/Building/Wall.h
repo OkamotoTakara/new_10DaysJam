@@ -1,12 +1,15 @@
 #pragma once
 #include "../Game/DrawCallSet.h"
 #include "../Game/Collision/MeshCollision.h"
+#include "../KazLibrary/Sound/SoundManager.h"
 
 class Player;
 
 class Wall {
 
 public:
+	SoundData wall_drop;
+	SoundData wall_build;
 
 	//Šî–{î•ñ
 	std::array<DrawCallSet, 3> m_model;
