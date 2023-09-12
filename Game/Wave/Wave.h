@@ -11,6 +11,7 @@ public:
 	enum class ENEMY_ID {
 		MINEKUJI,
 		MINETSUMURI,
+		MINEKING,
 	};
 
 	struct EnemyWaveInfo {

@@ -40,7 +40,12 @@ void Wave::Update(std::weak_ptr<EnemyMgr> arg_enemyMgr)
 			}
 			else if (enemy.m_enemyID == ENEMY_ID::MINETSUMURI) {
 
-				arg_enemyMgr.lock()->GenerateMinetsumuri(enemy.m_routeID);
+				arg_enemyMgr.lock()->GenerateMinetsumuri(enemy.m_routeID, false);
+
+			}
+			else if (enemy.m_enemyID == ENEMY_ID::MINEKING) {
+
+				arg_enemyMgr.lock()->GenerateMinetsumuri(enemy.m_routeID, true);
 
 			}
 

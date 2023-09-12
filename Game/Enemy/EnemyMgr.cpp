@@ -51,14 +51,14 @@ void EnemyMgr::GenerateMinekuji(EnemyRoute::ROUTE_ID arg_routeID)
 
 }
 
-void EnemyMgr::GenerateMinetsumuri(EnemyRoute::ROUTE_ID arg_routeID)
+void EnemyMgr::GenerateMinetsumuri(EnemyRoute::ROUTE_ID arg_routeID, bool arg_isKing)
 {
 
 	for (auto& index : m_minetsumuri) {
 
 		if (index->GetIsActive()) continue;
 
-		index->Generate(EnemyRoute::Instance()->GetRoute(arg_routeID));
+		index->Generate(EnemyRoute::Instance()->GetRoute(arg_routeID), arg_isKing);
 
 		break;
 
