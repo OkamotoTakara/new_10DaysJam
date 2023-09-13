@@ -50,6 +50,8 @@ void Player::Init()
 	m_daipanReturnTimer = 0;
 	m_daipanStrongTimer = 0.0f;
 	m_daipanShakePos = {};
+	m_transform.pos.x = 0.0f;
+	m_transform.pos.z = 0.0f;
 	m_transform.pos.y = DEFAULT_Y;
 	m_daipanPos = m_transform.pos;
 	m_mineralCenterPos = m_transform.pos;
@@ -89,20 +91,26 @@ void Player::Update()
 
 		//プレイヤーを動かす。
 		const float MOVE_SPEED = 1.0f;
-		m_transform.pos.z += (KeyBoradInputManager::Instance()->InputState(DIK_W)) * MOVE_SPEED;
-		m_transform.pos.z -= (KeyBoradInputManager::Instance()->InputState(DIK_S)) * MOVE_SPEED;
-		m_transform.pos.x += (KeyBoradInputManager::Instance()->InputState(DIK_D)) * MOVE_SPEED;
-		m_transform.pos.x -= (KeyBoradInputManager::Instance()->InputState(DIK_A)) * MOVE_SPEED;
+		float moveSpeed = MOVE_SPEED;
+		//台パンチャージ中は若干移動速度を上げる。
+		if (m_daipanStatus == CHARGE) {
+			const float DAIPAN_SPEED = 0.3f;
+			moveSpeed += DAIPAN_SPEED;
+		}
+		m_transform.pos.z += (KeyBoradInputManager::Instance()->InputState(DIK_W)) * moveSpeed;
+		m_transform.pos.z -= (KeyBoradInputManager::Instance()->InputState(DIK_S)) * moveSpeed;
+		m_transform.pos.x += (KeyBoradInputManager::Instance()->InputState(DIK_D)) * moveSpeed;
+		m_transform.pos.x -= (KeyBoradInputManager::Instance()->InputState(DIK_A)) * moveSpeed;
 
 		//コントローラーも対応。
 		float inputStickX = ControllerInputManager::Instance()->GetJoyStickLXNum() / 32767.0f;
 		float inputStickY = ControllerInputManager::Instance()->GetJoyStickLYNum() / 32767.0f;
-		const float STICK_DEADLINE = 0.3f;
+		const float STICK_DEADLINE = 0.1f;
 		if (STICK_DEADLINE <= fabs(inputStickX)) {
-			m_transform.pos.x += inputStickX * MOVE_SPEED;
+			m_transform.pos.x += inputStickX * moveSpeed;
 		}
 		if (STICK_DEADLINE <= fabs(inputStickY)) {
-			m_transform.pos.z += inputStickY * MOVE_SPEED;
+			m_transform.pos.z += inputStickY * moveSpeed;
 		}
 
 		//隊列を操作する。
@@ -502,7 +510,28 @@ void Player::Draw(DrawingByRasterize& arg_rasterize, Raytracing::BlasVector& arg
 		m_dadanUI[dadanIndex].Draw(arg_rasterize);
 		m_dadanBackGroundUI.Draw(arg_rasterize);
 
-	}/*
+		m_hpFrameUI.m_color.color.a += static_cast<int>((255.0f - m_hpFrameUI.m_color.color.a) / 15.0f);
+		m_hpUI.m_color.color.a += static_cast<int>((255.0f - m_hpUI.m_color.color.a) / 15.0f);;
+		m_hpBackGroundUI.m_color.color.a += static_cast<int>((255.0f - m_hpBackGroundUI.m_color.color.a) / 15.0f);;
+		m_dadanUI[0].m_color.color.a += static_cast<int>((255.0f - m_dadanUI[0].m_color.color.a) / 15.0f);;
+		m_dadanUI[1].m_color.color.a += static_cast<int>((255.0f - m_dadanUI[1].m_color.color.a) / 15.0f);;
+		m_dadanUI[2].m_color.color.a += static_cast<int>((255.0f - m_dadanUI[2].m_color.color.a) / 15.0f);;
+		m_dadanBackGroundUI.m_color.color.a += static_cast<int>((255.0f - m_dadanBackGroundUI.m_color.color.a) / 15.0f);;
+
+	}
+	else {
+
+		m_hpFrameUI.m_color.color.a = 0;
+		m_hpUI.m_color.color.a = 0;
+		m_hpBackGroundUI.m_color.color.a = 0;
+		m_dadanUI[0].m_color.color.a = 0;
+		m_dadanUI[1].m_color.color.a = 0;
+		m_dadanUI[2].m_color.color.a = 0;
+		m_dadanBackGroundUI.m_color.color.a = 0;
+
+	}
+	
+	/*
 
 	ImGui::Begin("UI");
 

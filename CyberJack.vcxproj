@@ -157,6 +157,7 @@
     <ClCompile Include="Game\Stage\ChildOfEdenStage.cpp" />
     <ClCompile Include="Game\Tool\SplineRail.cpp" />
     <ClCompile Include="Game\Tool\ModelTool.cpp" />
+    <ClCompile Include="Game\Transition.cpp" />
     <ClCompile Include="Game\Tutorial.cpp" />
     <ClCompile Include="Game\Tutorial\DirectX12MoviePlayer.cpp" />
     <ClCompile Include="Game\Tutorial\DirectXMoive.cpp" />
@@ -320,6 +321,7 @@
     <ClInclude Include="Game\TitleFlag.h" />
     <ClInclude Include="Game\Tool\SplineRail.h" />
     <ClInclude Include="Game\Tool\ModelTool.h" />
+    <ClInclude Include="Game\Transition.h" />
     <ClInclude Include="Game\Tutorial.h" />
     <ClInclude Include="Game\Tutorial\DirectX12MoviePlayer.h" />
     <ClInclude Include="Game\Tutorial\DirectXMoive.h" />
@@ -456,7 +458,11 @@
     <None Include="Resource\ShaderFiles\Raytracing\RaytracingNoiseHeader.hlsli" />
   </ItemGroup>
   <ItemGroup>
+    <ResourceCompile Include="icon.rc" />
     <ResourceCompile Include="KazLib.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="icon.ico" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

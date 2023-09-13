@@ -50,6 +50,10 @@ private:
 	const float ADD_SELECT_TITLE_SINE = 0.2f;
 	const float SELECT_TITLE_SINE_SCALE = 15.0f;
 
+	//タイトルでロゴとかのアルファを消すまでのタイマー
+	float m_titleLogoDeleteTimer;
+	const float TITLELOGO_DELETE_TIMER = 10.0f;
+
 	//UIのスケール
 	KazMath::Vec2<float> UI_DEF_START_SCALE = KazMath::Vec2<float>(150.0f, 50.0f);
 	KazMath::Vec2<float> UI_DEF_QUIT_SCALE = KazMath::Vec2<float>(125.0f, 50.0f);

@@ -132,9 +132,15 @@ void MineTsumuri::Update(std::weak_ptr<Core> arg_core, std::weak_ptr<Player> arg
 			//コアの近くに居なかったらコアの方向に向かって移動させる。
 			if (CORE_ATTACK_RANGE < coreDistance) {
 
+				//コアに向かって動く遅延。
+				float coreMoveDelay = CORE_MOVE_DELAY;
+				if (m_isMineking) {
+					coreMoveDelay = CORE_MOVE_DELAY_MINEING;
+				}
+
 				//一定時間置きに初速度を与えて動かす。
-				m_coreMoveDelayTimer = std::clamp(m_coreMoveDelayTimer + 1.0f, 0.0f, CORE_MOVE_DELAY);
-				if (CORE_MOVE_DELAY <= m_coreMoveDelayTimer) {
+				m_coreMoveDelayTimer = std::clamp(m_coreMoveDelayTimer + 1.0f, 0.0f, coreMoveDelay);
+				if (coreMoveDelay <= m_coreMoveDelayTimer) {
 
 					m_coreMoveSpeed = CORE_MOVE_SPEED;
 					m_coreMoveDelayTimer = 0.0f;
@@ -333,44 +339,44 @@ void MineTsumuri::Draw(DrawingByRasterize& arg_rasterize, Raytracing::BlasVector
 		m_shellModel.m_model.extraBufferArray.back().rootParamType = GRAPHICS_PRAMTYPE_TEX;
 		m_shellModel.Draw(arg_rasterize, arg_blasVec, m_shellTransform);
 
-	/*オカモトゾーン*/
-	m_gardHpBoxTransform.pos = m_transform.pos;
-	m_gardHpBoxTransform.pos.y += 35.0f;
-	m_gardHpBoxTransform.rotation.y = 45.0f;
+		/*オカモトゾーン*/
+		m_gardHpBoxTransform.pos = m_transform.pos;
+		m_gardHpBoxTransform.pos.y += 35.0f;
+		m_gardHpBoxTransform.rotation.y = 45.0f;
 
-	m_hpBoxTransform.pos = m_transform.pos;
-	m_hpBoxTransform.pos.y += 30.0f;
-	m_hpBoxTransform.rotation.y = 45.0f;
+		m_hpBoxTransform.pos = m_transform.pos;
+		m_hpBoxTransform.pos.y += 30.0f;
+		m_hpBoxTransform.rotation.y = 45.0f;
 
-	float shell_base_hp = (m_shellHP / SHELL_HP) * SCALE_MAG;
-	float mine_base_hp = (static_cast<float>(m_hp) / HP) * SCALE_MAG;
-	m_gardHpBoxTransform.scale.x += (shell_base_hp - m_gardHpBoxTransform.scale.x) / 5.0f;
-	if (fabs(mine_base_hp - m_hpBoxTransform.scale.x) > 0)
-	{
-		m_hpBoxTransform.scale.x += (mine_base_hp - m_hpBoxTransform.scale.x) / 5.0f;
-	}
-
-	if (m_isActive && isDrawHpBox)
-	{
-		if (m_hpBoxDrawTimer > 0)
+		float shell_base_hp = (m_shellHP / SHELL_HP) * SCALE_MAG;
+		float mine_base_hp = (static_cast<float>(m_hp) / HP) * SCALE_MAG;
+		m_gardHpBoxTransform.scale.x += (shell_base_hp - m_gardHpBoxTransform.scale.x) / 5.0f;
+		if (fabs(mine_base_hp - m_hpBoxTransform.scale.x) > 0)
 		{
-			if (m_shellHP >= 0.05f)
-			{
-				m_gardHpBoxModel.Draw(arg_rasterize, arg_blasVec, m_gardHpBoxTransform, 0, false);
-			}
-			if (m_hp >= 0.05f)
-			{
-				m_hpBoxModel.Draw(arg_rasterize, arg_blasVec, m_hpBoxTransform, 0, false);
-			}
-			m_hpBoxDrawTimer--;
+			m_hpBoxTransform.scale.x += (mine_base_hp - m_hpBoxTransform.scale.x) / 5.0f;
 		}
-		else
+
+		if (m_isActive && isDrawHpBox)
 		{
-			isDrawHpBox = false;
+			if (m_hpBoxDrawTimer > 0)
+			{
+				if (m_shellHP >= 0.05f)
+				{
+					m_gardHpBoxModel.Draw(arg_rasterize, arg_blasVec, m_gardHpBoxTransform, 0, false);
+				}
+				if (m_hp >= 0.05f)
+				{
+					m_hpBoxModel.Draw(arg_rasterize, arg_blasVec, m_hpBoxTransform, 0, false);
+				}
+				m_hpBoxDrawTimer--;
+			}
+			else
+			{
+				isDrawHpBox = false;
+			}
 		}
+		/*オカモトゾーン*/
 	}
-	/*オカモトゾーン*/
-}
 
 }
 
@@ -383,6 +389,7 @@ void MineTsumuri::Damage(std::weak_ptr<Mineral> arg_mineral, int arg_damage)
 		if (m_attackedMineral.expired()) {
 			m_attackedMineral = arg_mineral;
 		}
+	}
 
 	/*オカモトゾーン*/
 	isDrawHpBox = true;
@@ -398,7 +405,6 @@ void MineTsumuri::Damage(std::weak_ptr<Mineral> arg_mineral, int arg_damage)
 		else {
 			m_shellHP = std::clamp(m_shellHP - arg_damage, 0.0f, SHELL_HP);
 		}
-		m_shellHP = std::clamp(m_shellHP - arg_damage, 0.0f, SHELL_HP);
 		if (m_shellHP <= 0.0f) {
 
 			//殻が壊された瞬間だったら。
@@ -429,8 +435,6 @@ void MineTsumuri::Damage(std::weak_ptr<Mineral> arg_mineral, int arg_damage)
 		}
 	}
 
-		m_hp = std::clamp(m_hp - arg_damage, 0, HP);
-	}
 }
 
 void MineTsumuri::AttackCore(std::weak_ptr<Core> arg_core)
@@ -467,7 +471,12 @@ void MineTsumuri::AttackCore(std::weak_ptr<Core> arg_core)
 			m_coreAttackReactionVec = reactionDir * (m_coreAttackMoveSpeed * 3.0f);
 
 			//コアにダメージを与える。
-			arg_core.lock()->Damage(1);
+			if (m_isMineking) {
+				arg_core.lock()->Damage(ATTACK_POWER_KING);
+			}
+			else {
+				arg_core.lock()->Damage(ATTACK_POWER);
+			}
 
 			ShakeMgr::Instance()->m_shakeAmount = 1.0f;
 
@@ -556,7 +565,12 @@ void MineTsumuri::AttackMineral()
 			m_coreAttackReactionVec = reactionDir * (m_coreAttackMoveSpeed * 1.5f);
 
 			//コアにダメージを与える。
-			m_attackedMineral.lock()->Damage(1);
+			if (m_isMineking) {
+				m_attackedMineral.lock()->Damage(ATTACK_POWER_KING);
+			}
+			else {
+				m_attackedMineral.lock()->Damage(ATTACK_POWER);
+			}
 
 			if (m_attackedMineral.lock()->GetHP() <= 0) {
 				m_attackedMineral.reset();
@@ -649,7 +663,12 @@ void MineTsumuri::AttackPlayer(std::weak_ptr<Player> arg_player)
 			m_coreAttackReactionVec = reactionDir * (m_coreAttackMoveSpeed * 1.5f);
 
 			//コアにダメージを与える。
-			arg_player.lock()->Damage(1);
+			if (m_isMineking) {
+				arg_player.lock()->Damage(ATTACK_POWER_KING);
+			}
+			else {
+				arg_player.lock()->Damage(ATTACK_POWER);
+			}
 
 
 			ShakeMgr::Instance()->m_shakeAmount = 3.0;

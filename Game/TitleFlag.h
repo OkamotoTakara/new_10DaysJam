@@ -9,12 +9,16 @@ public:
 	bool m_isQuit;
 	bool m_isStart;
 
+	//タイトルの描画関連
+	bool m_isDrawTitle;	//タイトルのUIのアルファがついているか。
+
 public:
 
 	void Init() {
 		m_isTitle = true;
 		m_isQuit = false;
 		m_isStart = false;
+		m_isDrawTitle = true;
 	};
 
 };

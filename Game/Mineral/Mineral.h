@@ -35,7 +35,7 @@ private:
 	const float STRONG_DAIPAN_POWER = 2.0f;
 	const float GATHERING_DAIPAN_POWER = 1.0f;	//すでに追従しているときの、反応用の力
 	int m_hp;
-	std::array<int, 3> HP = { 3, 6, 9 };
+	std::array<int, 3> HP = { 5, 15, 45 };
 	std::weak_ptr<Mineral> m_thisMineral;	//自分自身
 
 	//解散するときのベクトル
@@ -47,7 +47,8 @@ private:
 	int m_moveSpan;
 	int m_randomMoveSpan;
 	const int MOVE_SPAN = 1;
-	const float MOVE_SPEED = 2.0f;
+	std::array<const float, 3> MOVE_SPEED = { 2.0f, 1.5f, 0.1f };
+	std::array<const int, 3> ATTACK_DAMAGE = { 1, 3, 9 };
 	KazMath::Vec3<float> m_wallJump;	//壁超えの大ジャンプ
 
 	//ステータス

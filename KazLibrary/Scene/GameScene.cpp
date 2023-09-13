@@ -23,6 +23,8 @@
 #include"../Game/Wave/WaveMgr.h"
 #include"../Game/TitleFlag.h"
 #include"../Game/Tutorial.h"
+#include"../KazLibrary/Easing/easing.h"
+#include"../Game/Transition.h"
 
 GameScene::GameScene()
 {
@@ -58,7 +60,7 @@ GameScene::GameScene()
 	EnemyRoute::Instance()->Setting();
 	WallAndTreeGeneratePos::Instance()->Setting();
 	WaveMgr::Instance()->Setting();
-	WaveMgr::Instance()->GameStart();
+	Transition::Instance()->Setting();
 
 
 	m_ground.Load("Resource/Stage/", "Stage_Ground.gltf");
@@ -86,6 +88,8 @@ GameScene::GameScene()
 
 	NumberFont::Instance()->Load();
 	Tutorial::Instance()->setting();
+
+	Tutorial::Instance()->is_tutorial = false;
 }
 
 GameScene::~GameScene()
@@ -120,7 +124,14 @@ void GameScene::Init()
 	//太陽の方向を昼に設定
 	GBufferMgr::Instance()->m_lightConstData.m_dirLight.m_dir = KazMath::Vec3<float>(0.0f, -0.894f, 0.4472f);
 
-	TitleFlag::Instance()->m_isTitle = true;
+	TitleFlag::Instance()->Init();
+	m_titleLogoDeleteTimer = 0.0f;
+
+	Transition::Instance()->Init();
+
+	m_titleStartUI.m_color.color.a = 255;
+	m_titleQuitUI.m_color.color.a = 255;
+	m_titleBackGroundUI.m_color.color.a = 255;
 
 }
 
@@ -215,7 +226,7 @@ void GameScene::Update()
 			//Startを選択していたら。
 			if (m_selectTitleNum == 0) {
 
-				TitleFlag::Instance()->m_isTitle = false;
+				TitleFlag::Instance()->m_isStart = true;
 
 			}
 			//Quitを選択していたら
@@ -230,33 +241,41 @@ void GameScene::Update()
 
 		m_selectTitleUISine += ADD_SELECT_TITLE_SINE;
 
-
-		//const float MOVE_SPEED = 1.0f;
-		//m_transform.pos.z += (KeyBoradInputManager::Instance()->InputState(DIK_W)) * MOVE_SPEED;
-		//m_transform.pos.z -= (KeyBoradInputManager::Instance()->InputState(DIK_S)) * MOVE_SPEED;
-		//m_transform.pos.x += (KeyBoradInputManager::Instance()->InputState(DIK_D)) * MOVE_SPEED;
-		//m_transform.pos.x -= (KeyBoradInputManager::Instance()->InputState(DIK_A)) * MOVE_SPEED;
-
-		////コントローラーも対応。
-		//float inputStickX = ControllerInputManager::Instance()->GetJoyStickLXNum() / 32767.0f;
-		//float inputStickY = ControllerInputManager::Instance()->GetJoyStickLYNum() / 32767.0f;
-		//const float STICK_DEADLINE = 0.3f;
-		//if (STICK_DEADLINE <= fabs(inputStickX)) {
-		//	m_transform.pos.x += inputStickX * MOVE_SPEED;
-		//}
-		//if (STICK_DEADLINE <= fabs(inputStickY)) {
-		//	m_transform.pos.z += inputStickY * MOVE_SPEED;
-		//}
-
-		////隊列を操作する。
-		//m_mineralCenterPos.z += (KeyBoradInputManager::Instance()->InputState(DIK_UP)) * MINERAL_MOVE_SPEED;
-		//m_mineralCenterPos.z -= (KeyBoradInputManager::Instance()->InputState(DIK_DOWN)) * MINERAL_MOVE_SPEED;
-		//m_mineralCenterPos.x += (KeyBoradInputManager::Instance()->InputState(DIK_RIGHT)) * MINERAL_MOVE_SPEED;
-		//m_mineralCenterPos.x -= (KeyBoradInputManager::Instance()->InputState(DIK_LEFT)) * MINERAL_MOVE_SPEED;
-
 	}
 
 	Tutorial::Instance()->Update();
+
+	//タイトルロゴを消すまでのタイマー
+	if (TitleFlag::Instance()->m_isStart && TitleFlag::Instance()->m_isDrawTitle) {
+
+		m_titleLogoDeleteTimer = std::clamp(m_titleLogoDeleteTimer + 1.0f, 0.0f, TITLELOGO_DELETE_TIMER);
+
+		//イージングをかけてタイマーを減らす。
+		float easingAmount = EasingMaker(In, Sine, m_titleLogoDeleteTimer / TITLELOGO_DELETE_TIMER);
+
+		//アルファを減らす。
+		m_titleStartUI.m_color.color.a = static_cast<int>((1.0f - easingAmount) * 255);
+		m_titleQuitUI.m_color.color.a = static_cast<int>((1.0f - easingAmount) * 255);
+		m_titleBackGroundUI.m_color.color.a = static_cast<int>((1.0f - easingAmount) * 255);
+
+		if (TITLELOGO_DELETE_TIMER <= m_titleLogoDeleteTimer) {
+
+			m_titleLogoDeleteTimer = 0.0f;
+			TitleFlag::Instance()->m_isDrawTitle = false;
+			Transition::Instance()->Activate();
+
+		}
+
+	}
+
+	//タイトルが消えていて、遷移も終わっていたらタイトルを終える。
+	if (!TitleFlag::Instance()->m_isDrawTitle && !Transition::Instance()->GetIsActive()) {
+
+		TitleFlag::Instance()->m_isTitle = false;
+
+	}
+
+	Transition::Instance()->Update();
 
 }
 
@@ -281,38 +300,6 @@ void GameScene::Draw(DrawingByRasterize& arg_rasterize, Raytracing::BlasVector& 
 	DestructibleObjectMgr::Instance()->Draw(arg_rasterize, arg_blasVec);
 	BuildingMaterialMgr::Instance()->Draw(arg_rasterize, arg_blasVec);
 	BuildingMgr::Instance()->Draw(arg_rasterize, arg_blasVec);
-
-	//DessolveOutline outline;
-	//outline.m_outline = KazMath::Vec4<float>(0, 0, 0, 1);
-	//m_ground.m_model.extraBufferArray[4].bufferWrapper->TransData(&outline, sizeof(DessolveOutline));
-
-	//m_ground.m_model.extraBufferArray.back() = GBufferMgr::Instance()->m_outlineBuffer;
-	//m_ground.m_model.extraBufferArray.back().rangeType = GRAPHICS_RANGE_TYPE_UAV_DESC;
-	//m_ground.m_model.extraBufferArray.back().rootParamType = GRAPHICS_PRAMTYPE_TEX;
-
-
-	//outline.m_outline = KazMath::Vec4<float>(0, 0, 0, 1);
-	//m_fence.m_model.extraBufferArray[4].bufferWrapper->TransData(&outline, sizeof(DessolveOutline));
-
-	//m_fence.m_model.extraBufferArray.back() = GBufferMgr::Instance()->m_outlineBuffer;
-	//m_fence.m_model.extraBufferArray.back().rangeType = GRAPHICS_RANGE_TYPE_UAV_DESC;
-	//m_fence.m_model.extraBufferArray.back().rootParamType = GRAPHICS_PRAMTYPE_TEX;
-
-
-	//outline.m_outline = KazMath::Vec4<float>(0, 0, 0, 1);
-	//m_tree.m_model.extraBufferArray[4].bufferWrapper->TransData(&outline, sizeof(DessolveOutline));
-
-	//m_tree.m_model.extraBufferArray.back() = GBufferMgr::Instance()->m_outlineBuffer;
-	//m_tree.m_model.extraBufferArray.back().rangeType = GRAPHICS_RANGE_TYPE_UAV_DESC;
-	//m_tree.m_model.extraBufferArray.back().rootParamType = GRAPHICS_PRAMTYPE_TEX;
-
-
-	//outline.m_outline = KazMath::Vec4<float>(0, 0, 0, 1);
-	//m_rock.m_model.extraBufferArray[4].bufferWrapper->TransData(&outline, sizeof(DessolveOutline));
-
-	//m_rock.m_model.extraBufferArray.back() = GBufferMgr::Instance()->m_outlineBuffer;
-	//m_rock.m_model.extraBufferArray.back().rangeType = GRAPHICS_RANGE_TYPE_UAV_DESC;
-	//m_rock.m_model.extraBufferArray.back().rootParamType = GRAPHICS_PRAMTYPE_TEX;
 
 	m_ground.Draw(arg_rasterize, arg_blasVec, m_stageTransform);
 	m_fence.Draw(arg_rasterize, arg_blasVec, m_stageTransform);
@@ -356,15 +343,19 @@ void GameScene::Draw(DrawingByRasterize& arg_rasterize, Raytracing::BlasVector& 
 			m_titleQuitUI.m_transform.scale += ((UI_MAX_QUIT_SCALE + sinf(m_selectTitleUISine) * SELECT_TITLE_SINE_SCALE) - m_titleQuitUI.m_transform.scale) / 3.0f;
 		}
 
-		//m_titleLogoUI.Draw(arg_rasterize);
+
+	}
+	if (TitleFlag::Instance()->m_isDrawTitle) {
 		m_titleStartUI.Draw(arg_rasterize);
 		m_titleQuitUI.Draw(arg_rasterize);
 		m_titleBackGroundUI.Draw(arg_rasterize);
-
 	}
 
 	//チュートリアルを描画。
 	Tutorial::Instance()->Draw(arg_rasterize, arg_blasVec);
+
+	//遷移を描画。
+	Transition::Instance()->Draw(arg_rasterize, arg_blasVec);
 
 }
 
