@@ -51,5 +51,5 @@ public:
 
 	bool GetIsActiveWave() { return m_isActiveWave; }
 	bool GetIsNight() { return m_isNight; }
-
+	void SetMNowTime(int set_time) { m_nowTime = set_time;}
 };

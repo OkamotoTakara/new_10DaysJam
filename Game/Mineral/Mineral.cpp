@@ -9,6 +9,7 @@
 #include "../Game/Collision/StageCollision.h"
 #include "../Game/Enemy/MineTsumuri.h"
 #include "../Game/Building/BuildingMgr.h"
+#include "../Game/Tutorial.h"
 
 Mineral::Mineral()
 {
@@ -255,6 +256,11 @@ void Mineral::Update(std::weak_ptr<Player> arg_player, std::vector<std::pair<Kaz
 			//こいつ本体は消す。
 			Init();
 
+			//次のチュートリアルに送る
+			if (Tutorial::Instance()->tutorial_num == 6 || Tutorial::Instance()->tutorial_num == 7)
+			{
+				Tutorial::Instance()->break_mineral = true;
+			}
 		}
 
 	}
@@ -719,6 +725,10 @@ void Mineral::HaveMaterial(std::weak_ptr<BuildingMaterial> arg_material)
 	m_haveMaterial = arg_material;
 	m_haveMaterial.lock()->Held();
 
+	if (Tutorial::Instance()->tutorial_num == 9)
+	{
+		Tutorial::Instance()->tree_carry_count++;
+	}
 }
 
 void Mineral::DropMaterial()

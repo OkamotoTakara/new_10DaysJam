@@ -5,6 +5,7 @@
 #include "../Game/Effect/ShakeMgr.h"
 #include "../Game/UI/NumberFont.h"
 #include "../Game/Wave/WaveMgr.h"
+#include "../Game/Tutorial.h"
 
 Wall::Wall()
 {
@@ -166,6 +167,12 @@ void Wall::Update(std::weak_ptr<Player> arg_player)
 				m_wallTransform = m_transform;
 				m_meshCollider[m_modelIndex].Setting(m_meshCollisionModel[m_modelIndex].m_modelData->modelData[0].vertexData, m_wallTransform);
 
+				//チュートリアルを次に飛ばす
+				//次のチュートリアルに送る
+				if (Tutorial::Instance()->tutorial_num == 10)
+				{
+					Tutorial::Instance()->is_next = true;
+				}
 			}
 		}
 		break;
