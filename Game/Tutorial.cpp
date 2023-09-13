@@ -35,6 +35,10 @@ void Tutorial::setting()
 	for (int i = 0; i < static_cast<int>(tutorial_tex.size()); i++)
 	{
 		tutorial_tex[i].m_transform = tex_transform;
+		if (i != 0)
+		{
+			tutorial_tex[i].m_transform.pos.y = -1000.0f;
+		}
 	}
 }
 
