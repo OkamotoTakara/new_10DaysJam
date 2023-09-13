@@ -26,10 +26,14 @@ Player::Player()
 	m_hpFrameUI.Load("Resource/UI/Player/UI_HP1.png");
 	m_hpUI.Load("Resource/UI/Player/UI_HP2.png");
 	m_hpBackGroundUI.Load("Resource/UI/Player/UI_HP3.png");
+	m_sousaUI.Load("Resource/UI/Player/UI_Info1.png");
 	m_dadanUI[0].Load("Resource/UI/Player/UI_HP4.png");
 	m_dadanUI[1].Load("Resource/UI/Player/UI_HP5.png");
 	m_dadanUI[2].Load("Resource/UI/Player/UI_HP6.png");
 	m_dadanBackGroundUI.Load("Resource/UI/Player/UI_HP7.png");
+
+	m_sousaUI.m_transform.pos = { 1280.0f / 2.0f, 720.0f / 2.0f };
+	m_sousaUI.m_transform.scale = { 1280.0f, 720.0f };
 
 	//SE
 	slap_se = SoundManager::Instance()->SoundLoadWave("Resource/Sound/slap.wav");
@@ -535,6 +539,7 @@ void Player::Draw(DrawingByRasterize& arg_rasterize, Raytracing::BlasVector& arg
 		m_hpFrameUI.m_color.color.a += static_cast<int>((0.0f - m_hpFrameUI.m_color.color.a) / 3.0f);
 		m_hpUI.m_color.color.a += static_cast<int>((0.0f - m_hpUI.m_color.color.a) / 3.0f);
 		m_hpBackGroundUI.m_color.color.a += static_cast<int>((0.0f - m_hpBackGroundUI.m_color.color.a) / 3.0f);
+		m_sousaUI.m_color.color.a += static_cast<int>((0.0f - m_sousaUI.m_color.color.a) / 3.0f);
 		m_dadanUI[0].m_color.color.a += static_cast<int>((0.0f - m_dadanUI[0].m_color.color.a) / 3.0f);
 		m_dadanUI[1].m_color.color.a += static_cast<int>((0.0f - m_dadanUI[1].m_color.color.a) / 3.0f);
 		m_dadanUI[2].m_color.color.a += static_cast<int>((0.0f - m_dadanUI[2].m_color.color.a) / 3.0f);
@@ -545,6 +550,7 @@ void Player::Draw(DrawingByRasterize& arg_rasterize, Raytracing::BlasVector& arg
 			m_hpFrameUI.m_color.color.a = 0;
 			m_hpUI.m_color.color.a = 0;
 			m_hpBackGroundUI.m_color.color.a = 0;
+			m_sousaUI.m_color.color.a = 0;
 			m_dadanUI[0].m_color.color.a = 0;
 			m_dadanUI[1].m_color.color.a = 0;
 			m_dadanUI[2].m_color.color.a = 0;
@@ -557,6 +563,7 @@ void Player::Draw(DrawingByRasterize& arg_rasterize, Raytracing::BlasVector& arg
 			m_hpFrameUI.Draw(arg_rasterize);
 			m_hpUI.Draw(arg_rasterize);
 			m_hpBackGroundUI.Draw(arg_rasterize);
+			m_sousaUI.Draw(arg_rasterize);
 			m_dadanUI[dadanIndex].Draw(arg_rasterize);
 			m_dadanBackGroundUI.Draw(arg_rasterize);
 
@@ -571,12 +578,14 @@ void Player::Draw(DrawingByRasterize& arg_rasterize, Raytracing::BlasVector& arg
 		m_hpFrameUI.Draw(arg_rasterize);
 		m_hpUI.Draw(arg_rasterize);
 		m_hpBackGroundUI.Draw(arg_rasterize);
+		m_sousaUI.Draw(arg_rasterize);
 		m_dadanUI[dadanIndex].Draw(arg_rasterize);
 		m_dadanBackGroundUI.Draw(arg_rasterize);
 
 		m_hpFrameUI.m_color.color.a += static_cast<int>((255.0f - m_hpFrameUI.m_color.color.a) / 15.0f);
 		m_hpUI.m_color.color.a += static_cast<int>((255.0f - m_hpUI.m_color.color.a) / 15.0f);
 		m_hpBackGroundUI.m_color.color.a += static_cast<int>((255.0f - m_hpBackGroundUI.m_color.color.a) / 15.0f);
+		m_sousaUI.m_color.color.a += static_cast<int>((255.0f - m_sousaUI.m_color.color.a) / 15.0f);
 		m_dadanUI[0].m_color.color.a += static_cast<int>((255.0f - m_dadanUI[0].m_color.color.a) / 15.0f);
 		m_dadanUI[1].m_color.color.a += static_cast<int>((255.0f - m_dadanUI[1].m_color.color.a) / 15.0f);
 		m_dadanUI[2].m_color.color.a += static_cast<int>((255.0f - m_dadanUI[2].m_color.color.a) / 15.0f);
@@ -588,6 +597,7 @@ void Player::Draw(DrawingByRasterize& arg_rasterize, Raytracing::BlasVector& arg
 		m_hpFrameUI.m_color.color.a = 0;
 		m_hpUI.m_color.color.a = 0;
 		m_hpBackGroundUI.m_color.color.a = 0;
+		m_sousaUI.m_color.color.a = 0;
 		m_dadanUI[0].m_color.color.a = 0;
 		m_dadanUI[1].m_color.color.a = 0;
 		m_dadanUI[2].m_color.color.a = 0;

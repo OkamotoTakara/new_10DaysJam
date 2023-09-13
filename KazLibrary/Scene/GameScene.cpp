@@ -130,7 +130,7 @@ GameScene::GameScene()
 	NumberFont::Instance()->Load();
 	Tutorial::Instance()->setting();
 
-	//Tutorial::Instance()->is_tutorial = false;
+	Tutorial::Instance()->is_tutorial = false;
 }
 
 GameScene::~GameScene()
@@ -736,7 +736,9 @@ void GameScene::UpdateResult()
 		}
 		for (int index = 0; index < 4; ++index) {
 
-			m_resultMineralScoreUI[index].m_texture = NumberFont::Instance()->m_font[std::clamp(GetDigits(EnemyScore::Instance()->m_score, 0, 9999), 3 - index, 3 - index)];
+			int score = EnemyScore::Instance()->m_score;
+			int fontNum = std::clamp(GetDigits(score, 0, 9999), 3 - index, 3 - index);
+			m_reesultEnemyScoreUI[index].m_texture = NumberFont::Instance()->m_font[fontNum];
 			//m_reesultEnemyScoreUI[index].m_texture = NumberFont::Instance()->m_font[GetDigits(3456, 3 - index, 3 - index)];
 			m_reesultEnemyScoreUI[index].m_transform.pos = baseEnemyScorePos;
 			m_reesultEnemyScoreUI[index].m_transform.pos.x += index * gyokan;

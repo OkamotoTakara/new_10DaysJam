@@ -100,6 +100,7 @@ private:
 	DrawCallUISet m_hpFrameUI;
 	DrawCallUISet m_hpUI;
 	DrawCallUISet m_hpBackGroundUI;
+	DrawCallUISet m_sousaUI;
 	std::array<DrawCallUISet, 3> m_dadanUI;
 	DrawCallUISet m_dadanBackGroundUI;
 
