@@ -31,6 +31,8 @@ Wall::Wall()
 	wall_drop.volume = 0.07f;
 	wall_build = SoundManager::Instance()->SoundLoadWave("Resource/Sound/build.wav");
 	wall_build.volume = 0.1f;
+
+	m_modelIndex = 0;
 	Init();
 
 }
@@ -44,7 +46,6 @@ void Wall::Init()
 	m_isOldReady = false;
 	m_materialCounter = 0;
 	m_sineWaveTimer = 0.0f;
-	m_modelIndex = 0;
 	m_easingTimer = EXIT_EASING_TIMER;
 	m_noreadyStatus = NOREADY_STATUS::EXIT;
 	m_wallTransform.pos.y = -1000.0f;
