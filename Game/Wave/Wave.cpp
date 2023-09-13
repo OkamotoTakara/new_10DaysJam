@@ -147,17 +147,21 @@ void Wave::Update(std::weak_ptr<EnemyMgr> arg_enemyMgr)
 
 	}
 
-	//ディレクショナルライトの方向を変えて昼夜を表現
-	if (!m_isNight) {
-		GBufferMgr::Instance()->m_lightConstData.m_dirLight.m_dir += (KazMath::Vec3<float>(0.0f, -0.894f, 0.4472f) - GBufferMgr::Instance()->m_lightConstData.m_dirLight.m_dir) / 30.0f;
-	}
-	else if (m_isNight) {
-		GBufferMgr::Instance()->m_lightConstData.m_dirLight.m_dir += (KazMath::Vec3<float>(0.0f, -0.4472f, 0.894f) - GBufferMgr::Instance()->m_lightConstData.m_dirLight.m_dir) / 30.0f;
-	}
-	GBufferMgr::Instance()->m_lightConstData.m_dirLight.m_dir.Normalize();
+	if (!TitleFlag::Instance()->m_isTitle) {
 
-	//ライトのアップデート
-	PointLightMgr::Instance()->Update(m_isNight);
+		//ディレクショナルライトの方向を変えて昼夜を表現
+		if (!m_isNight) {
+			GBufferMgr::Instance()->m_lightConstData.m_dirLight.m_dir += (KazMath::Vec3<float>(0.0f, -0.894f, 0.4472f) - GBufferMgr::Instance()->m_lightConstData.m_dirLight.m_dir) / 30.0f;
+		}
+		else if (m_isNight) {
+			GBufferMgr::Instance()->m_lightConstData.m_dirLight.m_dir += (KazMath::Vec3<float>(0.0f, -0.4472f, 0.894f) - GBufferMgr::Instance()->m_lightConstData.m_dirLight.m_dir) / 30.0f;
+		}
+		GBufferMgr::Instance()->m_lightConstData.m_dirLight.m_dir.Normalize();
+
+		//ライトのアップデート
+		PointLightMgr::Instance()->Update(m_isNight);
+
+	}
 
 }
 

@@ -27,6 +27,7 @@
 #include"../KazLibrary/Easing/easing.h"
 #include"../Game/Transition.h"
 #include"../Game/EnemyScore.h"
+#include"../Game/PointLightMgr.h"
 
 GameScene::GameScene()
 {
@@ -177,6 +178,9 @@ void GameScene::Init()
 	m_selectResultNum = 0;
 	m_isResultToTitle = false;
 	m_resultDayScore = 0;
+
+	m_isTitleNightChangeTimer = 0;
+	m_isTitleNight = false;
 
 	EnemyScore::Instance()->m_score = 0;
 
@@ -461,6 +465,25 @@ void GameScene::UpdateTitle()
 			Transition::Instance()->Init();
 
 		}
+
+		++m_isTitleNightChangeTimer;
+		if (600 < m_isTitleNightChangeTimer) {
+
+			m_isTitleNightChangeTimer = 0;
+			m_isTitleNight = !m_isTitleNight;
+
+		}
+
+		//ディレクショナルライトの方向を変えて昼夜を表現
+		if (!m_isTitleNight) {
+			GBufferMgr::Instance()->m_lightConstData.m_dirLight.m_dir += (KazMath::Vec3<float>(0.0f, -0.894f, 0.4472f) - GBufferMgr::Instance()->m_lightConstData.m_dirLight.m_dir) / 30.0f;
+		}
+		else if (m_isTitleNight) {
+			GBufferMgr::Instance()->m_lightConstData.m_dirLight.m_dir += (KazMath::Vec3<float>(0.0f, -0.4472f, 0.894f) - GBufferMgr::Instance()->m_lightConstData.m_dirLight.m_dir) / 30.0f;
+		}
+		GBufferMgr::Instance()->m_lightConstData.m_dirLight.m_dir.Normalize();
+
+		PointLightMgr::Instance()->Update(m_isTitleNight);
 
 	}
 

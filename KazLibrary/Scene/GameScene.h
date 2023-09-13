@@ -65,6 +65,9 @@ private:
 	bool m_isResultToGame;
 	int m_resultDayScore;
 
+	bool m_isTitleNight;
+	int m_isTitleNightChangeTimer;
+
 	std::array<DrawCallUISet, 4> m_resultDayScoreUI;
 	std::array<DrawCallUISet, 4> m_resultMineralScoreUI;
 	std::array<DrawCallUISet, 4> m_reesultEnemyScoreUI;
