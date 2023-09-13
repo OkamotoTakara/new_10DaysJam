@@ -28,7 +28,7 @@ public:
 	DrawCallSet m_hpBoxModel;
 	KazMath::Transform3D m_hpBoxTransform;
 	int m_hpBoxDrawTimer;
-	const int HP_BOX_DRAW_TIME_MAX = 60;
+	const int HP_BOX_DRAW_TIME_MAX = 90;
 	float hpBoxScaleStart;
 	float hpBoxScaleEnd;
 	bool isDrawHpBox;

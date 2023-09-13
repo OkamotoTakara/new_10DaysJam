@@ -43,5 +43,6 @@ public:
 	KazMath::Vec3<float> GetMineTsumuriTargetScale(int arg_index);
 	KazMath::Vec3<float> GetMineTsumuriPos(int arg_index);
 	std::weak_ptr<MineTsumuri> GetMineTsumuri(int arg_index);
+	bool GetIsMineking(int arg_index);
 
 };

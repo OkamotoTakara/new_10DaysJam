@@ -107,7 +107,7 @@ void MineralTarget::Draw(DrawingByRasterize& arg_rasterize, Raytracing::BlasVect
 	if (targetIndex == 1) {
 
 		//‘å‚«‚³‚ðÝ’è
-		const float SCALE = 1.0f;
+		const float SCALE = 2.5f;
 		m_transform.scale += ((RockMgr::Instance()->GetScale(m_targetRockIndex) + KazMath::Vec3<float>(SCALE, SCALE, SCALE)) - m_transform.scale) / 3.0f;
 		const float TARGET_SCALE = 10.0f;
 		m_targetTransform.scale += (KazMath::Vec3<float>(TARGET_SCALE, TARGET_SCALE, TARGET_SCALE) - m_targetTransform.scale) / 5.0f;
@@ -116,7 +116,7 @@ void MineralTarget::Draw(DrawingByRasterize& arg_rasterize, Raytracing::BlasVect
 		m_transform.pos = RockMgr::Instance()->GetPos(m_targetRockIndex);
 		m_transform.pos.y = 0.0f;
 		m_targetTransform.pos = RockMgr::Instance()->GetPos(m_targetRockIndex);
-		const float TARGET_HEIGHT = 10.0f;
+		const float TARGET_HEIGHT = 20.0f;
 		m_targetTransform.pos.y += TARGET_HEIGHT + (sinf(m_targetSineWaveTimer) * TARGET_SINE_WAVE_LENGTH);
 
 	}
@@ -187,16 +187,25 @@ void MineralTarget::Draw(DrawingByRasterize& arg_rasterize, Raytracing::BlasVect
 	else if (targetIndex == 6) {
 
 		//‘å‚«‚³‚ðÝ’è
-		const float SCALE = 1.0f;
+		float SCALE = 1.0f;
+		if (arg_enemyMgr.lock()->GetIsMineking(m_targetMineTsumuriIndex)) {
+			SCALE += 20.0f;
+		}
 		m_transform.scale += ((arg_enemyMgr.lock()->GetMineTsumuriTargetScale(m_targetMineTsumuriIndex) + KazMath::Vec3<float>(SCALE, SCALE, SCALE)) - m_transform.scale) / 3.0f;
-		const float TARGET_SCALE = 10.0f;
+		float TARGET_SCALE = 10.0f;
+		if (arg_enemyMgr.lock()->GetIsMineking(m_targetMineTsumuriIndex)) {
+			TARGET_SCALE += 10.0f;
+		}
 		m_targetTransform.scale += (KazMath::Vec3<float>(TARGET_SCALE, TARGET_SCALE, TARGET_SCALE) - m_targetTransform.scale) / 5.0f;
 
 		//À•W‚ðÝ’èB
 		m_transform.pos = arg_enemyMgr.lock()->GetMineTsumuriPos(m_targetMineTsumuriIndex);
 		m_transform.pos.y = 0.0f;
 		m_targetTransform.pos = arg_enemyMgr.lock()->GetMineTsumuriPos(m_targetMineTsumuriIndex);
-		const float TARGET_HEIGHT = 20.0f;
+		float TARGET_HEIGHT = 20.0f;
+		if (arg_enemyMgr.lock()->GetIsMineking(m_targetMineTsumuriIndex)) {
+			TARGET_HEIGHT += 25.0f;
+		}
 		m_targetTransform.pos.y += TARGET_HEIGHT + (sinf(m_targetSineWaveTimer) * TARGET_SINE_WAVE_LENGTH);
 
 	}

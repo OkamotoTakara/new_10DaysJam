@@ -35,6 +35,12 @@ Mineral::Mineral()
 
 	m_haveMaterial.reset();
 
+	//SE
+	rock_break01 = SoundManager::Instance()->SoundLoadWave("Resource/Sound/rock.wav");
+	rock_break02 = SoundManager::Instance()->SoundLoadWave("Resource/Sound/break.wav");
+	rock_break01.volume = 0.05f;
+	rock_break02.volume = 0.05f;
+
 }
 
 void Mineral::Init() {
@@ -235,6 +241,8 @@ void Mineral::Update(std::weak_ptr<Player> arg_player, std::vector<std::pair<Kaz
 
 			//IDがSmall以外だったら小さくして、分裂させる。
 			if (m_mineralID != SMALL) {
+				SoundManager::Instance()->SoundPlayerWave(rock_break01, 0);
+				SoundManager::Instance()->SoundPlayerWave(rock_break02, 0);
 				for (int index = 0; index < 3; ++index) {
 					std::pair<KazMath::Vec3<float>, int> respawnData;
 					respawnData.first = { Vec3<float>(KazMath::Rand(-1.0f, 1.0f) ,KazMath::Rand(-0.0f, 2.0f) ,KazMath::Rand(-1.0f, 1.0f)) };
@@ -476,7 +484,8 @@ void Mineral::Update(std::weak_ptr<Player> arg_player, std::vector<std::pair<Kaz
 
 	//ミネラルが死んだら
 	if (m_hp <= 0) {
-
+		SoundManager::Instance()->SoundPlayerWave(rock_break01, 0);
+		SoundManager::Instance()->SoundPlayerWave(rock_break02, 0);
 		if (m_mineralID == MEDIUM) {
 
 			//IDがSmall以外だったら小さくして、分裂させる。
@@ -491,13 +500,13 @@ void Mineral::Update(std::weak_ptr<Player> arg_player, std::vector<std::pair<Kaz
 				}
 			}
 
-			//岩を持っていたら落とす。
-			if (!m_haveMaterial.expired()) {
+		}
 
-				m_haveMaterial.lock()->Release();
-				m_haveMaterial.reset();
+		//岩を持っていたら落とす。
+		if (!m_haveMaterial.expired()) {
 
-			}
+			m_haveMaterial.lock()->Release();
+			m_haveMaterial.reset();
 
 		}
 

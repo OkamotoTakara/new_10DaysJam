@@ -134,6 +134,7 @@ public:
 	void Damage(std::weak_ptr<Mineral> arg_mineral, int arg_damage = 1);
 
 	bool GetIsActive() { return m_isActive; }
+	bool GetIsMineking() { return m_isMineking; }
 	KazMath::Vec3<float> GetPos() { return m_transform.pos; }
 	KazMath::Vec3<float> GetPosZeroY() { return KazMath::Vec3<float>(m_transform.pos.x, 0.0f, m_transform.pos.z); }
 	KazMath::Vec3<float> GetScale() { return m_transform.scale; }

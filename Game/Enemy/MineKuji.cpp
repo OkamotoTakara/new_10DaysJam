@@ -35,8 +35,8 @@ void MineKuji::Init()
 	m_hpBoxDrawTimer = HP_BOX_DRAW_TIME_MAX;
 	hpBoxEaseTime = HP_BOX_EASE_TIME_MAX;
 	ease_scale = 0.0f;
-	m_hpBoxTransform.scale.y = 2.0f;
-	m_hpBoxTransform.scale.z = 2.0f;
+	m_hpBoxTransform.scale.y = 1.0f;
+	m_hpBoxTransform.scale.z = 1.0f;
 	m_hpBoxTransform.scale.x = static_cast<float> (HP);
 	/*オカモトゾーン*/
 }
@@ -713,7 +713,7 @@ void MineKuji::CheckHitPlayer(std::weak_ptr<Player> arg_player)
 
 			//HPを減らす。
 			hpBoxScaleStart = static_cast <float>(m_hp);
-			m_hp = std::clamp(m_hp - 2, 0, HP);
+			m_hp = std::clamp(m_hp - arg_player.lock()->GetDaipanDamage(), 0, HP);
 
 			//攻撃の反動を追加。
 			m_attackedReactionVec = dir / 5.0f;

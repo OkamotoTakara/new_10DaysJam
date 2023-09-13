@@ -35,6 +35,10 @@ void Tutorial::setting()
 	for (int i = 0; i < static_cast<int>(tutorial_tex.size()); i++)
 	{
 		tutorial_tex[i].m_transform = tex_transform;
+		if (i != 0)
+		{
+			tutorial_tex[i].m_transform.pos.y = -1000.0f;
+		}
 	}
 }
 
@@ -60,6 +64,7 @@ void Tutorial::Update()
 			{
 				tutorial_timer++;
 			}
+
 			else
 			{
 				is_next = true;
@@ -96,6 +101,25 @@ void Tutorial::Update()
 		if (is_next)
 		{
 			tutorial_num++;
+			tutorial_timer = 0;
+			switch (tutorial_num)
+			{
+			case 4:
+				TUTORIAL_TIME_MAX = 400.0f;
+				break;
+
+			case 6:
+				TUTORIAL_TIME_MAX = 400.0f;
+				break;
+
+			case 11:
+				TUTORIAL_TIME_MAX = 300.0f;
+				break;
+
+			default:
+				TUTORIAL_TIME_MAX = 100.0f;
+				break;
+			}
 
 			//ミネクジを湧かせる
 			if (spawn_minekuzi)

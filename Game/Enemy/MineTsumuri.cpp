@@ -36,11 +36,11 @@ void MineTsumuri::Init()
 	m_shellHP = 0.0f;
 
 	/*オカモトゾーン*/
-	m_gardHpBoxTransform.scale.y = 2.0f;
-	m_gardHpBoxTransform.scale.z = 2.0f;
+	m_gardHpBoxTransform.scale.y = 1.0f;
+	m_gardHpBoxTransform.scale.z = 1.0f;
 	m_gardHpBoxTransform.scale.x = static_cast<float> (SHELL_HP);
-	m_hpBoxTransform.scale.y = 2.0f;
-	m_hpBoxTransform.scale.z = 2.0f;
+	m_hpBoxTransform.scale.y = 1.0f;
+	m_hpBoxTransform.scale.z = 1.0f;
 	m_hpBoxTransform.scale.x = static_cast<float> (HP);
 	/*オカモトゾーン*/
 }
@@ -329,6 +329,44 @@ void MineTsumuri::Draw(DrawingByRasterize& arg_rasterize, Raytracing::BlasVector
 		m_kingShellModel.m_model.extraBufferArray.back().rootParamType = GRAPHICS_PRAMTYPE_TEX;
 		m_kingShellModel.Draw(arg_rasterize, arg_blasVec, m_shellTransform);
 
+		/*オカモトゾーン*/
+		m_gardHpBoxTransform.pos = m_transform.pos;
+		m_gardHpBoxTransform.pos.y += 53.0f;
+		m_gardHpBoxTransform.rotation.y = 45.0f;
+
+		m_hpBoxTransform.pos = m_transform.pos;
+		m_hpBoxTransform.pos.y += 50.0f;
+		m_hpBoxTransform.rotation.y = 45.0f;
+
+		float shell_base_hp = (m_shellHP / SHELL_HP) * SCALE_MAG;
+		float mine_base_hp = (static_cast<float>(m_hp) / HP) * SCALE_MAG;
+		m_gardHpBoxTransform.scale.x += (shell_base_hp - m_gardHpBoxTransform.scale.x) / 5.0f;
+		if (fabs(mine_base_hp - m_hpBoxTransform.scale.x) > 0)
+		{
+			m_hpBoxTransform.scale.x += (mine_base_hp - m_hpBoxTransform.scale.x) / 5.0f;
+		}
+
+		if (m_isActive && isDrawHpBox)
+		{
+			if (m_hpBoxDrawTimer > 0)
+			{
+				if (m_shellHP >= 0.05f)
+				{
+					m_gardHpBoxModel.Draw(arg_rasterize, arg_blasVec, m_gardHpBoxTransform, 0, false);
+				}
+				if (m_hp >= 0.05f)
+				{
+					m_hpBoxModel.Draw(arg_rasterize, arg_blasVec, m_hpBoxTransform, 0, false);
+				}
+				m_hpBoxDrawTimer--;
+			}
+			else
+			{
+				isDrawHpBox = false;
+			}
+		}
+		/*オカモトゾーン*/
+
 	}
 	else {
 
@@ -341,7 +379,7 @@ void MineTsumuri::Draw(DrawingByRasterize& arg_rasterize, Raytracing::BlasVector
 
 		/*オカモトゾーン*/
 		m_gardHpBoxTransform.pos = m_transform.pos;
-		m_gardHpBoxTransform.pos.y += 35.0f;
+		m_gardHpBoxTransform.pos.y += 33.0f;
 		m_gardHpBoxTransform.rotation.y = 45.0f;
 
 		m_hpBoxTransform.pos = m_transform.pos;
@@ -730,7 +768,12 @@ void MineTsumuri::AttackWall()
 			m_coreAttackReactionVec = reactionDir * (m_coreAttackMoveSpeed * 3.0f);
 
 			//コアにダメージを与える。
-			BuildingMgr::Instance()->DamageWall(m_wallIndex);
+			if (m_isMineking) {
+				BuildingMgr::Instance()->DamageWall(m_wallIndex, ATTACK_POWER_KING);
+			}
+			else {
+				BuildingMgr::Instance()->DamageWall(m_wallIndex, ATTACK_POWER);
+			}
 
 			ShakeMgr::Instance()->m_shakeAmount = 1.0f;
 
@@ -803,10 +846,10 @@ void MineTsumuri::CheckHitPlayer(std::weak_ptr<Player> arg_player)
 
 				//HPを減らす。
 				if (m_isMineking) {
-					m_hp = std::clamp(m_hp - 2, 0, MINEKING_HP);
+					m_hp = std::clamp(m_hp - arg_player.lock()->GetDaipanDamage(), 0, MINEKING_HP);
 				}
 				else {
-					m_hp = std::clamp(m_hp - 2, 0, HP);
+					m_hp = std::clamp(m_hp - arg_player.lock()->GetDaipanDamage(), 0, HP);
 				}
 
 				//攻撃の反動を追加。

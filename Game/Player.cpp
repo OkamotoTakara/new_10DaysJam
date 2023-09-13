@@ -109,12 +109,12 @@ void Player::Update()
 		//コントローラーも対応。
 		float inputStickX = ControllerInputManager::Instance()->GetJoyStickLXNum() / 32767.0f;
 		float inputStickY = ControllerInputManager::Instance()->GetJoyStickLYNum() / 32767.0f;
-		const float STICK_DEADLINE = 0.1f;
-		if (STICK_DEADLINE <= fabs(inputStickX)) {
+		const float STICK_DEADLINE = 0.7f;
+		if (STICK_DEADLINE < KazMath::Vec2<float>(inputStickX, inputStickY).Length()) {
+
 			moveVec.x += inputStickX;
-		}
-		if (STICK_DEADLINE <= fabs(inputStickY)) {
 			moveVec.z += inputStickY;
+
 		}
 
 		//入力があったら。
@@ -150,7 +150,7 @@ void Player::Update()
 		}
 
 		//隊列の操作量に上限を設ける。
-		const float MINERAL_CENTER_MOVE_RANGE = 10.0f;
+		const float MINERAL_CENTER_MOVE_RANGE = 20.0f;
 		if (MINERAL_CENTER_MOVE_RANGE < m_mineralCenterPos.Length()) {
 			m_mineralCenterPos = m_mineralCenterPos.GetNormal() * MINERAL_CENTER_MOVE_RANGE;
 		}
@@ -475,7 +475,7 @@ void Player::Update()
 		Tutorial::Instance()->move_amount += (m_oldTransform.pos - m_transform.pos).Length();
 
 		//一定量動いたらチュートリアルを進める
-		if (Tutorial::Instance()->move_amount >= 300.0f)
+		if (Tutorial::Instance()->move_amount >= 400.0f)
 		{
 			Tutorial::Instance()->is_next = true;
 		}

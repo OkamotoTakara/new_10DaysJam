@@ -45,8 +45,8 @@ void DestructibleTree::Update()
 		for (int index = 0; index < 3; ++index) {
 			const float STRONG_DAIPAN_POWER = 2.0f;
 			KazMath::Vec3<float> generateVec;
-			generateVec = { KazMath::Vec3<float>(KazMath::Rand(-1.0f, 1.0f) ,KazMath::Rand(-0.0f, 2.0f) ,KazMath::Rand(-1.0f, 1.0f)) };
-			generateVec.GetNormal();
+			generateVec = { KazMath::Vec3<float>(KazMath::Rand(-1.0f, 1.0f) ,KazMath::Rand(1.0f, 4.0f) ,KazMath::Rand(-1.0f, 1.0f)) };
+			generateVec.Normalize();
 			generateVec *= STRONG_DAIPAN_POWER;
 			BuildingMaterialMgr::Instance()->Generate(m_transform.pos, generateVec);
 		}
