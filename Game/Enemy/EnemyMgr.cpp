@@ -259,3 +259,8 @@ std::weak_ptr<MineTsumuri> EnemyMgr::GetMineTsumuri(int arg_index)
 {
 	return m_minetsumuri[arg_index];
 }
+
+bool EnemyMgr::GetIsMineking(int arg_index)
+{
+	return m_minetsumuri[arg_index]->GetIsMineking();
+}

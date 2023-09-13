@@ -150,7 +150,7 @@ void Player::Update()
 		}
 
 		//‘à—ñ‚Ì‘€ì—Ê‚ÉãŒÀ‚ðÝ‚¯‚éB
-		const float MINERAL_CENTER_MOVE_RANGE = 10.0f;
+		const float MINERAL_CENTER_MOVE_RANGE = 20.0f;
 		if (MINERAL_CENTER_MOVE_RANGE < m_mineralCenterPos.Length()) {
 			m_mineralCenterPos = m_mineralCenterPos.GetNormal() * MINERAL_CENTER_MOVE_RANGE;
 		}
