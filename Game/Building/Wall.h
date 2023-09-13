@@ -38,7 +38,7 @@ public:
 	/*オカモトゾーン*/
 
 	int m_hp;
-	const int HP = 10;
+	const int HP = 15;
 
 	//状態
 	enum class NOREADY_STATUS {

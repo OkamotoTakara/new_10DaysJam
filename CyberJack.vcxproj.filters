@@ -348,5 +348,9 @@
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="KazLib.rc" />
+    <ResourceCompile Include="icon.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="icon.ico" />
   </ItemGroup>
 </Project>

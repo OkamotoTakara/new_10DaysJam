@@ -58,11 +58,15 @@ private:
 	//コアに向かっていく変数
 	const float CORE_MOVE_SPEED = 0.8f;	//コアに向かって行く初速度
 	const float CORE_MOVE_DELAY = 70.0f;
+	const float CORE_MOVE_DELAY_MINEING = 120.0f;
 	float m_coreMoveDelayTimer;
 	float m_coreMoveSpeed;
 	bool m_isAttackCore;
 	bool m_isAttackMineral;
 	bool m_isAttackPlayer;
+
+	const int ATTACK_POWER = 1;
+	const int ATTACK_POWER_KING = 5;
 
 	//攻撃された場合の変数
 	bool m_isAttackedMineral;

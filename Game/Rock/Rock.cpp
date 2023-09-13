@@ -118,14 +118,17 @@ void Rock::Update(std::weak_ptr<Player> arg_player, std::vector<std::pair<KazMat
 			dir.y = 0.0f;
 			dir.Normalize();
 
-			//HPÇå∏ÇÁÇ∑ÅB
-			Damage(dir / 5.0f, 4);
-			if (m_hp <= 0.0f) {
+			if (m_rockID == SMALL) {
 
-				if (m_rockID == SMALL) {
+				m_respawnVec = { Vec3<float>(KazMath::Rand(-0.1f, 0.1f) ,KazMath::Rand(0.5f, 2.0f) ,KazMath::Rand(-0.1f, 0.1f)) };
+				m_respawnVec.Normalize();
+			}
+			else {
 
-					m_respawnVec = { Vec3<float>(KazMath::Rand(-0.1f, 0.1f) ,KazMath::Rand(0.5f, 2.0f) ,KazMath::Rand(-0.1f, 0.1f)) };
-					m_respawnVec.Normalize();
+				//HPÇå∏ÇÁÇ∑ÅB
+				Damage(dir / 5.0f, 4);
+				if (m_hp <= 0.0f) {
+
 
 				}
 				else {
@@ -185,7 +188,6 @@ void Rock::Update(std::weak_ptr<Player> arg_player, std::vector<std::pair<KazMat
 
 
 				}
-
 			}
 
 		}

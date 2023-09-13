@@ -53,7 +53,8 @@ HRESULT WinApi::CreateMyWindow(int WINDOW_SIZE_X, int WINDOW_SIZE_Y)
 	window.lpszClassName = L"DirectX";
 	window.hInstance = GetModuleHandle(nullptr);
 	window.hCursor = LoadCursor(NULL, IDC_ARROW);	
-	window.hIcon = LoadIcon(window.hInstance, TEXT("KITTY"));
+	//window.hIcon = LoadIcon(window.hInstance, TEXT("KITTY"));
+	window.hIcon = LoadIcon(window.hInstance, TEXT("icon"));
 
 	
 
@@ -89,7 +90,7 @@ HRESULT WinApi::CreateMyWindow(int WINDOW_SIZE_X, int WINDOW_SIZE_Y)
 	
 	hwnd = CreateWindow(
 		window.lpszClassName,
-		L"10daysFinal",
+		L"4011_ƒ~ƒlƒ‰ƒ‹",
 		WS_OVERLAPPEDWINDOW,
 		CW_USEDEFAULT,
 		CW_USEDEFAULT,
