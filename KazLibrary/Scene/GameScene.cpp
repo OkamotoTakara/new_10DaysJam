@@ -130,7 +130,7 @@ GameScene::GameScene()
 	NumberFont::Instance()->Load();
 	Tutorial::Instance()->setting();
 
-	//Tutorial::Instance()->is_tutorial = false;
+	Tutorial::Instance()->is_tutorial = false;
 }
 
 GameScene::~GameScene()
@@ -185,7 +185,7 @@ void GameScene::Init()
 
 	EnemyScore::Instance()->m_score = 0;
 
-	
+
 
 }
 
@@ -250,6 +250,9 @@ void GameScene::Update()
 	ShakeMgr::Instance()->Update();
 
 	//ウェーブが終わったらリザルトへ。
+	if (!ResultFlag::Instance()->m_isResult) {
+		ResultFlag::Instance()->m_isReadyResult = (WaveMgr::Instance()->GetIsFinishAllWave()) || m_goldCore->IsDead();
+	}
 	if ((!ResultFlag::Instance()->m_isResult && WaveMgr::Instance()->GetIsFinishAllWave()) || m_goldCore->IsDead()) {
 
 		++ResultFlag::Instance()->m_uiDeleteTime;
@@ -266,7 +269,7 @@ void GameScene::Update()
 				Transition::Instance()->Init();
 
 				//スコアを算出。
-				for (int index = 0; index < 5; ++index) {
+				for (int index = 0; index < WaveMgr::Instance()->GetNowWaveIndex() + 1; ++index) {
 
 					if (m_resultDayScore <= 0) {
 						m_resultDayScore = 100;
@@ -281,6 +284,9 @@ void GameScene::Update()
 			}
 
 		}
+
+		//敵を初期化
+		m_enemyMgr->Init();
 
 	}
 
@@ -737,7 +743,7 @@ void GameScene::UpdateResult()
 		for (int index = 0; index < 4; ++index) {
 
 			int score = EnemyScore::Instance()->m_score;
-			int fontNum = std::clamp(GetDigits(score, 0, 9999), 3 - index, 3 - index);
+			int fontNum = std::clamp(GetDigits(score, 3 - index, 3 - index), 0, 9999);
 			m_reesultEnemyScoreUI[index].m_texture = NumberFont::Instance()->m_font[fontNum];
 			//m_reesultEnemyScoreUI[index].m_texture = NumberFont::Instance()->m_font[GetDigits(3456, 3 - index, 3 - index)];
 			m_reesultEnemyScoreUI[index].m_transform.pos = baseEnemyScorePos;
@@ -749,7 +755,7 @@ void GameScene::UpdateResult()
 		const int TOTAL_SCORE = std::clamp(m_resultDayScore + MINERAL_SCORE + EnemyScore::Instance()->m_score, 0, 99999);
 		for (int index = 0; index < 5; ++index) {
 
-			m_totalScoreUI[index].m_texture = NumberFont::Instance()->m_font[GetDigits(3456, 4 - index, 4 - index)];
+			m_totalScoreUI[index].m_texture = NumberFont::Instance()->m_font[GetDigits(TOTAL_SCORE, 4 - index, 4 - index)];
 			m_totalScoreUI[index].m_transform.pos = baseTotalScorePos;
 			m_totalScoreUI[index].m_transform.pos.x += index * gyokan;
 

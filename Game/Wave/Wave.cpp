@@ -159,7 +159,7 @@ void Wave::Update(std::weak_ptr<EnemyMgr> arg_enemyMgr)
 
 			//ŠÔ‚ªI‚í‚Á‚½Wave‚ğ–³Œø‰»‚·‚éB
 			if (m_nighTime <= m_nowTime) {
-				SoundManager::Instance()->SoundPlayerWave(WaveMgr::Instance()->start_morning, 0);
+				//SoundManager::Instance()->SoundPlayerWave(WaveMgr::Instance()->start_morning, 0);
 				Invalidate(arg_enemyMgr);
 				if (Tutorial::Instance()->is_tutorial)
 				{
