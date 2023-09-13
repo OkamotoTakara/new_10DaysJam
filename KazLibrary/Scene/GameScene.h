@@ -34,6 +34,7 @@ private:
 	DrawCallSet m_fence;
 	DrawCallSet m_rock;
 	DrawCallSet m_tree;
+	DrawCallSet m_line;
 
 	DrawCallUISet m_titleLogoUI;
 	DrawCallUISet m_titleBackGroundUI;
