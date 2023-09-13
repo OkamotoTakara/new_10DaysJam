@@ -4,6 +4,8 @@
 #include "../Game/TitleFlag.h"
 #include "../Game/ResultFlag.h"
 #include "../Game/Tutorial.h"
+#include "../Game/UI/NumberFont.h"
+#include <Imgui/imgui.h>
 
 void WaveMgr::Setting(std::weak_ptr<Core> m_core)
 {
@@ -253,17 +255,8 @@ void WaveMgr::Setting(std::weak_ptr<Core> m_core)
 	m_daysUI.m_transform.pos = { 108,230 };
 	m_daysUI.m_transform.scale = { 100,50 };
 
-	////数字テクスチャロード
-	//m_number[0].Load("Resource/UI/NumFont/0.png");
-	//m_number[1].Load("Resource/UI/NumFont/1.png");
-	//m_number[2].Load("Resource/UI/NumFont/2.png");
-	//m_number[3].Load("Resource/UI/NumFont/3.png");
-	//m_number[4].Load("Resource/UI/NumFont/4.png");
-	//m_number[5].Load("Resource/UI/NumFont/5.png");
-	//m_number[6].Load("Resource/UI/NumFont/6.png");
-	//m_number[7].Load("Resource/UI/NumFont/7.png");
-	//m_number[8].Load("Resource/UI/NumFont/8.png");
-	//m_number[9].Load("Resource/UI/NumFont/9.png");
+	//数字テクスチャロード
+	m_dayNumerUI.Load("Resource/UI/NumFont/0.png");
 
 	//BGM
 	m_BGM = SoundManager::Instance()->SoundLoadWave("Resource/Sound/bgm.wav");
@@ -325,6 +318,9 @@ void WaveMgr::Update(std::weak_ptr<EnemyMgr> arg_enemyMgr)
 	m_frameUI.m_transform.scale = { 168,168 };
 	m_frameUI.m_transform.pos = { 128,128 };
 
+	//日数を表示。
+	m_dayNumerUI.m_texture = NumberFont::Instance()->m_font[std::clamp(static_cast<int>(m_nowWaveIndex + 1), 0, 9)];
+
 }
 
 void WaveMgr::Draw(DrawingByRasterize& arg_rasterize, Raytracing::BlasVector& arg_blasVec)
@@ -336,11 +332,15 @@ void WaveMgr::Draw(DrawingByRasterize& arg_rasterize, Raytracing::BlasVector& ar
 
 		m_frameUI.m_color.color.a += static_cast<int>((0.0f - m_frameUI.m_color.color.a) / 3.0f);
 		m_timerUI.m_color.color.a += static_cast<int>((0.0f - m_timerUI.m_color.color.a) / 3.0f);
+		m_dayNumerUI.m_color.color.a += static_cast<int>((0.0f - m_dayNumerUI.m_color.color.a) / 3.0f);
+		m_daysUI.m_color.color.a += static_cast<int>((0.0f - m_daysUI.m_color.color.a) / 3.0f);
 
 		if (m_frameUI.m_color.color.a <= 50.0f) {
 
 			m_frameUI.m_color.color.a = 0;
 			m_timerUI.m_color.color.a = 0;
+			m_dayNumerUI.m_color.color.a = 0;
+			m_daysUI.m_color.color.a = 0;
 
 		}
 		else {
@@ -348,6 +348,8 @@ void WaveMgr::Draw(DrawingByRasterize& arg_rasterize, Raytracing::BlasVector& ar
 			//UIを描画。
 			m_frameUI.Draw(arg_rasterize);
 			m_timerUI.Draw(arg_rasterize);
+			m_timerUI.Draw(arg_rasterize);
+			m_dayNumerUI.Draw(arg_rasterize);
 
 		}
 
@@ -360,15 +362,20 @@ void WaveMgr::Draw(DrawingByRasterize& arg_rasterize, Raytracing::BlasVector& ar
 		m_daysUI.Draw(arg_rasterize);
 		m_frameUI.Draw(arg_rasterize);
 		m_timerUI.Draw(arg_rasterize);
+		m_dayNumerUI.Draw(arg_rasterize);
 
 		m_frameUI.m_color.color.a += static_cast<int>((255.0f - m_frameUI.m_color.color.a) / 15.0f);
 		m_timerUI.m_color.color.a += static_cast<int>((255.0f - m_timerUI.m_color.color.a) / 15.0f);
+		m_dayNumerUI.m_color.color.a += static_cast<int>((255.0f - m_dayNumerUI.m_color.color.a) / 15.0f);
+		m_daysUI.m_color.color.a += static_cast<int>((255.0f - m_daysUI.m_color.color.a) / 15.0f);
 
 	}
 	else {
 
 		m_frameUI.m_color.color.a = 0;
 		m_timerUI.m_color.color.a = 0;
+		m_dayNumerUI.m_color.color.a = 0;
+		m_daysUI.m_color.color.a = 0;
 
 	}
 

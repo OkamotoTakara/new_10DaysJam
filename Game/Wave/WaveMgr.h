@@ -32,7 +32,7 @@ private:
 	DrawCallUISet m_frameUI;
 	//“ú”‚ÌUI
 	DrawCallUISet m_daysUI;
-	//std::array<DrawCallUISet, 10> m_number;
+	DrawCallUISet m_dayNumerUI;
 
 public:
 
