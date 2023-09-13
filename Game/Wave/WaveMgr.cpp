@@ -37,8 +37,8 @@ void WaveMgr::Setting()
 	dayTime = 600;		//日中の時間 フレーム数
 	nightTime = 1800;	//夜の時間 フレーム数
 	tree = {  };		//有効化時に生成される木のIndex 1スタート
-	rock = {  };		//有効化時に生成される岩のIndex 1スタート
-	mineralRock = {  };		//有効化時に生成されるミネラル岩のIndex 1スタート
+	rock = { 3 };		//有効化時に生成される岩のIndex 1スタート
+	mineralRock = { 1,2 };		//有効化時に生成されるミネラル岩のIndex 1スタート
 	//敵を追加していく。
 	enemyInfo.emplace_back(EnemyRoute::A, Wave::ENEMY_ID::MINEKUJI, 0);
 	enemyInfo.emplace_back(EnemyRoute::A, Wave::ENEMY_ID::MINEKUJI, 180);
