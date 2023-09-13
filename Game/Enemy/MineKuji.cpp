@@ -713,7 +713,7 @@ void MineKuji::CheckHitPlayer(std::weak_ptr<Player> arg_player)
 
 			//HP‚ğŒ¸‚ç‚·B
 			hpBoxScaleStart = static_cast <float>(m_hp);
-			m_hp = std::clamp(m_hp - 2, 0, HP);
+			m_hp = std::clamp(m_hp - arg_player.lock()->GetDaipanDamage(), 0, HP);
 
 			//UŒ‚‚Ì”½“®‚ğ’Ç‰ÁB
 			m_attackedReactionVec = dir / 5.0f;

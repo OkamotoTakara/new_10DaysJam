@@ -109,12 +109,12 @@ void Player::Update()
 		//コントローラーも対応。
 		float inputStickX = ControllerInputManager::Instance()->GetJoyStickLXNum() / 32767.0f;
 		float inputStickY = ControllerInputManager::Instance()->GetJoyStickLYNum() / 32767.0f;
-		const float STICK_DEADLINE = 0.1f;
-		if (STICK_DEADLINE <= fabs(inputStickX)) {
+		const float STICK_DEADLINE = 0.7f;
+		if (STICK_DEADLINE < KazMath::Vec2<float>(inputStickX, inputStickY).Length()) {
+
 			moveVec.x += inputStickX;
-		}
-		if (STICK_DEADLINE <= fabs(inputStickY)) {
 			moveVec.z += inputStickY;
+
 		}
 
 		//入力があったら。
