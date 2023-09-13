@@ -263,6 +263,7 @@ void GameScene::Update()
 				Transition::Instance()->Init();
 
 				//スコアを算出。
+				m_resultDayScore = 0;
 				for (int index = 0; index < WaveMgr::Instance()->GetNowWaveIndex() + 1; ++index) {
 
 					if (m_resultDayScore <= 0) {
