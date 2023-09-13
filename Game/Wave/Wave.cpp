@@ -155,15 +155,15 @@ void Wave::Update(std::weak_ptr<EnemyMgr> arg_enemyMgr)
 			//時間を進める。
 			m_nowTime = std::clamp(m_nowTime + 1, 0, m_nighTime);
 
-		//時間が終わったWaveを無効化する。
-		if (m_nighTime <= m_nowTime) {
-			SoundManager::Instance()->SoundPlayerWave(WaveMgr::Instance()->start_morning, 0);
-			Invalidate(arg_enemyMgr);
-			if (Tutorial::Instance()->is_tutorial)
-			{
-				Tutorial::Instance()->is_tutorial = false;
+			//時間が終わったWaveを無効化する。
+			if (m_nighTime <= m_nowTime) {
+				SoundManager::Instance()->SoundPlayerWave(WaveMgr::Instance()->start_morning, 0);
+				Invalidate(arg_enemyMgr);
+				if (Tutorial::Instance()->is_tutorial)
+				{
+					Tutorial::Instance()->is_tutorial = false;
+				}
 			}
-		}
 
 		}
 		//昼時間だったら
@@ -176,33 +176,35 @@ void Wave::Update(std::weak_ptr<EnemyMgr> arg_enemyMgr)
 			//時間が終わったWaveを無効化する。
 			if (m_dayTime <= m_nowTime) {
 
-			//夜時間へ
-			m_nowTime = 0;
-			m_isNight = true;
-			SoundManager::Instance()->SoundPlayerWave(night_start, 0);
+				//夜時間へ
+				m_nowTime = 0;
+				m_isNight = true;
+				SoundManager::Instance()->SoundPlayerWave(night_start, 0);
 
-			//BGMを鳴らす
-			volume_up = true;
-			if (WaveMgr::Instance()->GetWaveCount() == 0)
-			{
-				WaveMgr::Instance()->start_bgm = true;
+				//BGMを鳴らす
+				volume_up = true;
+				if (WaveMgr::Instance()->GetWaveCount() == 0)
+				{
+					WaveMgr::Instance()->start_bgm = true;
+				}
 			}
 		}
-	}
 
-	if (!TitleFlag::Instance()->m_isTitle) {
+		if (!TitleFlag::Instance()->m_isTitle) {
 
-		//ディレクショナルライトの方向を変えて昼夜を表現
-		if (!m_isNight) {
-			GBufferMgr::Instance()->m_lightConstData.m_dirLight.m_dir += (KazMath::Vec3<float>(0.0f, -0.894f, 0.4472f) - GBufferMgr::Instance()->m_lightConstData.m_dirLight.m_dir) / 30.0f;
+			//ディレクショナルライトの方向を変えて昼夜を表現
+			if (!m_isNight) {
+				GBufferMgr::Instance()->m_lightConstData.m_dirLight.m_dir += (KazMath::Vec3<float>(0.0f, -0.894f, 0.4472f) - GBufferMgr::Instance()->m_lightConstData.m_dirLight.m_dir) / 30.0f;
+			}
+			else if (m_isNight) {
+				GBufferMgr::Instance()->m_lightConstData.m_dirLight.m_dir += (KazMath::Vec3<float>(0.0f, -0.4472f, 0.894f) - GBufferMgr::Instance()->m_lightConstData.m_dirLight.m_dir) / 30.0f;
+			}
+			GBufferMgr::Instance()->m_lightConstData.m_dirLight.m_dir.Normalize();
+
+			//ライトのアップデート
+			PointLightMgr::Instance()->Update(m_isNight);
+
 		}
-		else if (m_isNight) {
-			GBufferMgr::Instance()->m_lightConstData.m_dirLight.m_dir += (KazMath::Vec3<float>(0.0f, -0.4472f, 0.894f) - GBufferMgr::Instance()->m_lightConstData.m_dirLight.m_dir) / 30.0f;
-		}
-		GBufferMgr::Instance()->m_lightConstData.m_dirLight.m_dir.Normalize();
-
-		//ライトのアップデート
-		PointLightMgr::Instance()->Update(m_isNight);
 
 	}
 
