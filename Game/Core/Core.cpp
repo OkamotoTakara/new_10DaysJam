@@ -2,6 +2,7 @@
 #include "../KazLibrary/Easing/easing.h"
 #include "../Game/Wave/WaveMgr.h"
 #include "../Game/TitleFlag.h"
+#include "../Game/Tutorial.h"
 
 Core::Core()
 {
@@ -95,7 +96,7 @@ void Core::Draw(DrawingByRasterize& arg_rasterize, Raytracing::BlasVector& arg_b
 	crownTransform.pos += m_crownPos;
 	m_crownModel.Draw(arg_rasterize, arg_blasVec, crownTransform);
 
-	if (!TitleFlag::Instance()->m_isTitle) {
+	if (!TitleFlag::Instance()->m_isTitle && !Tutorial::Instance()->is_tutorial) {
 
 		/*オカモトゾーン*/
 		m_hpBoxTransform.pos = m_transform.pos;

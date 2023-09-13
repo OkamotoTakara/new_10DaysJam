@@ -36,11 +36,11 @@ void MineTsumuri::Init()
 	m_shellHP = 0.0f;
 
 	/*オカモトゾーン*/
-	m_gardHpBoxTransform.scale.y = 2.0f;
-	m_gardHpBoxTransform.scale.z = 2.0f;
+	m_gardHpBoxTransform.scale.y = 1.0f;
+	m_gardHpBoxTransform.scale.z = 1.0f;
 	m_gardHpBoxTransform.scale.x = static_cast<float> (SHELL_HP);
-	m_hpBoxTransform.scale.y = 2.0f;
-	m_hpBoxTransform.scale.z = 2.0f;
+	m_hpBoxTransform.scale.y = 1.0f;
+	m_hpBoxTransform.scale.z = 1.0f;
 	m_hpBoxTransform.scale.x = static_cast<float> (HP);
 	/*オカモトゾーン*/
 }
@@ -341,7 +341,7 @@ void MineTsumuri::Draw(DrawingByRasterize& arg_rasterize, Raytracing::BlasVector
 
 		/*オカモトゾーン*/
 		m_gardHpBoxTransform.pos = m_transform.pos;
-		m_gardHpBoxTransform.pos.y += 35.0f;
+		m_gardHpBoxTransform.pos.y += 33.0f;
 		m_gardHpBoxTransform.rotation.y = 45.0f;
 
 		m_hpBoxTransform.pos = m_transform.pos;
