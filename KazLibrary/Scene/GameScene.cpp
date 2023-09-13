@@ -129,8 +129,6 @@ GameScene::GameScene()
 
 	NumberFont::Instance()->Load();
 	Tutorial::Instance()->setting();
-
-	Tutorial::Instance()->is_tutorial = false;
 }
 
 GameScene::~GameScene()
@@ -204,10 +202,6 @@ void GameScene::Input()
 void GameScene::Update()
 {
 	using namespace KazMath;
-
-	if (KeyBoradInputManager::Instance()->InputTrigger(DIK_R)) {
-		Init();
-	}
 
 	//ウェーブを更新。
 	WaveMgr::Instance()->Update(m_enemyMgr);
