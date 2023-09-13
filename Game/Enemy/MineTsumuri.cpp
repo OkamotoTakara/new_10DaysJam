@@ -517,12 +517,13 @@ void MineTsumuri::AttackMineral()
 
 		m_mode = CoreAttack;
 		m_isAttackMineral = false;
+		m_attackedMineral.reset();
 		return;
 	}
 
 	//攻撃対象のミネラルが一定以上離れていたらコア攻撃状態二遷移。
 	float mineralDistance = KazMath::Vec3<float>(GetPosZeroY() - m_attackedMineral.lock()->GetPosZeroY()).Length();
-	if (ENEMY_SEARCH_END_RANGE < mineralDistance) {
+	if (ENEMY_SEARCH_END_RANGE < mineralDistance || (m_attackedMineral.lock()->GetHP() <= 0)) {
 
 		m_mode = CoreAttack;
 		m_isAttackMineral = false;
