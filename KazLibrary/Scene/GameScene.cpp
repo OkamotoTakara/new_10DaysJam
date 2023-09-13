@@ -67,6 +67,7 @@ GameScene::GameScene()
 	m_fence.Load("Resource/Stage/", "Stage_Fence.gltf");
 	m_tree.Load("Resource/Stage/", "Stage_Tree.gltf");
 	m_rock.Load("Resource/Stage/", "Stage_Rock.gltf");
+	m_line.Load("Resource/Stage/", "Line.gltf");
 
 	//タイトルロゴをロード
 	m_titleLogoUI.Load("Resource/Title/TitleLogo.png");
@@ -304,6 +305,7 @@ void GameScene::Draw(DrawingByRasterize& arg_rasterize, Raytracing::BlasVector& 
 	m_fence.Draw(arg_rasterize, arg_blasVec, m_stageTransform);
 	m_tree.Draw(arg_rasterize, arg_blasVec, m_stageTransform);
 	m_rock.Draw(arg_rasterize, arg_blasVec, m_stageTransform);
+	m_line.Draw(arg_rasterize, arg_blasVec, m_stageTransform);
 
 
 	//ImGui::Begin("UI");
