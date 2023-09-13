@@ -13,6 +13,7 @@ void Transition::Setting()
 void Transition::Init()
 {
 	m_isActive = false;
+	m_isFinish = false;
 	m_status = STATUS::APPEAR;
 	m_easingTimer = 0.0f;
 }
@@ -69,7 +70,8 @@ void Transition::Update()
 
 		if (EXIT_TIME <= m_easingTimer) {
 
-			Init();
+			m_isActive = false;
+			m_isFinish = true;
 
 		}
 	}

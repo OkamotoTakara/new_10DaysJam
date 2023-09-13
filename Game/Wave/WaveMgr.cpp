@@ -2,6 +2,7 @@
 #include "Wave.h"
 #include "../Game/Enemy/EnemyMgr.h"
 #include "../Game/TitleFlag.h"
+#include "../Game/ResultFlag.h"
 #include "../Game/Tutorial.h"
 
 void WaveMgr::Setting()
@@ -197,6 +198,8 @@ void WaveMgr::Setting()
 	//ウェーブ数を保存。
 	m_waveCount = static_cast<int>(m_waves.size());
 
+	m_isFinishAllWave = false;
+
 	//UIをロード
 	m_timerUI.Load("Resource/UI/Timer/Timer.png");
 	m_frameUI.Load("Resource/UI/Timer/Frame.png");
@@ -228,6 +231,7 @@ void WaveMgr::Update(std::weak_ptr<EnemyMgr> arg_enemyMgr)
 		if (m_waveCount - 1 <= m_nowWaveIndex) {
 
 			//次のウェーブがない時
+			m_isFinishAllWave = true;
 
 		}
 		else {
@@ -256,7 +260,31 @@ void WaveMgr::Update(std::weak_ptr<EnemyMgr> arg_enemyMgr)
 void WaveMgr::Draw(DrawingByRasterize& arg_rasterize, Raytracing::BlasVector& arg_blasVec)
 {
 
-	if (!TitleFlag::Instance()->m_isTitle) {
+
+	if (0 < ResultFlag::Instance()->m_uiDeleteTime) {
+
+
+		m_frameUI.m_color.color.a += static_cast<int>((0.0f - m_frameUI.m_color.color.a) / 3.0f);
+		m_timerUI.m_color.color.a += static_cast<int>((0.0f - m_timerUI.m_color.color.a) / 3.0f);
+
+		if (m_frameUI.m_color.color.a <= 50.0f) {
+
+			m_frameUI.m_color.color.a = 0;
+			m_timerUI.m_color.color.a = 0;
+
+		}
+		else {
+
+			//UIを描画。
+			m_frameUI.Draw(arg_rasterize);
+			m_timerUI.Draw(arg_rasterize);
+
+		}
+
+
+
+	}
+	else if ((!TitleFlag::Instance()->m_isTitle && !ResultFlag::Instance()->m_isResult)) {
 
 		//UIを描画。
 		m_frameUI.Draw(arg_rasterize);
@@ -287,6 +315,8 @@ void WaveMgr::GameStart()
 	}
 
 	m_waves.front()->Active();
+
+	m_isFinishAllWave = false;
 
 }
 

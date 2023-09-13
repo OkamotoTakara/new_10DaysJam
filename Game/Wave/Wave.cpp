@@ -5,6 +5,7 @@
 #include "../PointLightMgr.h"
 #include "../Game/Rock/RockMgr.h"
 #include "../Game/TitleFlag.h"
+#include "../Game/ResultFlag.h"
 #include "../Game/Tutorial.h"
 
 Wave::Wave(int arg_dayTime, int arg_nightTime, std::vector<int> arg_tree, std::vector<int> arg_rock, std::vector<int> arg_mineralRock, std::vector<EnemyWaveInfo> arg_enemyWaveInfo)
@@ -82,61 +83,66 @@ void Wave::Update(std::weak_ptr<EnemyMgr> arg_enemyMgr)
 		}
 	}
 
-	//夜時間だったら
-	if (m_isNight) {
+	//リザルト中は時間を進めない。
+	if (!ResultFlag::Instance()->m_isResult) {
 
-		//この時間に湧く敵がいたら湧かせる。
-		for (auto& enemy : m_enemyWaveInfo) {
+		//夜時間だったら
+		if (m_isNight) {
 
-			if (enemy.m_spawnFrame != m_nowTime) continue;
+			//この時間に湧く敵がいたら湧かせる。
+			for (auto& enemy : m_enemyWaveInfo) {
 
-			//敵を湧かせる。
-			if (enemy.m_enemyID == ENEMY_ID::MINEKUJI) {
+				if (enemy.m_spawnFrame != m_nowTime) continue;
 
-				arg_enemyMgr.lock()->GenerateMinekuji(enemy.m_routeID);
+				//敵を湧かせる。
+				if (enemy.m_enemyID == ENEMY_ID::MINEKUJI) {
+
+					arg_enemyMgr.lock()->GenerateMinekuji(enemy.m_routeID);
+
+				}
+				else if (enemy.m_enemyID == ENEMY_ID::MINETSUMURI) {
+
+					arg_enemyMgr.lock()->GenerateMinetsumuri(enemy.m_routeID, false);
+
+				}
+				else if (enemy.m_enemyID == ENEMY_ID::MINEKING) {
+
+					arg_enemyMgr.lock()->GenerateMinetsumuri(enemy.m_routeID, true);
+
+				}
 
 			}
-			else if (enemy.m_enemyID == ENEMY_ID::MINETSUMURI) {
 
-				arg_enemyMgr.lock()->GenerateMinetsumuri(enemy.m_routeID, false);
+			//時間を進める。
+			m_nowTime = std::clamp(m_nowTime + 1, 0, m_nighTime);
 
-			}
-			else if (enemy.m_enemyID == ENEMY_ID::MINEKING) {
+			//時間が終わったWaveを無効化する。
+			if (m_nighTime <= m_nowTime) {
 
-				arg_enemyMgr.lock()->GenerateMinetsumuri(enemy.m_routeID, true);
-
+				Invalidate(arg_enemyMgr);
+				if (Tutorial::Instance()->is_tutorial)
+				{
+					Tutorial::Instance()->is_tutorial = false;
+				}
 			}
 
 		}
+		//昼時間だったら
+		else {
 
-		//時間を進める。
-		m_nowTime = std::clamp(m_nowTime + 1, 0, m_nighTime);
 
-		//時間が終わったWaveを無効化する。
-		if (m_nighTime <= m_nowTime) {
+			//時間を進める。
+			m_nowTime = std::clamp(m_nowTime + 1, 0, m_dayTime);
 
-			Invalidate(arg_enemyMgr);
-			if (Tutorial::Instance()->is_tutorial)
-			{
-				Tutorial::Instance()->is_tutorial = false;
+			//時間が終わったWaveを無効化する。
+			if (m_dayTime <= m_nowTime) {
+
+				//夜時間へ
+				m_nowTime = 0;
+				m_isNight = true;
+				SoundManager::Instance()->SoundPlayerWave(night_start, 0);
 			}
-		}
 
-	}
-	//昼時間だったら
-	else {
-
-
-		//時間を進める。
-		m_nowTime = std::clamp(m_nowTime + 1, 0, m_dayTime);
-
-		//時間が終わったWaveを無効化する。
-		if (m_dayTime <= m_nowTime) {
-
-			//夜時間へ
-			m_nowTime = 0;
-			m_isNight = true;
-			SoundManager::Instance()->SoundPlayerWave(night_start, 0);
 		}
 
 	}

@@ -41,6 +41,10 @@ private:
 	DrawCallUISet m_titleStartUI;
 	DrawCallUISet m_titleQuitUI;
 
+	DrawCallUISet m_resultBackGroundUI;
+	DrawCallUISet m_resultTitleUI;
+	DrawCallUISet m_resultRetryUI;
+
 	KazMath::Vec3<float> m_cameraEyeDir;
 	KazMath::Vec3<float> m_targetOffset;
 	float m_cameraEyeDistance;
@@ -55,11 +59,21 @@ private:
 	float m_titleLogoDeleteTimer;
 	const float TITLELOGO_DELETE_TIMER = 10.0f;
 
+	//リザルト関連。
+	int m_selectResultNum;
+	bool m_isResultToTitle;
+	bool m_isResultToGame;
+
 	//UIのスケール
 	KazMath::Vec2<float> UI_DEF_START_SCALE = KazMath::Vec2<float>(150.0f, 50.0f);
 	KazMath::Vec2<float> UI_DEF_QUIT_SCALE = KazMath::Vec2<float>(125.0f, 50.0f);
 	KazMath::Vec2<float> UI_MAX_START_SCALE = UI_DEF_START_SCALE * 1.5f;
 	KazMath::Vec2<float> UI_MAX_QUIT_SCALE = UI_DEF_QUIT_SCALE * 1.5f;
+
+	KazMath::Vec2<float> UI_DEF_TITLE_SCALE = KazMath::Vec2<float>(100.0f, 50.0f);
+	KazMath::Vec2<float> UI_DEF_RETRY_SCALE = KazMath::Vec2<float>(100.0f, 50.0f);
+	KazMath::Vec2<float> UI_MAX_TITLE_SCALE = KazMath::Vec2<float>(100.0f, 50.0f) * 1.3f;
+	KazMath::Vec2<float> UI_MAX_RETRY_SCALE = KazMath::Vec2<float>(100.0f, 50.0f) * 1.3f;
 
 
 public:
@@ -74,4 +88,9 @@ public:
 	void Draw(DrawingByRasterize& arg_rasterize, Raytracing::BlasVector& arg_blasVec);
 
 	int SceneChange();
+
+private:
+
+	void UpdateTitle();
+	void UpdateResult();
 };

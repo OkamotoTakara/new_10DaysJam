@@ -315,6 +315,7 @@
     <ClInclude Include="Game\Mineral\MineralTarget.h" />
     <ClInclude Include="Game\Player.h" />
     <ClInclude Include="Game\PointLightMgr.h" />
+    <ClInclude Include="Game\ResultFlag.h" />
     <ClInclude Include="Game\Rock\Rock.h" />
     <ClInclude Include="Game\Rock\RockMgr.h" />
     <ClInclude Include="Game\Stage\ChildOfEdenStage.h" />

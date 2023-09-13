@@ -341,6 +341,7 @@
     <ClInclude Include="Game\TitleFlag.h" />
     <ClInclude Include="Game\Tutorial.h" />
     <ClInclude Include="Game\Transition.h" />
+    <ClInclude Include="Game\ResultFlag.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

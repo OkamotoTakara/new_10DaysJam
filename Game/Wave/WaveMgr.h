@@ -13,6 +13,7 @@ private:
 	std::vector<std::shared_ptr<Wave>> m_waves;		//ウェーブの配列
 	int m_waveCount;
 	int m_nowWaveIndex;
+	bool m_isFinishAllWave;
 
 	//ウェーブ
 	std::shared_ptr<Wave> m_wave1;	//通常の1Wave目
@@ -39,4 +40,6 @@ public:
 	bool GetIsNight();
 
 	void SetTime(int wave_index, int wave_time);
+
+	bool GetIsFinishAllWave() { return m_isFinishAllWave; }
 };

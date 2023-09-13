@@ -22,6 +22,7 @@
 #include"../Game/WallAndTreeGeneratePos.h"
 #include"../Game/Wave/WaveMgr.h"
 #include"../Game/TitleFlag.h"
+#include"../Game/ResultFlag.h"
 #include"../Game/Tutorial.h"
 #include"../KazLibrary/Easing/easing.h"
 #include"../Game/Transition.h"
@@ -87,6 +88,19 @@ GameScene::GameScene()
 	m_selectTitleNum = 0;
 	m_selectTitleUISine = 0.0f;
 
+	//リザルト関連
+	m_resultBackGroundUI.Load("Resource/Result/Result_UI4.png");
+	m_resultTitleUI.Load("Resource/Result/Result_UI2.png");
+	m_resultRetryUI.Load("Resource/Result/Result_UI3.png");
+
+	//サイズを調整。
+	m_resultBackGroundUI.m_transform.pos = { 1280.0f / 2.0f, 720.0f / 2.0f };
+	m_resultBackGroundUI.m_transform.scale = { 1280.0f, 720.0f };
+	m_resultTitleUI.m_transform.pos = { 640.0f, 610.0f };
+	m_resultTitleUI.m_transform.scale = UI_DEF_TITLE_SCALE;
+	m_resultRetryUI.m_transform.pos = { 640.0f, 535.0f };
+	m_resultRetryUI.m_transform.scale = { UI_MAX_RETRY_SCALE };
+
 	NumberFont::Instance()->Load();
 	Tutorial::Instance()->setting();
 
@@ -125,6 +139,7 @@ void GameScene::Init()
 	GBufferMgr::Instance()->m_lightConstData.m_dirLight.m_dir = KazMath::Vec3<float>(0.0f, -0.894f, 0.4472f);
 
 	TitleFlag::Instance()->Init();
+	ResultFlag::Instance()->Init();
 	m_titleLogoDeleteTimer = 0.0f;
 
 	Transition::Instance()->Init();
@@ -132,6 +147,10 @@ void GameScene::Init()
 	m_titleStartUI.m_color.color.a = 255;
 	m_titleQuitUI.m_color.color.a = 255;
 	m_titleBackGroundUI.m_color.color.a = 255;
+
+	//リザルト関連
+	m_selectResultNum = 0;
+	m_isResultToTitle = false;
 
 }
 
@@ -153,9 +172,6 @@ void GameScene::Update()
 
 	if (KeyBoradInputManager::Instance()->InputTrigger(DIK_R)) {
 		Init();
-	}
-	if (KeyBoradInputManager::Instance()->InputTrigger(DIK_I)) {
-		TitleFlag::Instance()->m_isTitle = false;
 	}
 
 	//ウェーブを更新。
@@ -198,84 +214,36 @@ void GameScene::Update()
 	//シェイクを更新。
 	ShakeMgr::Instance()->Update();
 
-	//タイトル画面だったら。
-	if (TitleFlag::Instance()->m_isTitle) {
+	//ウェーブが終わったらリザルトへ。
+	if (!ResultFlag::Instance()->m_isResult && WaveMgr::Instance()->GetIsFinishAllWave()) {
 
+		++ResultFlag::Instance()->m_uiDeleteTime;
+		if (ResultFlag::Instance()->UI_DELETE_TIME <= ResultFlag::Instance()->m_uiDeleteTime) {
 
-		if (KeyBoradInputManager::Instance()->InputState(DIK_W) ||
-			KeyBoradInputManager::Instance()->InputState(DIK_UP) ||
-			ControllerInputManager::Instance()->InputStickTrigger(ControllerStickSide::LEFT_STICK, ControllerSide::UP_SIDE)) {
-
-			m_selectTitleNum = std::clamp(m_selectTitleNum - 1, 0, 1);
-
-		}
-
-		if (KeyBoradInputManager::Instance()->InputState(DIK_S) ||
-			KeyBoradInputManager::Instance()->InputState(DIK_DOWN) ||
-			ControllerInputManager::Instance()->InputStickTrigger(ControllerStickSide::LEFT_STICK, ControllerSide::DOWN_SIDE)) {
-
-			m_selectTitleNum = std::clamp(m_selectTitleNum + 1, 0, 1);
-
-		}
-
-		//決定キーが入力されたら
-		if (KeyBoradInputManager::Instance()->InputState(DIK_SPACE) ||
-			KeyBoradInputManager::Instance()->InputState(DIK_RETURN) ||
-			ControllerInputManager::Instance()->InputTrigger(XINPUT_GAMEPAD_A)) {
-
-			//Startを選択していたら。
-			if (m_selectTitleNum == 0) {
-
-				TitleFlag::Instance()->m_isStart = true;
-
+			//遷移が始まっていなかったら遷移させる。
+			if (!Transition::Instance()->GetIsActive()) {
+				Transition::Instance()->Activate();
 			}
-			//Quitを選択していたら
-			else if (m_selectTitleNum) {
-
-				TitleFlag::Instance()->m_isQuit = true;
-
+			//終わっていたら
+			else if (Transition::Instance()->GetIsFinish()) {
+				ResultFlag::Instance()->m_isResult = true;
+				ResultFlag::Instance()->m_isDraw = true;
+				Transition::Instance()->Init();
 			}
 
 		}
 
-
-		m_selectTitleUISine += ADD_SELECT_TITLE_SINE;
-
 	}
 
-	Tutorial::Instance()->Update();
+	//タイトルの更新処理
+	UpdateTitle();
 
-	//タイトルロゴを消すまでのタイマー
-	if (TitleFlag::Instance()->m_isStart && TitleFlag::Instance()->m_isDrawTitle) {
-
-		m_titleLogoDeleteTimer = std::clamp(m_titleLogoDeleteTimer + 1.0f, 0.0f, TITLELOGO_DELETE_TIMER);
-
-		//イージングをかけてタイマーを減らす。
-		float easingAmount = EasingMaker(In, Sine, m_titleLogoDeleteTimer / TITLELOGO_DELETE_TIMER);
-
-		//アルファを減らす。
-		m_titleStartUI.m_color.color.a = static_cast<int>((1.0f - easingAmount) * 255);
-		m_titleQuitUI.m_color.color.a = static_cast<int>((1.0f - easingAmount) * 255);
-		m_titleBackGroundUI.m_color.color.a = static_cast<int>((1.0f - easingAmount) * 255);
-
-		if (TITLELOGO_DELETE_TIMER <= m_titleLogoDeleteTimer) {
-
-			m_titleLogoDeleteTimer = 0.0f;
-			TitleFlag::Instance()->m_isDrawTitle = false;
-			Transition::Instance()->Activate();
-
-		}
-
-	}
-
-	//タイトルが消えていて、遷移も終わっていたらタイトルを終える。
-	if (!TitleFlag::Instance()->m_isDrawTitle && !Transition::Instance()->GetIsActive()) {
-
-		TitleFlag::Instance()->m_isTitle = false;
-
-	}
+	//リザルトの更新処理
+	UpdateResult();
 
 	Transition::Instance()->Update();
+
+	Tutorial::Instance()->Update();
 
 }
 
@@ -308,7 +276,7 @@ void GameScene::Draw(DrawingByRasterize& arg_rasterize, Raytracing::BlasVector& 
 	m_line.Draw(arg_rasterize, arg_blasVec, m_stageTransform);
 
 
-	//ImGui::Begin("UI");
+	ImGui::Begin("UI");
 
 	////ImGui::DragFloat("POS_X", &BuildingMgr::Instance()->GetWall(2).lock()->m_initPos.x, 1.0f);
 	////ImGui::DragFloat("POS_Y", &BuildingMgr::Instance()->GetWall(2).lock()->m_initPos.y, 1.0f);
@@ -322,14 +290,14 @@ void GameScene::Draw(DrawingByRasterize& arg_rasterize, Raytracing::BlasVector& 
 
 	////ImGui::Text(" ");
 
-	////ImGui::DragFloat("EyeDistance", &m_cameraEyeDistance, 1.0f);
-	//ImGui::DragFloat("START_UI_X", &m_titleStartUI.m_transform.pos.x, 1.0f);
-	//ImGui::DragFloat("START_UI_Y", &m_titleStartUI.m_transform.pos.y, 1.0f);
-	//ImGui::DragFloat("QUIT_UI_X", &m_titleQuitUI.m_transform.pos.x, 1.0f);
-	//ImGui::DragFloat("QUIT_UI_Y", &m_titleQuitUI.m_transform.pos.y, 1.0f);
-	////ImGui::SliderFloat("UI_Z", &GBufferMgr::Instance()->m_lightConstData.m_dirLight.m_dir.z, 0.0f, 1.0f);
+	//ImGui::DragFloat("EyeDistance", &m_cameraEyeDistance, 1.0f);
+	ImGui::DragFloat("TITLE_UI_X", &m_resultTitleUI.m_transform.pos.x, 1.0f);
+	ImGui::DragFloat("TITLE_UI_Y", &m_resultTitleUI.m_transform.pos.y, 1.0f);
+	ImGui::DragFloat("RETRY_UI_X", &m_resultRetryUI.m_transform.pos.x, 1.0f);
+	ImGui::DragFloat("RETRY_UI_Y", &m_resultRetryUI.m_transform.pos.y, 1.0f);
+	//ImGui::SliderFloat("UI_Z", &GBufferMgr::Instance()->m_lightConstData.m_dirLight.m_dir.z, 0.0f, 1.0f);
 
-	//ImGui::End();
+	ImGui::End();
 
 	//タイトルのUIをロード
 	if (TitleFlag::Instance()->m_isTitle) {
@@ -352,6 +320,27 @@ void GameScene::Draw(DrawingByRasterize& arg_rasterize, Raytracing::BlasVector& 
 		m_titleBackGroundUI.Draw(arg_rasterize);
 	}
 
+	//リザルト画面を描画
+	if (ResultFlag::Instance()->m_isResult) {
+
+		//Startを選択していたら。
+		if (m_selectResultNum == 0) {
+			m_resultRetryUI.m_transform.scale += ((UI_MAX_RETRY_SCALE + sinf(m_selectTitleUISine) * SELECT_TITLE_SINE_SCALE) - m_resultRetryUI.m_transform.scale) / 3.0f;
+			m_resultTitleUI.m_transform.scale += (UI_DEF_TITLE_SCALE - m_resultTitleUI.m_transform.scale) / 3.0f;
+		}
+		else {
+			m_resultRetryUI.m_transform.scale += (UI_DEF_RETRY_SCALE - m_resultRetryUI.m_transform.scale) / 3.0f;
+			m_resultTitleUI.m_transform.scale += ((UI_MAX_TITLE_SCALE + sinf(m_selectTitleUISine) * SELECT_TITLE_SINE_SCALE) - m_resultTitleUI.m_transform.scale) / 3.0f;
+		}
+
+
+	}
+	if (ResultFlag::Instance()->m_isDraw) {
+		m_resultTitleUI.Draw(arg_rasterize);
+		m_resultRetryUI.Draw(arg_rasterize);
+		m_resultBackGroundUI.Draw(arg_rasterize);
+	}
+
 	//チュートリアルを描画。
 	Tutorial::Instance()->Draw(arg_rasterize, arg_blasVec);
 
@@ -363,4 +352,267 @@ void GameScene::Draw(DrawingByRasterize& arg_rasterize, Raytracing::BlasVector& 
 int GameScene::SceneChange()
 {
 	return SCENE_NONE;
+}
+
+void GameScene::UpdateTitle()
+{
+
+	//タイトル画面だったら。
+	if (TitleFlag::Instance()->m_isTitle) {
+
+
+		if (KeyBoradInputManager::Instance()->InputState(DIK_W) ||
+			KeyBoradInputManager::Instance()->InputState(DIK_UP) ||
+			ControllerInputManager::Instance()->InputStickTrigger(ControllerStickSide::LEFT_STICK, ControllerSide::UP_SIDE)) {
+
+			m_selectTitleNum = std::clamp(m_selectTitleNum - 1, 0, 1);
+
+		}
+
+		if (KeyBoradInputManager::Instance()->InputState(DIK_S) ||
+			KeyBoradInputManager::Instance()->InputState(DIK_DOWN) ||
+			ControllerInputManager::Instance()->InputStickTrigger(ControllerStickSide::LEFT_STICK, ControllerSide::DOWN_SIDE)) {
+
+			m_selectTitleNum = std::clamp(m_selectTitleNum + 1, 0, 1);
+
+		}
+
+		//決定キーが入力されたら
+		if (KeyBoradInputManager::Instance()->InputState(DIK_SPACE) ||
+			KeyBoradInputManager::Instance()->InputState(DIK_RETURN) ||
+			ControllerInputManager::Instance()->InputTrigger(XINPUT_GAMEPAD_A)) {
+
+			//Startを選択していたら。
+			if (m_selectTitleNum == 0) {
+
+				TitleFlag::Instance()->m_isStart = true;
+
+			}
+			//Quitを選択していたら
+			else if (m_selectTitleNum == 1) {
+
+				TitleFlag::Instance()->m_isQuit = true;
+
+			}
+
+		}
+
+
+		m_selectTitleUISine += ADD_SELECT_TITLE_SINE;
+
+		//タイトルが消えていて、遷移も終わっていたらタイトルを終える。
+		if (!TitleFlag::Instance()->m_isDrawTitle && !Transition::Instance()->GetIsActive()) {
+
+			TitleFlag::Instance()->m_isTitle = false;
+			Transition::Instance()->Init();
+
+		}
+
+	}
+
+	//タイトルロゴを消すまでのタイマー
+	if (TitleFlag::Instance()->m_isStart && TitleFlag::Instance()->m_isDrawTitle) {
+
+		m_titleLogoDeleteTimer = std::clamp(m_titleLogoDeleteTimer + 1.0f, 0.0f, TITLELOGO_DELETE_TIMER);
+
+		//イージングをかけてタイマーを減らす。
+		float easingAmount = EasingMaker(In, Sine, m_titleLogoDeleteTimer / TITLELOGO_DELETE_TIMER);
+
+		//アルファを減らす。
+		m_titleStartUI.m_color.color.a = static_cast<int>((1.0f - easingAmount) * 255);
+		m_titleQuitUI.m_color.color.a = static_cast<int>((1.0f - easingAmount) * 255);
+		m_titleBackGroundUI.m_color.color.a = static_cast<int>((1.0f - easingAmount) * 255);
+
+		if (TITLELOGO_DELETE_TIMER <= m_titleLogoDeleteTimer) {
+
+			m_titleLogoDeleteTimer = 0.0f;
+			TitleFlag::Instance()->m_isDrawTitle = false;
+			Transition::Instance()->Activate();
+
+		}
+
+	}
+	else if(TitleFlag::Instance()->m_isTitle) {
+
+		m_titleStartUI.m_color.color.a += static_cast<int>((255.0f - m_titleStartUI.m_color.color.a) / 10.0f);
+		m_titleQuitUI.m_color.color.a += static_cast<int>((255.0f - m_titleQuitUI.m_color.color.a) / 10.0f);
+		m_titleBackGroundUI.m_color.color.a += static_cast<int>((255.0f - m_titleBackGroundUI.m_color.color.a) / 10.0f);
+
+	}
+	else {
+
+		m_titleStartUI.m_color.color.a = 0;
+		m_titleQuitUI.m_color.color.a = 0;
+		m_titleBackGroundUI.m_color.color.a = 0;
+
+	}
+
+}
+
+void GameScene::UpdateResult()
+{
+
+
+	//リザルト画面だったら。
+	if (ResultFlag::Instance()->m_isResult) {
+
+		if (KeyBoradInputManager::Instance()->InputState(DIK_W) ||
+			KeyBoradInputManager::Instance()->InputState(DIK_UP) ||
+			ControllerInputManager::Instance()->InputStickTrigger(ControllerStickSide::LEFT_STICK, ControllerSide::UP_SIDE)) {
+
+			m_selectResultNum = std::clamp(m_selectResultNum - 1, 0, 1);
+
+		}
+
+		if (KeyBoradInputManager::Instance()->InputState(DIK_S) ||
+			KeyBoradInputManager::Instance()->InputState(DIK_DOWN) ||
+			ControllerInputManager::Instance()->InputStickTrigger(ControllerStickSide::LEFT_STICK, ControllerSide::DOWN_SIDE)) {
+
+			m_selectResultNum = std::clamp(m_selectResultNum + 1, 0, 1);
+
+		}
+
+		//決定キーが入力されたら
+		if (KeyBoradInputManager::Instance()->InputState(DIK_SPACE) ||
+			KeyBoradInputManager::Instance()->InputState(DIK_RETURN) ||
+			ControllerInputManager::Instance()->InputTrigger(XINPUT_GAMEPAD_A)) {
+
+			//Startを選択していたら。
+			if (m_selectResultNum == 0) {
+
+				//リトライ
+				m_isResultToGame = true;
+				m_titleLogoDeleteTimer = 0;
+
+			}
+			//Quitを選択していたら
+			else if (m_selectResultNum == 1) {
+				
+				m_isResultToTitle = true;
+				m_titleLogoDeleteTimer = 0;
+				//Init();
+
+			}
+
+		}
+
+
+		m_selectTitleUISine += ADD_SELECT_TITLE_SINE;
+
+	}
+
+	//タイトルか再挑戦が選ばれていて、遷移が終わっていたら。
+	if ((m_isResultToTitle) && Transition::Instance()->GetIsBlackOut()) {
+		
+		m_player->Init();
+		MineralMgr::Instance()->Init();
+		//MineralMgr::Instance()->DebugGenerate();
+		m_goldCore->Init();
+
+		m_enemyMgr->Init();
+		//m_enemyMgr->DebugGenerate();
+
+		RockMgr::Instance()->Init();
+		//m_rockMgr->DebugGenerate();
+
+		DestructibleObjectMgr::Instance()->Init();
+		//m_destructibleObject->DebugGenerate();
+
+		WaveMgr::Instance()->Init(m_enemyMgr);
+		WaveMgr::Instance()->GameStart();
+
+		BuildingMaterialMgr::Instance()->Init();
+		BuildingMgr::Instance()->Init();
+		BuildingMgr::Instance()->Generate();
+
+		//太陽の方向を昼に設定
+		GBufferMgr::Instance()->m_lightConstData.m_dirLight.m_dir = KazMath::Vec3<float>(0.0f, -0.894f, 0.4472f);
+
+	}
+	if ((m_isResultToTitle) && Transition::Instance()->GetIsFinish()) {
+
+		ResultFlag::Instance()->Init();
+		TitleFlag::Instance()->Init();
+
+		Transition::Instance()->Init();
+		m_isResultToTitle = false;
+
+	}
+
+	//タイトルか再挑戦が選ばれていて、遷移が終わっていたら。
+	if ((m_isResultToGame) && Transition::Instance()->GetIsBlackOut()) {
+		
+		m_player->Init();
+		MineralMgr::Instance()->Init();
+		//MineralMgr::Instance()->DebugGenerate();
+		m_goldCore->Init();
+
+		m_enemyMgr->Init();
+		//m_enemyMgr->DebugGenerate();
+
+		RockMgr::Instance()->Init();
+		//m_rockMgr->DebugGenerate();
+
+		DestructibleObjectMgr::Instance()->Init();
+		//m_destructibleObject->DebugGenerate();
+
+		WaveMgr::Instance()->Init(m_enemyMgr);
+		WaveMgr::Instance()->GameStart();
+
+		BuildingMaterialMgr::Instance()->Init();
+		BuildingMgr::Instance()->Init();
+		BuildingMgr::Instance()->Generate();
+
+		//太陽の方向を昼に設定
+		GBufferMgr::Instance()->m_lightConstData.m_dirLight.m_dir = KazMath::Vec3<float>(0.0f, -0.894f, 0.4472f);
+
+	}
+	if ((m_isResultToGame) && Transition::Instance()->GetIsFinish()) {
+
+
+		ResultFlag::Instance()->Init();
+		Transition::Instance()->Init();
+		m_isResultToGame = false;
+
+	}
+
+	//タイトルロゴを消すまでのタイマー
+	if (ResultFlag::Instance()->m_isResult && ResultFlag::Instance()->m_isDraw && (m_isResultToTitle || m_isResultToGame)) {
+
+		m_titleLogoDeleteTimer = std::clamp(m_titleLogoDeleteTimer + 1.0f, 0.0f, TITLELOGO_DELETE_TIMER);
+
+		//イージングをかけてタイマーを減らす。
+		float easingAmount = EasingMaker(In, Sine, m_titleLogoDeleteTimer / TITLELOGO_DELETE_TIMER);
+
+		//アルファを減らす。
+		m_resultTitleUI.m_color.color.a = static_cast<int>((1.0f - easingAmount) * 255);
+		m_resultRetryUI	.m_color.color.a = static_cast<int>((1.0f - easingAmount) * 255);
+		m_resultBackGroundUI.m_color.color.a = static_cast<int>((1.0f - easingAmount) * 255);
+
+		if (TITLELOGO_DELETE_TIMER <= m_titleLogoDeleteTimer) {
+
+			m_titleLogoDeleteTimer = 0.0f;
+			ResultFlag::Instance()->m_isDraw = false;
+			Transition::Instance()->Activate();
+
+		}
+
+	}
+	else if (ResultFlag::Instance()->m_isResult) {
+
+		m_resultTitleUI.m_color.color.a += static_cast<int>((255.0f - m_resultTitleUI.m_color.color.a) / 10.0f);
+		m_resultRetryUI.m_color.color.a += static_cast<int>((255.0f - m_resultRetryUI.m_color.color.a) / 10.0f);
+		m_resultBackGroundUI.m_color.color.a += static_cast<int>((255.0f - m_resultBackGroundUI.m_color.color.a) / 10.0f);
+
+	}
+	else {
+
+		m_resultTitleUI.m_color.color.a = 0;
+		m_resultRetryUI.m_color.color.a = 0;
+		m_resultBackGroundUI.m_color.color.a = 0;
+
+
+	}
+
+
 }

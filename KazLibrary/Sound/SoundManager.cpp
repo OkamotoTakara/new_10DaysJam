@@ -139,6 +139,7 @@ void SoundManager::SoundPlayerWave(SoundData& arg_soundData, int arg_loopCount)
 	//波形データの再生
 	result = pSourceVoice->SubmitSourceBuffer(&buf);
 	result = pSourceVoice->Start();
+
 }
 
 
