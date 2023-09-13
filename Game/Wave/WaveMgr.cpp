@@ -21,37 +21,35 @@ void WaveMgr::Setting()
 
 	//1ウェーブ目 -----------------------------------------------------------------------------------------
 
-	//チュートリアルのとき
-	if (Tutorial::Instance()->is_tutorial)
-	{
-		dayTime = 600;
-		nightTime = 1800;
-		//敵を追加していく。
-		enemyInfo.emplace_back(EnemyRoute::A, Wave::ENEMY_ID::MINEKUJI, 0);
-		enemyInfo.emplace_back(EnemyRoute::A, Wave::ENEMY_ID::MINEKUJI, 180);
-		enemyInfo.emplace_back(EnemyRoute::A, Wave::ENEMY_ID::MINEKUJI, 360);
-		//enemyInfo.emplace_back(EnemyRoute::B, Wave::ENEMY_ID::MINETSUMURI, 0);
+	//チュートリアルのウェーブ
+	dayTime = 600;
+	nightTime = 1800;
+	//敵を追加していく。
+	enemyInfo.emplace_back(EnemyRoute::A, Wave::ENEMY_ID::MINEKUJI, 0);
+	enemyInfo.emplace_back(EnemyRoute::A, Wave::ENEMY_ID::MINEKUJI, 180);
+	enemyInfo.emplace_back(EnemyRoute::A, Wave::ENEMY_ID::MINEKUJI, 360);
+	//enemyInfo.emplace_back(EnemyRoute::B, Wave::ENEMY_ID::MINETSUMURI, 0);
 	//ウェーブを追加。
-		m_waves.emplace_back(std::make_shared<Wave>(dayTime, nightTime, tree, rock, mineralRock, enemyInfo));
-		enemyInfo.clear();
-	}
-	//チュートリアルではないとき
-	else
-	{
-		int dayTime = 600;		//日中の時間 フレーム数
-		int nightTime = 1800;	//夜の時間 フレーム数
-		std::vector<int> tree = {  };		//有効化時に生成される木のIndex 1スタート
-		std::vector<int> rock = {  };		//有効化時に生成される岩のIndex 1スタート
-		std::vector<int> mineralRock = {  };		//有効化時に生成されるミネラル岩のIndex 1スタート
-		//敵を追加していく。
-		enemyInfo.emplace_back(EnemyRoute::A, Wave::ENEMY_ID::MINEKUJI, 0);
-		enemyInfo.emplace_back(EnemyRoute::A, Wave::ENEMY_ID::MINEKUJI, 180);
-		enemyInfo.emplace_back(EnemyRoute::A, Wave::ENEMY_ID::MINEKUJI, 360);
-		//enemyInfo.emplace_back(EnemyRoute::B, Wave::ENEMY_ID::MINETSUMURI, 0);
+	m_tutorialWave = std::make_shared<Wave>(dayTime, nightTime, tree, rock, mineralRock, enemyInfo);
+	enemyInfo.clear();
+
+	//通常のウェーブ1
+	dayTime = 600;		//日中の時間 フレーム数
+	nightTime = 1800;	//夜の時間 フレーム数
+	tree = {  };		//有効化時に生成される木のIndex 1スタート
+	rock = {  };		//有効化時に生成される岩のIndex 1スタート
+	mineralRock = {  };		//有効化時に生成されるミネラル岩のIndex 1スタート
+	//敵を追加していく。
+	enemyInfo.emplace_back(EnemyRoute::A, Wave::ENEMY_ID::MINEKUJI, 0);
+	enemyInfo.emplace_back(EnemyRoute::A, Wave::ENEMY_ID::MINEKUJI, 180);
+	enemyInfo.emplace_back(EnemyRoute::A, Wave::ENEMY_ID::MINEKUJI, 360);
+	//enemyInfo.emplace_back(EnemyRoute::B, Wave::ENEMY_ID::MINETSUMURI, 0);
 	//ウェーブを追加。
-		m_waves.emplace_back(std::make_shared<Wave>(dayTime, nightTime, tree, rock, mineralRock, enemyInfo));
-		enemyInfo.clear();
-	}
+	m_wave1 = std::make_shared<Wave>(dayTime, nightTime, tree, rock, mineralRock, enemyInfo);
+	enemyInfo.clear();
+
+	//一旦チュートリアルのウェーブを入れておく。
+	m_tutorialWave.emplace_back(m_wave1);
 
 
 	//2ウェーブ目 -----------------------------------------------------------------------------------------
@@ -272,6 +270,14 @@ void WaveMgr::Draw(DrawingByRasterize& arg_rasterize, Raytracing::BlasVector& ar
 
 void WaveMgr::GameStart()
 {
+
+	//チュートリアルだったら最初のウェーブを差し替え。
+	if (Tutorial::Instance()->is_tutorial) {
+		m_waves.front() = m_tutorialWave;
+	}
+	else {
+		m_waves.front() = m_wave1;
+	}
 
 	m_waves.front()->Active();
 

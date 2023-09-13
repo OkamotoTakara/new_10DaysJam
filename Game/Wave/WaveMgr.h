@@ -14,6 +14,10 @@ private:
 	int m_waveCount;
 	int m_nowWaveIndex;
 
+	//ウェーブ
+	std::shared_ptr<Wave> m_wave1;	//通常の1Wave目
+	std::shared_ptr<Wave> m_tutorialWave;	//チュートリアル用のウェーブ1
+
 	//タイマーのUI
 	DrawCallUISet m_timerUI;
 	DrawCallUISet m_frameUI;
