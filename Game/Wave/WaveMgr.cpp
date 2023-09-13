@@ -21,7 +21,7 @@ void WaveMgr::Setting()
 
 
 	//チュートリアルのウェーブ-----------------------------------------------------------------------------------------
-	dayTime = 600;
+	dayTime = 60;
 	nightTime = 1800;
 	//敵を追加していく。
 	enemyInfo.emplace_back(EnemyRoute::A, Wave::ENEMY_ID::MINEKUJI, 0);
@@ -35,6 +35,7 @@ void WaveMgr::Setting()
 	m_tutorialWave = std::make_shared<Wave>(dayTime, nightTime, tree, rock, mineralRock, enemyInfo);
 	enemyInfo.clear();
 
+	
 	//1ウェーブ目 -----------------------------------------------------------------------------------------
 	dayTime = 600;		//日中の時間 フレーム数
 	nightTime = 1800;	//夜の時間 フレーム数
@@ -54,7 +55,7 @@ void WaveMgr::Setting()
 
 	m_waves.emplace_back(m_wave1);
 
-
+	/*
 	//2ウェーブ目 -----------------------------------------------------------------------------------------
 	dayTime = 3200;		//日中の時間 フレーム数
 	nightTime = 3200;	//夜の時間 フレーム数
@@ -194,6 +195,7 @@ void WaveMgr::Setting()
 	m_waves.emplace_back(std::make_shared<Wave>(dayTime, nightTime, tree, rock, mineralRock, enemyInfo));
 	enemyInfo.clear();
 
+	*/
 
 	//7ウェーブ目 -----------------------------------------------------------------------------------------
 	dayTime = 3200;		//日中の時間 フレーム数
@@ -213,6 +215,32 @@ void WaveMgr::Setting()
 	enemyInfo.emplace_back(EnemyRoute::A, Wave::ENEMY_ID::MINETSUMURI, 1080);
 
 
+	enemyInfo.emplace_back(EnemyRoute::B, Wave::ENEMY_ID::MINEKUJI, 0);
+	enemyInfo.emplace_back(EnemyRoute::B, Wave::ENEMY_ID::MINEKUJI, 180);
+	enemyInfo.emplace_back(EnemyRoute::B, Wave::ENEMY_ID::MINEKUJI, 360);
+	enemyInfo.emplace_back(EnemyRoute::B, Wave::ENEMY_ID::MINEKUJI, 0);
+	enemyInfo.emplace_back(EnemyRoute::B, Wave::ENEMY_ID::MINEKUJI, 180);
+	enemyInfo.emplace_back(EnemyRoute::B, Wave::ENEMY_ID::MINEKUJI, 360);
+	enemyInfo.emplace_back(EnemyRoute::B, Wave::ENEMY_ID::MINETSUMURI, 720);
+	enemyInfo.emplace_back(EnemyRoute::B, Wave::ENEMY_ID::MINETSUMURI, 900);
+	enemyInfo.emplace_back(EnemyRoute::B, Wave::ENEMY_ID::MINETSUMURI, 1080);
+	enemyInfo.emplace_back(EnemyRoute::B, Wave::ENEMY_ID::MINEKING, 0);
+
+	enemyInfo.emplace_back(EnemyRoute::C, Wave::ENEMY_ID::MINEKUJI, 0);
+	enemyInfo.emplace_back(EnemyRoute::C, Wave::ENEMY_ID::MINEKUJI, 180);
+	enemyInfo.emplace_back(EnemyRoute::C, Wave::ENEMY_ID::MINEKUJI, 360);
+	enemyInfo.emplace_back(EnemyRoute::C, Wave::ENEMY_ID::MINEKUJI, 0);
+	enemyInfo.emplace_back(EnemyRoute::C, Wave::ENEMY_ID::MINEKUJI, 180);
+	enemyInfo.emplace_back(EnemyRoute::C, Wave::ENEMY_ID::MINEKUJI, 360);
+	enemyInfo.emplace_back(EnemyRoute::C, Wave::ENEMY_ID::MINETSUMURI, 720);
+	enemyInfo.emplace_back(EnemyRoute::C, Wave::ENEMY_ID::MINETSUMURI, 900);
+	enemyInfo.emplace_back(EnemyRoute::C, Wave::ENEMY_ID::MINETSUMURI, 1080);
+	enemyInfo.emplace_back(EnemyRoute::C, Wave::ENEMY_ID::MINEKING, 900);
+	//ウェーブを追加。
+
+	//ウェーブを追加。
+	m_waves.emplace_back(std::make_shared<Wave>(dayTime, nightTime, tree, rock, mineralRock, enemyInfo));
+	enemyInfo.clear();
 
 
 	//ウェーブ数を保存。
