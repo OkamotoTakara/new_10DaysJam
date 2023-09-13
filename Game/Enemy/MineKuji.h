@@ -76,6 +76,8 @@ private:
 	int m_wallIndex;
 	bool m_isAttackWall;
 
+	bool m_isTutorialEnemy;
+
 	//出現地点をランダム化
 	const float RANDOM_SPAWN_RANGE = 20.0f;
 
@@ -100,7 +102,7 @@ public:
 
 	void Init();
 
-	void Generate(std::vector<KazMath::Vec3<float>> arg_route);
+	void Generate(std::vector<KazMath::Vec3<float>> arg_route, bool arg_isTutorialEnemy);
 
 	void Update(std::weak_ptr<Core> arg_core, std::weak_ptr<Player> arg_player);
 

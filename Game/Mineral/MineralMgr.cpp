@@ -218,5 +218,10 @@ bool MineralMgr::SearchNearMineral(KazMath::Vec3<float> arg_pos, float arg_searc
 		arg_mineralIndex = mineralIndex;
 	}
 
+	//インデックスが-1だったら当たってないことにする。
+	if (arg_mineralIndex < 0) {
+		isHit = false;
+	}
+
 	return isHit;
 }

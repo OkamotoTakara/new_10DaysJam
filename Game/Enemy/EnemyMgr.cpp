@@ -36,14 +36,14 @@ void EnemyMgr::Init()
 
 }
 
-void EnemyMgr::GenerateMinekuji(EnemyRoute::ROUTE_ID arg_routeID)
+void EnemyMgr::GenerateMinekuji(EnemyRoute::ROUTE_ID arg_routeID, bool arg_isTutorialEnemy)
 {
 
 	for (auto& index : m_minekujis) {
 
 		if (index->GetIsActive()) continue;
 
-		index->Generate(EnemyRoute::Instance()->GetRoute(arg_routeID));
+		index->Generate(EnemyRoute::Instance()->GetRoute(arg_routeID), arg_isTutorialEnemy);
 
 		break;
 
