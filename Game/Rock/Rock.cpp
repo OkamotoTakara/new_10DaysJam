@@ -129,7 +129,8 @@ void Rock::Update(std::weak_ptr<Player> arg_player, std::vector<std::pair<KazMat
 				//HP‚ðŒ¸‚ç‚·B
 				Damage(dir / 5.0f, 4);
 				if (m_hp <= 0.0f) {
-
+					SoundManager::Instance()->SoundPlayerWave(rock_break01, 0);
+					SoundManager::Instance()->SoundPlayerWave(rock_break02, 0);
 					int id = 0;
 					switch (m_rockID)
 					{
