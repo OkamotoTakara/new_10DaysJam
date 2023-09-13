@@ -1,9 +1,14 @@
 #pragma once
 #include "../Game/DrawCallSet.h"
+#include "../KazLibrary/Sound/SoundManager.h"
 
 class Core {
 
 private:
+
+	SoundData wall_break01;
+	SoundData wall_break02;
+	SoundData damage;
 
 	DrawCallSet m_model;
 	DrawCallSet m_crownModel;
@@ -37,6 +42,8 @@ public:
 	void Draw(DrawingByRasterize& arg_rasterize, Raytracing::BlasVector& arg_blasVec);
 
 	void Damage(int arg_damage = 1);
+
+	bool IsDead() { return m_hp <= 0; }
 
 	void SetPos(KazMath::Vec3<float> arg_pos) { m_transform.pos = arg_pos; };
 	float GetScale() { return SCALE; }

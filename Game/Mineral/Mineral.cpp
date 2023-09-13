@@ -40,6 +40,12 @@ Mineral::Mineral()
 	rock_break02 = SoundManager::Instance()->SoundLoadWave("Resource/Sound/break.wav");
 	rock_break01.volume = 0.05f;
 	rock_break02.volume = 0.05f;
+	have_material_se = SoundManager::Instance()->SoundLoadWave("Resource/Sound/Take_Wood.wav");
+	have_material_se.volume = 0.05f;
+	walk = SoundManager::Instance()->SoundLoadWave("Resource/Sound/Walk.wav");
+	walk.volume = 0.07f;
+	attack = SoundManager::Instance()->SoundLoadWave("Resource/Sound/Attack.wav");
+	attack.volume = 0.1f;
 
 }
 
@@ -104,7 +110,6 @@ void Mineral::Update(std::weak_ptr<Player> arg_player, std::vector<std::pair<Kaz
 
 		m_transform.pos += m_respawnVec;
 		m_respawnVec -= m_respawnVec / 10.0f;
-
 	}
 	else {
 
@@ -152,6 +157,8 @@ void Mineral::Update(std::weak_ptr<Player> arg_player, std::vector<std::pair<Kaz
 			m_moveVec *= MOVE_SPEED[static_cast<int>(m_mineralID)] + KazMath::Rand(0.0f, MOVE_SPEED[static_cast<int>(m_mineralID)]);
 
 			m_moveSpan = 0;
+
+			SoundManager::Instance()->SoundPlayerWave(walk, 0);
 
 		}
 
@@ -270,7 +277,6 @@ void Mineral::Update(std::weak_ptr<Player> arg_player, std::vector<std::pair<Kaz
 				Tutorial::Instance()->break_mineral = true;
 			}
 		}
-
 	}
 
 	//ミネラルのサイズをステータスによって変更させる。
@@ -634,7 +640,6 @@ void Mineral::BreakUP(KazMath::Vec3<float> arg_forwardVec) {
 
 void Mineral::Attack(std::weak_ptr<Rock> arg_attackTargetRock)
 {
-
 	m_isAttack = true;
 	m_attackTargetRock.reset();
 	m_attackTargetMineKuji.reset();
@@ -658,7 +663,6 @@ void Mineral::Attack(std::weak_ptr<Rock> arg_attackTargetRock)
 }
 void Mineral::Attack(std::weak_ptr<MineKuji> arg_attackTargetMinekuji)
 {
-
 	m_isAttack = true;
 	m_attackTargetRock.reset();
 	m_attackTargetMineKuji.reset();
@@ -682,7 +686,6 @@ void Mineral::Attack(std::weak_ptr<MineKuji> arg_attackTargetMinekuji)
 }
 void Mineral::Attack(std::weak_ptr<MineTsumuri> arg_attackTargetMinetsumuri)
 {
-
 	m_isAttack = true;
 	m_attackTargetRock.reset();
 	m_attackTargetMineKuji.reset();
@@ -705,7 +708,6 @@ void Mineral::Attack(std::weak_ptr<MineTsumuri> arg_attackTargetMinetsumuri)
 
 }
 void Mineral::Attack(std::weak_ptr<DestructibleTree> arg_destructibleTree) {
-
 	m_isAttack = true;
 	m_attackTargetRock.reset();
 	m_attackTargetMineKuji.reset();
@@ -730,7 +732,7 @@ void Mineral::Attack(std::weak_ptr<DestructibleTree> arg_destructibleTree) {
 
 void Mineral::HaveMaterial(std::weak_ptr<BuildingMaterial> arg_material)
 {
-
+	SoundManager::Instance()->SoundPlayerWave(have_material_se, 0);
 	m_haveMaterial = arg_material;
 	m_haveMaterial.lock()->Held();
 
@@ -814,7 +816,15 @@ void Mineral::UpdateAttack(std::weak_ptr<Player> arg_player)
 			m_moveVec *= MOVE_SPEED[static_cast<int>(m_mineralID)];
 
 			m_moveSpan = 0;
-
+			if (move_span_count < MOVE_SPAN_COUNT_MAX)
+			{
+				move_span_count++;
+			}
+			else
+			{
+				move_span_count = 0;
+				SoundManager::Instance()->SoundPlayerWave(walk, 0);
+			}
 		}
 
 		//移動するベクトルを求める。
@@ -834,6 +844,7 @@ void Mineral::UpdateAttack(std::weak_ptr<Player> arg_player)
 			m_attackID = STAY;
 
 			//反動で吹き飛ばす。
+			SoundManager::Instance()->SoundPlayerWave(attack, 0);
 			KazMath::Vec3<float> reactionDir = moveDir;
 			reactionDir *= -1.0f;
 			reactionDir.y = 1.0f;

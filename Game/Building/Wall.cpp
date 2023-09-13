@@ -32,7 +32,12 @@ Wall::Wall()
 	wall_drop.volume = 0.07f;
 	wall_build = SoundManager::Instance()->SoundLoadWave("Resource/Sound/build.wav");
 	wall_build.volume = 0.1f;
-
+	wall_break01 = SoundManager::Instance()->SoundLoadWave("Resource/Sound/break.wav");
+	wall_break01.volume = 0.1f;
+	wall_break02 = SoundManager::Instance()->SoundLoadWave("Resource/Sound/rock.wav");
+	wall_break02.volume = 0.1f;
+	damage = SoundManager::Instance()->SoundLoadWave("Resource/Sound/Object_Damage.wav");
+	damage.volume = 0.05f;
 	m_modelIndex = 0;
 	Init();
 
@@ -274,6 +279,9 @@ void Wall::Update(std::weak_ptr<Player> arg_player)
 
 	//HPが0になったら初期化
 	if (m_hp <= 0) {
+
+		SoundManager::Instance()->SoundPlayerWave(wall_break01, 0);
+		SoundManager::Instance()->SoundPlayerWave(wall_break02, 0);
 		m_transform.pos = m_initPos;
 		Init();
 
@@ -376,6 +384,7 @@ KazMath::Vec3<float> Wall::GetPosZeroY()
 
 void Wall::Damage(int arg_damage)
 {
+	SoundManager::Instance()->SoundPlayerWave(damage, 0);
 	/*オカモトゾーン*/
 	damageAmount = static_cast<float>(arg_damage);
 	isDrawHpBox = true;

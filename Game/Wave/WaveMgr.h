@@ -2,11 +2,17 @@
 #include "../DrawCallSet.h"
 #include "../KazLibrary/Helper/ISinglton.h"
 #include "../DrawCallUISet.h"
+#include "../KazLibrary/Sound/SoundManager.h"
 
 class Wave;
 class EnemyMgr;
 
 class WaveMgr : public ISingleton<WaveMgr> {
+public:
+	SoundData m_BGM;
+	SoundData start_morning;
+	float volume;
+	bool start_bgm;
 
 private:
 
@@ -22,7 +28,9 @@ private:
 	//タイマーのUI
 	DrawCallUISet m_timerUI;
 	DrawCallUISet m_frameUI;
-
+	//日数のUI
+	DrawCallUISet m_daysUI;
+	std::array<DrawCallUISet, 10> m_number;
 
 public:
 
@@ -42,4 +50,8 @@ public:
 	void SetTime(int wave_index, int wave_time);
 
 	bool GetIsFinishAllWave() { return m_isFinishAllWave; }
+
+	int GetNowWaveIndex() { return m_nowWaveIndex; }
+	int GetWaveCount() { return m_nowWaveIndex; }
+
 };

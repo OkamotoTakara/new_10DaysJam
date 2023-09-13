@@ -36,6 +36,10 @@ Player::Player()
 	slap_se.volume = 0.1f;
 	slap_strong_se = SoundManager::Instance()->SoundLoadWave("Resource/Sound/slap_strong.wav");
 	slap_strong_se.volume = 0.2f;
+	down = SoundManager::Instance()->SoundLoadWave("Resource/Sound/Player_Down.wav");
+	down.volume = 0.05f;
+	damage = SoundManager::Instance()->SoundLoadWave("Resource/Sound/Player_Damage.wav");
+	damage.volume = 0.05f;
 }
 
 void Player::Init()
@@ -375,6 +379,7 @@ void Player::Update()
 	if (m_hp <= 0 && !m_isStun) {
 
 		m_isStun = true;
+		SoundManager::Instance()->SoundPlayerWave(down, 0);
 
 		ShakeMgr::Instance()->m_shakeAmount = 5.0f;
 		m_damageShake = DAMAGE_SHAKE * 1.5f;
@@ -592,12 +597,12 @@ void Player::Draw(DrawingByRasterize& arg_rasterize, Raytracing::BlasVector& arg
 
 
 
-	ImGui::Begin("UI");
+	//ImGui::Begin("UI");
 
-	ImGui::Text("POS_X : %f", m_transform.pos.x);
-	ImGui::Text("POS_Z : %f", m_transform.pos.z);
+	//ImGui::Text("POS_X : %f", m_transform.pos.x);
+	//ImGui::Text("POS_Z : %f", m_transform.pos.z);
 
-	ImGui::End();
+	//ImGui::End();
 
 
 }
@@ -611,6 +616,7 @@ KazMath::Vec3<float> Player::TransformVec3(KazMath::Vec3<float> arg_value, Direc
 
 void Player::Damage(int arg_damage) {
 
+	SoundManager::Instance()->SoundPlayerWave(damage, 0);
 	m_hp = std::clamp(m_hp - arg_damage, 0.0f, HP);
 	m_damageShake = DAMAGE_SHAKE;
 	m_damageChangeDadanUITimer = DAMAGE_CHANGE_DADAN_UI_TIMER;

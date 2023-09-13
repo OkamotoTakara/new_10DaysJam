@@ -8,7 +8,8 @@ class Player {
 private:
 	SoundData slap_se;
 	SoundData slap_strong_se;
-
+	SoundData damage;
+	SoundData down;
 	//プレイヤー描画関連
 	DrawCallSet m_model;
 	DrawCallSet m_attackModel;

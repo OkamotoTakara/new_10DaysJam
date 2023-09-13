@@ -10,6 +10,8 @@ class Wave {
 public:
 
 	SoundData night_start;
+	bool volume_up;
+	bool volume_down;
 
 	enum class ENEMY_ID {
 		MINEKUJI,

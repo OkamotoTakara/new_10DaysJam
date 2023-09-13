@@ -3,6 +3,7 @@
 #include "../Game/Wave/WaveMgr.h"
 #include "../Game/TitleFlag.h"
 #include "../Game/Tutorial.h"
+#include "../KazLibrary/Input/KeyBoradInputManager.h"
 
 Core::Core()
 {
@@ -12,6 +13,12 @@ Core::Core()
 	m_hpBoxModel.LoadNoLighting("Resource/HpBox/", "Hp_Box.gltf");
 	m_crownPos = KazMath::Vec3<float>(0.6f, 17.6f, -5.2f);
 	m_hp = MAX_HP;
+	wall_break01 = SoundManager::Instance()->SoundLoadWave("Resource/Sound/break.wav");
+	wall_break01.volume = 0.1f;
+	wall_break02 = SoundManager::Instance()->SoundLoadWave("Resource/Sound/rock.wav");
+	wall_break02.volume = 0.1f;
+	damage = SoundManager::Instance()->SoundLoadWave("Resource/Sound/Object_Damage.wav");
+	damage.volume = 0.04f;
 
 }
 
@@ -112,6 +119,7 @@ void Core::Draw(DrawingByRasterize& arg_rasterize, Raytracing::BlasVector& arg_b
 
 void Core::Damage(int arg_damage)
 {
+	SoundManager::Instance()->SoundPlayerWave(damage, 0);
 	/*オカモトゾーン*/
 	isDrawHpBox = true;
 	m_hpBoxDrawTimer = HP_BOX_DRAW_TIME_MAX;

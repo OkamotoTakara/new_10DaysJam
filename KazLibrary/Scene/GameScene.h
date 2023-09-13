@@ -21,6 +21,8 @@ class GameScene :public SceneBase
 {
 
 private:
+	SoundData Select;
+	SoundData Move;
 
 	std::shared_ptr<Player> m_player;
 	std::shared_ptr<MineralTarget> m_mineralTarget;
@@ -63,6 +65,22 @@ private:
 	int m_selectResultNum;
 	bool m_isResultToTitle;
 	bool m_isResultToGame;
+	int m_resultDayScore;
+
+	bool m_isTitleNight;
+	int m_isTitleNightChangeTimer;
+
+	std::array<DrawCallUISet, 4> m_resultDayScoreUI;
+	std::array<DrawCallUISet, 4> m_resultMineralScoreUI;
+	std::array<DrawCallUISet, 4> m_reesultEnemyScoreUI;
+	std::array<DrawCallUISet, 5> m_totalScoreUI;
+
+	float fontScale = 29.5f;
+	float gyokan = 25.3f;
+	KazMath::Vec2<float> baseDayPos = { 700.0f, 202.0f };
+	KazMath::Vec2<float> baseMineralPos = { 700.0f, 277.0f };
+	KazMath::Vec2<float> baseEnemyScorePos = { 700.0f, 349.0f };
+	KazMath::Vec2<float> baseTotalScorePos = { 673.0f, 453.0f };
 
 	//UI‚ÌƒXƒP[ƒ‹
 	KazMath::Vec2<float> UI_DEF_START_SCALE = KazMath::Vec2<float>(150.0f, 50.0f);
@@ -93,4 +111,18 @@ private:
 
 	void UpdateTitle();
 	void UpdateResult();
+
+	int GetDigits(int arg_value, int arg_m, int arg_n) {
+		int mod_value;
+		int result;
+
+		/* nŒ…–ÚˆÈ‰º‚ÌŒ…‚ğæ“¾ */
+		mod_value = arg_value % (int)pow(10, arg_n + 1);
+
+		/* mŒ…–ÚˆÈã‚ÌŒ…‚ğæ“¾ */
+		result = mod_value / static_cast<int>(pow(10, arg_m));
+
+		return result;
+
+	}
 };

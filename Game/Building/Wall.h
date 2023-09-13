@@ -10,6 +10,9 @@ class Wall {
 public:
 	SoundData wall_drop;
 	SoundData wall_build;
+	SoundData wall_break01;
+	SoundData wall_break02;
+	SoundData damage;
 
 	//Šî–{î•ñ
 	std::array<DrawCallSet, 3> m_model;

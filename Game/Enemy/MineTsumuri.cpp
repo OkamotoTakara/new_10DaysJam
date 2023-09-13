@@ -7,6 +7,7 @@
 #include "../Game/Building/BuildingMgr.h"
 #include "../Game/Mineral/MineralMgr.h"
 #include "../KazLibrary/Easing/easing.h"
+#include "../Game/EnemyScore.h"
 
 MineTsumuri::MineTsumuri()
 {
@@ -20,6 +21,12 @@ MineTsumuri::MineTsumuri()
 	m_kingShellModel.LoadOutline("Resource/Enemy/MineKing/", "MineKing.gltf");
 	m_attackedScale = 0.0f;
 	m_scale = 0.0f;
+
+	//SE
+	shell_slap = SoundManager::Instance()->SoundLoadWave("Resource/Sound/Guard.wav");
+	shell_slap.volume = 0.07f;
+	attack = SoundManager::Instance()->SoundLoadWave("Resource/Sound/Attack.wav");
+	attack.volume = 0.1f;
 
 	Init();
 
@@ -256,6 +263,15 @@ void MineTsumuri::Update(std::weak_ptr<Core> arg_core, std::weak_ptr<Player> arg
 	//HPが0になったら死亡
 	if (m_hp <= 0) {
 		m_isActive = false;
+
+
+		//ミネキングだったら
+		if (m_isMineking) {
+			EnemyScore::Instance()->m_score += 250;
+		}
+		else {
+			EnemyScore::Instance()->m_score += 50;
+		}
 	}
 
 }
@@ -458,6 +474,14 @@ void MineTsumuri::Damage(std::weak_ptr<Mineral> arg_mineral, int arg_damage)
 				m_shellBreakRightVec = KazMath::Vec3<float>(arg_mineral.lock()->GetPosZeroY() - GetPosZeroY()).GetNormal().Cross({ 0,1,0 });
 				m_shellBreakRotation = 0;
 
+
+				if (m_isMineking) {
+					EnemyScore::Instance()->m_score += 250;
+				}
+				else {
+					EnemyScore::Instance()->m_score += 50;
+				}
+
 			}
 			m_isShell = false;
 			m_inShell = false;
@@ -595,7 +619,7 @@ void MineTsumuri::AttackMineral()
 		if (KazMath::Vec3<float>(m_attackedMineral.lock()->GetPosZeroY() - m_transform.pos).Length() <= m_attackedMineral.lock()->GetScale().x + m_transform.scale.x) {
 
 			m_attackID = STAY;
-
+			SoundManager::Instance()->SoundPlayerWave(attack, 0);
 			//反動で吹き飛ばす。
 			KazMath::Vec3<float> reactionDir = moveDir;
 			reactionDir *= -1.0f;
@@ -833,7 +857,7 @@ void MineTsumuri::CheckHitPlayer(std::weak_ptr<Player> arg_player)
 					//殻にこもる。
 					m_inShell = true;
 					m_inShellTimer = IN_SHELL_TIMER;
-
+					SoundManager::Instance()->SoundPlayerWave(shell_slap, 0);
 				}
 
 			}

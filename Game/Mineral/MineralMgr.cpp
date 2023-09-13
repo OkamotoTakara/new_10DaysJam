@@ -225,3 +225,24 @@ bool MineralMgr::SearchNearMineral(KazMath::Vec3<float> arg_pos, float arg_searc
 
 	return isHit;
 }
+
+int MineralMgr::GetMineralScore()
+{
+
+	int score = 0;
+
+	for (auto& index : m_minerals) {
+
+		if (!index->GetIsAlive()) continue;
+
+		if (index->GetMineralID() == 0) {
+			score += 50;
+		}
+		else if (index->GetMineralID() == 1) {
+			score += 150;
+		}
+
+	}
+
+	return score;
+}

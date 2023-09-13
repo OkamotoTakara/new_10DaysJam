@@ -22,6 +22,12 @@ public:
 private:
 	SoundData rock_break01;
 	SoundData rock_break02;
+	SoundData have_material_se;
+	SoundData walk;
+	SoundData attack;
+
+	int move_span_count;
+	const int MOVE_SPAN_COUNT_MAX = 2;;
 
 	//Šî–{î•ñ
 	std::array<DrawCallSet, 3> m_model;

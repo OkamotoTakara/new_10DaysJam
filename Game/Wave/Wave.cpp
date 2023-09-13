@@ -7,6 +7,7 @@
 #include "../Game/TitleFlag.h"
 #include "../Game/ResultFlag.h"
 #include "../Game/Tutorial.h"
+#include "../Wave/WaveMgr.h"
 
 Wave::Wave(int arg_dayTime, int arg_nightTime, std::vector<int> arg_tree, std::vector<int> arg_rock, std::vector<int> arg_mineralRock, std::vector<EnemyWaveInfo> arg_enemyWaveInfo)
 {
@@ -21,13 +22,51 @@ Wave::Wave(int arg_dayTime, int arg_nightTime, std::vector<int> arg_tree, std::v
 	m_isNight = false;
 	m_isActiveWave = false;
 
-	//SE
 	night_start = SoundManager::Instance()->SoundLoadWave("Resource/Sound/night_start.wav");
 	night_start.volume = 0.1f;
+
+	//BGM用
+	volume_up = false;
+	volume_down = true;
 }
 
 void Wave::Update(std::weak_ptr<EnemyMgr> arg_enemyMgr)
 {
+	//ボリューム調整
+	WaveMgr::Instance()->m_BGM.source->SetVolume(WaveMgr::Instance()->volume);
+
+	if (WaveMgr::Instance()->start_bgm)
+	{
+		WaveMgr::Instance()->m_BGM.source->Start();
+		WaveMgr::Instance()->start_bgm = false;
+	}
+
+	if (volume_up)
+	{
+		if (WaveMgr::Instance()->volume < 0.05f)
+		{
+			WaveMgr::Instance()->volume += 0.0005f;
+		}
+		else
+		{
+			volume_up = false;
+		}
+	}
+
+	if (volume_down)
+	{
+
+		if (WaveMgr::Instance()->volume > 0.0001f)
+		{
+			WaveMgr::Instance()->volume -= 0.0005f;
+		}
+
+		else
+		{
+			volume_down = false;
+		}
+	}
+
 	//タイトルだったらタイマーを1二固定する。
 	if (TitleFlag::Instance()->m_isTitle) {
 		m_nowTime = 1;
@@ -116,15 +155,15 @@ void Wave::Update(std::weak_ptr<EnemyMgr> arg_enemyMgr)
 			//時間を進める。
 			m_nowTime = std::clamp(m_nowTime + 1, 0, m_nighTime);
 
-			//時間が終わったWaveを無効化する。
-			if (m_nighTime <= m_nowTime) {
-
-				Invalidate(arg_enemyMgr);
-				if (Tutorial::Instance()->is_tutorial)
-				{
-					Tutorial::Instance()->is_tutorial = false;
-				}
+		//時間が終わったWaveを無効化する。
+		if (m_nighTime <= m_nowTime) {
+			SoundManager::Instance()->SoundPlayerWave(WaveMgr::Instance()->start_morning, 0);
+			Invalidate(arg_enemyMgr);
+			if (Tutorial::Instance()->is_tutorial)
+			{
+				Tutorial::Instance()->is_tutorial = false;
 			}
+		}
 
 		}
 		//昼時間だったら
@@ -137,27 +176,35 @@ void Wave::Update(std::weak_ptr<EnemyMgr> arg_enemyMgr)
 			//時間が終わったWaveを無効化する。
 			if (m_dayTime <= m_nowTime) {
 
-				//夜時間へ
-				m_nowTime = 0;
-				m_isNight = true;
-				SoundManager::Instance()->SoundPlayerWave(night_start, 0);
+			//夜時間へ
+			m_nowTime = 0;
+			m_isNight = true;
+			SoundManager::Instance()->SoundPlayerWave(night_start, 0);
+
+			//BGMを鳴らす
+			volume_up = true;
+			if (WaveMgr::Instance()->GetWaveCount() == 0)
+			{
+				WaveMgr::Instance()->start_bgm = true;
 			}
-
 		}
-
 	}
 
-	//ディレクショナルライトの方向を変えて昼夜を表現
-	if (!m_isNight) {
-		GBufferMgr::Instance()->m_lightConstData.m_dirLight.m_dir += (KazMath::Vec3<float>(0.0f, -0.894f, 0.4472f) - GBufferMgr::Instance()->m_lightConstData.m_dirLight.m_dir) / 30.0f;
-	}
-	else if (m_isNight) {
-		GBufferMgr::Instance()->m_lightConstData.m_dirLight.m_dir += (KazMath::Vec3<float>(0.0f, -0.4472f, 0.894f) - GBufferMgr::Instance()->m_lightConstData.m_dirLight.m_dir) / 30.0f;
-	}
-	GBufferMgr::Instance()->m_lightConstData.m_dirLight.m_dir.Normalize();
+	if (!TitleFlag::Instance()->m_isTitle) {
 
-	//ライトのアップデート
-	PointLightMgr::Instance()->Update(m_isNight);
+		//ディレクショナルライトの方向を変えて昼夜を表現
+		if (!m_isNight) {
+			GBufferMgr::Instance()->m_lightConstData.m_dirLight.m_dir += (KazMath::Vec3<float>(0.0f, -0.894f, 0.4472f) - GBufferMgr::Instance()->m_lightConstData.m_dirLight.m_dir) / 30.0f;
+		}
+		else if (m_isNight) {
+			GBufferMgr::Instance()->m_lightConstData.m_dirLight.m_dir += (KazMath::Vec3<float>(0.0f, -0.4472f, 0.894f) - GBufferMgr::Instance()->m_lightConstData.m_dirLight.m_dir) / 30.0f;
+		}
+		GBufferMgr::Instance()->m_lightConstData.m_dirLight.m_dir.Normalize();
+
+		//ライトのアップデート
+		PointLightMgr::Instance()->Update(m_isNight);
+
+	}
 
 }
 
