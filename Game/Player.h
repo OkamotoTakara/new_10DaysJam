@@ -102,7 +102,7 @@ private:
 	std::array<DrawCallUISet, 3> m_dadanUI;
 	DrawCallUISet m_dadanBackGroundUI;
 
-	
+
 
 	KazMath::Vec2<float> UI_BASE_POS = { 218.0f, 592.0f };
 	KazMath::Vec2<float> UI_BASE_SCALE = { 430.0f, 250.0f };
@@ -111,6 +111,9 @@ private:
 
 
 public:
+
+	const int DAIPAN_DAMAGE = 2;
+	const int STRONG_DAIPAN_DAMAGE = 10;
 
 	Player();
 
@@ -144,6 +147,10 @@ public:
 	void Damage(int arg_damage);
 	bool GetIsStun() { return m_isStun; }
 	float GetHitScale() { return HIT_SCALE; }
+
+	int GetDaipanDamage() {
+		return m_isDaipanStrong ? STRONG_DAIPAN_DAMAGE : DAIPAN_DAMAGE;
+	}
 
 	KazMath::Vec3<float> TransformVec3(KazMath::Vec3<float> arg_value, DirectX::XMVECTOR arg_quaternion);
 
