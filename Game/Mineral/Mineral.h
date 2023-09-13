@@ -27,7 +27,7 @@ private:
 	SoundData attack;
 
 	int move_span_count;
-	const int MOVE_SPAN_COUNT_MAX = 2;;
+	const int MOVE_SPAN_COUNT_MAX = 3;
 
 	//Šî–{î•ñ
 	std::array<DrawCallSet, 3> m_model;
