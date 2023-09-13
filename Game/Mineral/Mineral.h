@@ -1,5 +1,6 @@
 #pragma once
 #include "../Game/DrawCallSet.h"
+#include "../KazLibrary/Sound/SoundManager.h"
 
 class Player;
 class Rock;
@@ -19,6 +20,8 @@ public:
 	};
 
 private:
+	SoundData rock_break01;
+	SoundData rock_break02;
 
 	//Šî–{î•ñ
 	std::array<DrawCallSet, 3> m_model;
