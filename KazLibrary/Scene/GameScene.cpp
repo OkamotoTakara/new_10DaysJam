@@ -307,28 +307,28 @@ void GameScene::Draw(DrawingByRasterize& arg_rasterize, Raytracing::BlasVector& 
 	m_rock.Draw(arg_rasterize, arg_blasVec, m_stageTransform);
 
 
-	ImGui::Begin("UI");
+	//ImGui::Begin("UI");
 
-	//ImGui::DragFloat("POS_X", &BuildingMgr::Instance()->GetWall(2).lock()->m_initPos.x, 1.0f);
-	//ImGui::DragFloat("POS_Y", &BuildingMgr::Instance()->GetWall(2).lock()->m_initPos.y, 1.0f);
-	//ImGui::DragFloat("POS_Z", &BuildingMgr::Instance()->GetWall(2).lock()->m_initPos.z, 1.0f);
-	//ImGui::DragFloat("SCALE_X", &BuildingMgr::Instance()->GetWall(0).lock()->m_transform.scale.x, 0.01f);
-	//ImGui::DragFloat("SCALE_Y", &BuildingMgr::Instance()->GetWall(0).lock()->m_transform.scale.y, 0.01f);
-	//ImGui::DragFloat("SCALE_Z", &BuildingMgr::Instance()->GetWall(0).lock()->m_transform.scale.z, 0.01f);
-	//ImGui::DragFloat("ROTATE_X", &BuildingMgr::Instance()->GetWall(0).lock()->m_transform.rotation.x, 0.1f);
-	//ImGui::DragFloat("ROTATE_Y", &BuildingMgr::Instance()->GetWall(2).lock()->m_rotateY, 0.1f);
-	//ImGui::DragFloat("ROTATE_Z", &BuildingMgr::Instance()->GetWall(0).lock()->m_transform.rotation.z, 0.1f);
+	////ImGui::DragFloat("POS_X", &BuildingMgr::Instance()->GetWall(2).lock()->m_initPos.x, 1.0f);
+	////ImGui::DragFloat("POS_Y", &BuildingMgr::Instance()->GetWall(2).lock()->m_initPos.y, 1.0f);
+	////ImGui::DragFloat("POS_Z", &BuildingMgr::Instance()->GetWall(2).lock()->m_initPos.z, 1.0f);
+	////ImGui::DragFloat("SCALE_X", &BuildingMgr::Instance()->GetWall(0).lock()->m_transform.scale.x, 0.01f);
+	////ImGui::DragFloat("SCALE_Y", &BuildingMgr::Instance()->GetWall(0).lock()->m_transform.scale.y, 0.01f);
+	////ImGui::DragFloat("SCALE_Z", &BuildingMgr::Instance()->GetWall(0).lock()->m_transform.scale.z, 0.01f);
+	////ImGui::DragFloat("ROTATE_X", &BuildingMgr::Instance()->GetWall(0).lock()->m_transform.rotation.x, 0.1f);
+	////ImGui::DragFloat("ROTATE_Y", &BuildingMgr::Instance()->GetWall(2).lock()->m_rotateY, 0.1f);
+	////ImGui::DragFloat("ROTATE_Z", &BuildingMgr::Instance()->GetWall(0).lock()->m_transform.rotation.z, 0.1f);
 
-	//ImGui::Text(" ");
+	////ImGui::Text(" ");
 
-	//ImGui::DragFloat("EyeDistance", &m_cameraEyeDistance, 1.0f);
-	ImGui::DragFloat("START_UI_X", &m_titleStartUI.m_transform.pos.x, 1.0f);
-	ImGui::DragFloat("START_UI_Y", &m_titleStartUI.m_transform.pos.y, 1.0f);
-	ImGui::DragFloat("QUIT_UI_X", &m_titleQuitUI.m_transform.pos.x, 1.0f);
-	ImGui::DragFloat("QUIT_UI_Y", &m_titleQuitUI.m_transform.pos.y, 1.0f);
-	//ImGui::SliderFloat("UI_Z", &GBufferMgr::Instance()->m_lightConstData.m_dirLight.m_dir.z, 0.0f, 1.0f);
+	////ImGui::DragFloat("EyeDistance", &m_cameraEyeDistance, 1.0f);
+	//ImGui::DragFloat("START_UI_X", &m_titleStartUI.m_transform.pos.x, 1.0f);
+	//ImGui::DragFloat("START_UI_Y", &m_titleStartUI.m_transform.pos.y, 1.0f);
+	//ImGui::DragFloat("QUIT_UI_X", &m_titleQuitUI.m_transform.pos.x, 1.0f);
+	//ImGui::DragFloat("QUIT_UI_Y", &m_titleQuitUI.m_transform.pos.y, 1.0f);
+	////ImGui::SliderFloat("UI_Z", &GBufferMgr::Instance()->m_lightConstData.m_dirLight.m_dir.z, 0.0f, 1.0f);
 
-	ImGui::End();
+	//ImGui::End();
 
 	//タイトルのUIをロード
 	if (TitleFlag::Instance()->m_isTitle) {

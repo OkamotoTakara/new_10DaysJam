@@ -53,7 +53,7 @@ struct PointLight
 struct LightData
 {
     DirLight m_dirLight;
-    PointLight m_pointLight[3];
+    PointLight m_pointLight[8];
 };
 
 //カメラ用定数バッファ
@@ -230,7 +230,7 @@ void LightingPass(inout float arg_bright, inout float arg_pointlightBright, floa
     }
     
     //ポイントライト
-    for (int index = 0; index < 3; ++index)
+    for (int index = 0; index < 8; ++index)
     {
     
         if (arg_lightData.m_pointLight[index].m_isActive && 0.1f < length(arg_normalMap.xyz))    //「ポイントライトが有効だったら」 かつ 「現在のスクリーン座標の位置に法線が書き込まれていたら(何も書き込まれていないところからは影用のレイを飛ばさないようにするため。)」

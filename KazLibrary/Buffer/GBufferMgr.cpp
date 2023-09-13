@@ -163,9 +163,19 @@ GBufferMgr::GBufferMgr()
 	m_lightConstData.m_pointLight[0].m_isActive = true;
 	m_lightConstData.m_pointLight[1].m_isActive = true;
 	m_lightConstData.m_pointLight[2].m_isActive = true;
+	m_lightConstData.m_pointLight[3].m_isActive = true;
+	m_lightConstData.m_pointLight[4].m_isActive = true;
+	m_lightConstData.m_pointLight[5].m_isActive = true;
+	m_lightConstData.m_pointLight[6].m_isActive = true;
+	m_lightConstData.m_pointLight[7].m_isActive = true;
 	m_lightConstData.m_pointLight[0].m_pos = { 196.0f, 10.0f, 74.0f };
 	m_lightConstData.m_pointLight[1].m_pos = { 146.0f, 10.0f, -106.0f };
 	m_lightConstData.m_pointLight[2].m_pos = { 35.0f, 10.0f, -213.0f };
+	m_lightConstData.m_pointLight[3].m_pos = { -162.0f, 35.0f, -335.0f };
+	m_lightConstData.m_pointLight[4].m_pos = { -505.0f, 20.0f, -380.0f };
+	m_lightConstData.m_pointLight[5].m_pos = { -568.0f, 20.0f, -220.0f };
+	m_lightConstData.m_pointLight[6].m_pos = { -20.0f, 40.0f, 210.0f };
+	m_lightConstData.m_pointLight[7].m_pos = { -217.0f, 35.0f, 38.0f };
 }
 
 std::vector<RESOURCE_HANDLE> GBufferMgr::GetRenderTarget()

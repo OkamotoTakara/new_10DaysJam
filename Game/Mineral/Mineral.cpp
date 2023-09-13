@@ -467,6 +467,39 @@ void Mineral::Update(std::weak_ptr<Player> arg_player, std::vector<std::pair<Kaz
 
 	}
 
+
+	//ミネラルが死んだら
+	if (m_hp <= 0) {
+
+		if (m_mineralID == MEDIUM) {
+
+			//IDがSmall以外だったら小さくして、分裂させる。
+			if (m_mineralID != SMALL) {
+				for (int index = 0; index < 3; ++index) {
+					std::pair<KazMath::Vec3<float>, int> respawnData;
+					respawnData.first = { Vec3<float>(KazMath::Rand(-1.0f, 1.0f) ,KazMath::Rand(-0.0f, 2.0f) ,KazMath::Rand(-1.0f, 1.0f)) };
+					respawnData.first.GetNormal();
+					respawnData.first *= STRONG_DAIPAN_POWER;
+					respawnData.second = SMALL;
+					arg_respawnVec.emplace_back(respawnData);
+				}
+			}
+
+			//岩を持っていたら落とす。
+			if (!m_haveMaterial.expired()) {
+
+				m_haveMaterial.lock()->Release();
+				m_haveMaterial.reset();
+
+			}
+
+		}
+
+		//こいつ本体は消す。
+		Init();
+
+	}
+
 }
 
 void Mineral::Draw(DrawingByRasterize& arg_rasterize, Raytracing::BlasVector& arg_blasVec) {
