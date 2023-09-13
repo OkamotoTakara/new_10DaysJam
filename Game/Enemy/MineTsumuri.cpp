@@ -329,6 +329,44 @@ void MineTsumuri::Draw(DrawingByRasterize& arg_rasterize, Raytracing::BlasVector
 		m_kingShellModel.m_model.extraBufferArray.back().rootParamType = GRAPHICS_PRAMTYPE_TEX;
 		m_kingShellModel.Draw(arg_rasterize, arg_blasVec, m_shellTransform);
 
+		/*オカモトゾーン*/
+		m_gardHpBoxTransform.pos = m_transform.pos;
+		m_gardHpBoxTransform.pos.y += 53.0f;
+		m_gardHpBoxTransform.rotation.y = 45.0f;
+
+		m_hpBoxTransform.pos = m_transform.pos;
+		m_hpBoxTransform.pos.y += 50.0f;
+		m_hpBoxTransform.rotation.y = 45.0f;
+
+		float shell_base_hp = (m_shellHP / SHELL_HP) * SCALE_MAG;
+		float mine_base_hp = (static_cast<float>(m_hp) / HP) * SCALE_MAG;
+		m_gardHpBoxTransform.scale.x += (shell_base_hp - m_gardHpBoxTransform.scale.x) / 5.0f;
+		if (fabs(mine_base_hp - m_hpBoxTransform.scale.x) > 0)
+		{
+			m_hpBoxTransform.scale.x += (mine_base_hp - m_hpBoxTransform.scale.x) / 5.0f;
+		}
+
+		if (m_isActive && isDrawHpBox)
+		{
+			if (m_hpBoxDrawTimer > 0)
+			{
+				if (m_shellHP >= 0.05f)
+				{
+					m_gardHpBoxModel.Draw(arg_rasterize, arg_blasVec, m_gardHpBoxTransform, 0, false);
+				}
+				if (m_hp >= 0.05f)
+				{
+					m_hpBoxModel.Draw(arg_rasterize, arg_blasVec, m_hpBoxTransform, 0, false);
+				}
+				m_hpBoxDrawTimer--;
+			}
+			else
+			{
+				isDrawHpBox = false;
+			}
+		}
+		/*オカモトゾーン*/
+
 	}
 	else {
 
