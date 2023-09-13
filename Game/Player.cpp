@@ -304,32 +304,32 @@ void Player::Update()
 
 	}
 
-	////当たり判定を計算。
-	//const float RAY_LENGTH = 10.0f;
-	//MeshCollision::CheckHitResult rayResult = StageCollision::Instance()->m_stageCollision.CheckHitRay(m_transform.pos, m_forwardVec);
-	//if (rayResult.m_isHit && 0.0f < rayResult.m_distance && rayResult.m_distance <= RAY_LENGTH) {
+	//当たり判定を計算。
+	const float RAY_LENGTH = 10.0f;
+	MeshCollision::CheckHitResult rayResult = StageCollision::Instance()->m_stageCollision.CheckHitRay(m_transform.pos, m_forwardVec);
+	if (rayResult.m_isHit && 0.0f < rayResult.m_distance && rayResult.m_distance <= RAY_LENGTH) {
 
-	//	//押し戻し。
-	//	m_transform.pos += rayResult.m_normal * (RAY_LENGTH - rayResult.m_distance);
+		//押し戻し。
+		m_transform.pos += rayResult.m_normal * (RAY_LENGTH - rayResult.m_distance);
 
-	//}
-	////右方向
-	//KazMath::Vec3<float> rightVec = TransformVec3({ 1,0,0 }, m_transform.quaternion);
-	//rayResult = StageCollision::Instance()->m_stageCollision.CheckHitRay(m_transform.pos, rightVec);
-	//if (rayResult.m_isHit && 0.0f < rayResult.m_distance && rayResult.m_distance <= RAY_LENGTH) {
+	}
+	//右方向
+	KazMath::Vec3<float> rightVec = TransformVec3({ 1,0,0 }, m_transform.quaternion);
+	rayResult = StageCollision::Instance()->m_stageCollision.CheckHitRay(m_transform.pos, rightVec);
+	if (rayResult.m_isHit && 0.0f < rayResult.m_distance && rayResult.m_distance <= RAY_LENGTH) {
 
-	//	//押し戻し。
-	//	m_transform.pos += rayResult.m_normal * (RAY_LENGTH - rayResult.m_distance);
+		//押し戻し。
+		m_transform.pos += rayResult.m_normal * (RAY_LENGTH - rayResult.m_distance);
 
-	//}
-	////左方向
-	//rayResult = StageCollision::Instance()->m_stageCollision.CheckHitRay(m_transform.pos, -rightVec);
-	//if (rayResult.m_isHit && 0.0f < rayResult.m_distance && rayResult.m_distance <= RAY_LENGTH) {
+	}
+	//左方向
+	rayResult = StageCollision::Instance()->m_stageCollision.CheckHitRay(m_transform.pos, -rightVec);
+	if (rayResult.m_isHit && 0.0f < rayResult.m_distance && rayResult.m_distance <= RAY_LENGTH) {
 
-	//	//押し戻し。
-	//	m_transform.pos += rayResult.m_normal * (RAY_LENGTH - rayResult.m_distance);
+		//押し戻し。
+		m_transform.pos += rayResult.m_normal * (RAY_LENGTH - rayResult.m_distance);
 
-	//}
+	}
 
 	//ダメージを受けたときのシェイクを更新。
 	m_damageShakePos = { KazMath::Rand(-m_damageShake, m_damageShake), KazMath::Rand(-m_damageShake, m_damageShake), KazMath::Rand(-m_damageShake, m_damageShake) };
