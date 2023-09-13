@@ -142,7 +142,7 @@ void Mineral::Update(std::weak_ptr<Player> arg_player, std::vector<std::pair<Kaz
 			m_moveVec = (playerPos - mineralPos).GetNormal();
 			m_moveVec.y = 1.0f;
 			m_moveVec.Normalize();
-			m_moveVec *= MOVE_SPEED + KazMath::Rand(0.0f, MOVE_SPEED);
+			m_moveVec *= MOVE_SPEED[static_cast<int>(m_mineralID)] + KazMath::Rand(0.0f, MOVE_SPEED[static_cast<int>(m_mineralID)]);
 
 			m_moveSpan = 0;
 
@@ -234,7 +234,7 @@ void Mineral::Update(std::weak_ptr<Player> arg_player, std::vector<std::pair<Kaz
 
 			//ID‚ªSmallˆÈŠO‚¾‚Á‚½‚ç¬‚³‚­‚µ‚ÄA•ª—ô‚³‚¹‚éB
 			if (m_mineralID != SMALL) {
-				for (int index = 0; index < 2; ++index) {
+				for (int index = 0; index < 3; ++index) {
 					std::pair<KazMath::Vec3<float>, int> respawnData;
 					respawnData.first = { Vec3<float>(KazMath::Rand(-1.0f, 1.0f) ,KazMath::Rand(-0.0f, 2.0f) ,KazMath::Rand(-1.0f, 1.0f)) };
 					respawnData.first.GetNormal();
@@ -759,7 +759,7 @@ void Mineral::UpdateAttack(std::weak_ptr<Player> arg_player)
 			m_moveVec = (targetPos - GetPosZeroY()).GetNormal();
 			m_moveVec.y = 1.0f;
 			m_moveVec.Normalize();
-			m_moveVec *= MOVE_SPEED;
+			m_moveVec *= MOVE_SPEED[static_cast<int>(m_mineralID)];
 
 			m_moveSpan = 0;
 
@@ -830,17 +830,17 @@ void Mineral::UpdateAttack(std::weak_ptr<Player> arg_player)
 			}
 			else if (!m_attackTargetMineKuji.expired()) {
 
-				m_attackTargetMineKuji.lock()->Damage(m_thisMineral);
+				m_attackTargetMineKuji.lock()->Damage(m_thisMineral, ATTACK_DAMAGE[static_cast<int>(m_mineralID)]);
 
 			}
 			else if (!m_attackTargetMineTsumuri.expired()) {
 
-				m_attackTargetMineTsumuri.lock()->Damage(m_thisMineral);
+				m_attackTargetMineTsumuri.lock()->Damage(m_thisMineral, ATTACK_DAMAGE[static_cast<int>(m_mineralID)]);
 
 			}
 			else if (!m_attackDestrutibleTree.expired()) {
 
-				m_attackDestrutibleTree.lock()->Damage(1);
+				m_attackDestrutibleTree.lock()->Damage(ATTACK_DAMAGE[static_cast<int>(m_mineralID)]);
 
 			}
 

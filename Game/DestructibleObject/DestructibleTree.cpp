@@ -9,6 +9,10 @@ DestructibleTree::DestructibleTree()
 	m_isActive = false;
 	m_hp = HP;
 
+	//SE
+	break_se = SoundManager::Instance()->SoundLoadWave("Resource/Sound/break_tree.wav");
+	break_se.volume = 0.1f;
+
 }
 
 void DestructibleTree::Init()
@@ -34,7 +38,7 @@ void DestructibleTree::Update()
 	if (m_hp <= 0) {
 
 		m_isActive = false;
-		
+		SoundManager::Instance()->SoundPlayerWave(break_se, 0);
 		//‘fŞ‚ğU‚ç‚Î‚ç‚¹‚éB
 		const int MATERIAL_COUNT = 3;
 		for (int index = 0; index < 3; ++index) {

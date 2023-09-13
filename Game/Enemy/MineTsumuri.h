@@ -23,7 +23,7 @@ private:
 	const float GRAVITY = 0.1f;
 	int m_hp;
 	const int HP = 9;
-	const int MINEKING_HP = 20;
+	const int MINEKING_HP = 30;
 	const float SCALE = 3.0f;
 	const float KING_SCALE = 10.0f;
 	bool m_isMineking;
@@ -56,13 +56,17 @@ private:
 	const float ENEMY_SEARCH_END_RANGE = 60.0f;
 
 	//コアに向かっていく変数
-	const float CORE_MOVE_SPEED = 1.0f;	//コアに向かって行く初速度
-	const float CORE_MOVE_DELAY = 60.0f;
+	const float CORE_MOVE_SPEED = 0.8f;	//コアに向かって行く初速度
+	const float CORE_MOVE_DELAY = 70.0f;
+	const float CORE_MOVE_DELAY_MINEING = 120.0f;
 	float m_coreMoveDelayTimer;
 	float m_coreMoveSpeed;
 	bool m_isAttackCore;
 	bool m_isAttackMineral;
 	bool m_isAttackPlayer;
+
+	const int ATTACK_POWER = 1;
+	const int ATTACK_POWER_KING = 5;
 
 	//攻撃された場合の変数
 	bool m_isAttackedMineral;
@@ -100,7 +104,7 @@ private:
 
 
 	//出現地点をランダム化
-	const float RANDOM_SPAWN_RANGE = 30.0f;
+	const float RANDOM_SPAWN_RANGE = 20.0f;
 
 
 public:

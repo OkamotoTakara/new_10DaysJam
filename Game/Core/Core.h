@@ -10,7 +10,7 @@ private:
 	KazMath::Vec3<float> m_crownPos;
 	KazMath::Transform3D m_transform;
 	int m_hp;
-	const int MAX_HP = 20;
+	const int MAX_HP = 25;
 	const float SCALE = 10.0f;
 
 public:

@@ -26,6 +26,11 @@ Wall::Wall()
 	m_meshCollider[1].Setting(m_meshCollisionModel[1].m_modelData->modelData[0].vertexData, m_wallTransform);
 	m_meshCollider[2].Setting(m_meshCollisionModel[2].m_modelData->modelData[0].vertexData, m_wallTransform);
 
+	//SE
+	wall_drop = SoundManager::Instance()->SoundLoadWave("Resource/Sound/drop.wav");
+	wall_drop.volume = 0.07f;
+	wall_build = SoundManager::Instance()->SoundLoadWave("Resource/Sound/build.wav");
+	wall_build.volume = 0.1f;
 	Init();
 
 }
@@ -127,7 +132,6 @@ void Wall::Update(std::weak_ptr<Player> arg_player)
 			m_transform.pos.y = m_initPos.y + UPPER_DISTANCE * easingAmount;
 			m_transform.scale = { 2.0f + easingAmount * 2.0f,2.0f + easingAmount * 2.0f ,2.0f + easingAmount * 2.0f };
 			if (UPPER_EASING_TIMER <= m_easingTimer) {
-
 				m_easingTimer = 0.0f;
 				m_buildStatus = BUILD_STATUS::STAY;
 
@@ -151,6 +155,7 @@ void Wall::Update(std::weak_ptr<Player> arg_player)
 			float easingAmount = EasingMaker(In, Exp, m_easingTimer / DOWN_EASING_TIMER);
 			m_transform.pos.y = m_initPos.y + UPPER_DISTANCE - (UPPER_DISTANCE * easingAmount);
 			if (DOWN_EASING_TIMER <= m_easingTimer) {
+				SoundManager::Instance()->SoundPlayerWave(wall_drop, 0);
 
 				m_easingTimer = 0.0f;
 				m_buildStatus = BUILD_STATUS::COMPLETE;
@@ -248,6 +253,7 @@ void Wall::Update(std::weak_ptr<Player> arg_player)
 		m_sineWaveTimer += ADD_SINE_WAVE_TIMER;
 
 		if (MATERIAL_COUNT <= m_materialCounter || KeyBoradInputManager::Instance()->InputTrigger(DIK_B)) {
+			SoundManager::Instance()->SoundPlayerWave(wall_build, 0);
 			m_isBuild = true;
 			m_buildStatus = BUILD_STATUS::UPPER;
 			m_easingTimer = 0.0f;

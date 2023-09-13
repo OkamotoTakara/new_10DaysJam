@@ -157,6 +157,8 @@
     <ClCompile Include="Game\DrawCallUISet.cpp" />
     <ClCompile Include="Game\PointLightMgr.cpp" />
     <ClCompile Include="Game\Enemy\MineTsumuri.cpp" />
+    <ClCompile Include="Game\Tutorial.cpp" />
+    <ClCompile Include="Game\Transition.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Game\Debug\ParameterMgr.h" />
@@ -336,6 +338,9 @@
     <ClInclude Include="Game\PointLightMgr.h" />
     <ClInclude Include="Game\Enemy\MineTsumuri.h" />
     <ClInclude Include="Game\Effect\ChromaticAberration.h" />
+    <ClInclude Include="Game\TitleFlag.h" />
+    <ClInclude Include="Game\Tutorial.h" />
+    <ClInclude Include="Game\Transition.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -343,5 +348,9 @@
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="KazLib.rc" />
+    <ResourceCompile Include="icon.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="icon.ico" />
   </ItemGroup>
 </Project>

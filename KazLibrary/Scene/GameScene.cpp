@@ -21,6 +21,10 @@
 #include"../Game/Enemy/EnemyRoute.h"
 #include"../Game/WallAndTreeGeneratePos.h"
 #include"../Game/Wave/WaveMgr.h"
+#include"../Game/TitleFlag.h"
+#include"../Game/Tutorial.h"
+#include"../KazLibrary/Easing/easing.h"
+#include"../Game/Transition.h"
 
 GameScene::GameScene()
 {
@@ -56,7 +60,7 @@ GameScene::GameScene()
 	EnemyRoute::Instance()->Setting();
 	WallAndTreeGeneratePos::Instance()->Setting();
 	WaveMgr::Instance()->Setting();
-	WaveMgr::Instance()->GameStart();
+	Transition::Instance()->Setting();
 
 
 	m_ground.Load("Resource/Stage/", "Stage_Ground.gltf");
@@ -64,7 +68,28 @@ GameScene::GameScene()
 	m_tree.Load("Resource/Stage/", "Stage_Tree.gltf");
 	m_rock.Load("Resource/Stage/", "Stage_Rock.gltf");
 
+	//タイトルロゴをロード
+	m_titleLogoUI.Load("Resource/Title/TitleLogo.png");
+	m_titleBackGroundUI.Load("Resource/Title/Title_1.png");
+	m_titleStartUI.Load("Resource/Title/Title_2.png");
+	m_titleQuitUI.Load("Resource/Title/Title_3.png");
+
+	//タイトルロゴの場所を設定。
+	m_titleLogoUI.m_transform.pos = { 1280.0f / 2.0f, 720.0f / 2.0f };
+	m_titleLogoUI.m_transform.scale = { 1280.0f / 2.0f, 720.0f / 2.0f };
+	m_titleBackGroundUI.m_transform.pos = { 1280.0f / 2.0f, 720.0f / 2.0f };
+	m_titleBackGroundUI.m_transform.scale = { 1280.0f, 720.0f };
+	m_titleStartUI.m_transform.pos = { 640.0f, 440.0f };
+	m_titleStartUI.m_transform.scale = UI_MAX_START_SCALE;
+	m_titleQuitUI.m_transform.pos = { 640.0f, 545.0f };
+	m_titleQuitUI.m_transform.scale = { UI_DEF_QUIT_SCALE };
+	m_selectTitleNum = 0;
+	m_selectTitleUISine = 0.0f;
+
 	NumberFont::Instance()->Load();
+	Tutorial::Instance()->setting();
+
+	Tutorial::Instance()->is_tutorial = false;
 }
 
 GameScene::~GameScene()
@@ -99,6 +124,14 @@ void GameScene::Init()
 	//太陽の方向を昼に設定
 	GBufferMgr::Instance()->m_lightConstData.m_dirLight.m_dir = KazMath::Vec3<float>(0.0f, -0.894f, 0.4472f);
 
+	TitleFlag::Instance()->Init();
+	m_titleLogoDeleteTimer = 0.0f;
+
+	Transition::Instance()->Init();
+
+	m_titleStartUI.m_color.color.a = 255;
+	m_titleQuitUI.m_color.color.a = 255;
+	m_titleBackGroundUI.m_color.color.a = 255;
 
 }
 
@@ -120,6 +153,9 @@ void GameScene::Update()
 
 	if (KeyBoradInputManager::Instance()->InputTrigger(DIK_R)) {
 		Init();
+	}
+	if (KeyBoradInputManager::Instance()->InputTrigger(DIK_I)) {
+		TitleFlag::Instance()->m_isTitle = false;
 	}
 
 	//ウェーブを更新。
@@ -161,6 +197,86 @@ void GameScene::Update()
 
 	//シェイクを更新。
 	ShakeMgr::Instance()->Update();
+
+	//タイトル画面だったら。
+	if (TitleFlag::Instance()->m_isTitle) {
+
+
+		if (KeyBoradInputManager::Instance()->InputState(DIK_W) ||
+			KeyBoradInputManager::Instance()->InputState(DIK_UP) ||
+			ControllerInputManager::Instance()->InputStickTrigger(ControllerStickSide::LEFT_STICK, ControllerSide::UP_SIDE)) {
+
+			m_selectTitleNum = std::clamp(m_selectTitleNum - 1, 0, 1);
+
+		}
+
+		if (KeyBoradInputManager::Instance()->InputState(DIK_S) ||
+			KeyBoradInputManager::Instance()->InputState(DIK_DOWN) ||
+			ControllerInputManager::Instance()->InputStickTrigger(ControllerStickSide::LEFT_STICK, ControllerSide::DOWN_SIDE)) {
+
+			m_selectTitleNum = std::clamp(m_selectTitleNum + 1, 0, 1);
+
+		}
+
+		//決定キーが入力されたら
+		if (KeyBoradInputManager::Instance()->InputState(DIK_SPACE) ||
+			KeyBoradInputManager::Instance()->InputState(DIK_RETURN) ||
+			ControllerInputManager::Instance()->InputTrigger(XINPUT_GAMEPAD_A)) {
+
+			//Startを選択していたら。
+			if (m_selectTitleNum == 0) {
+
+				TitleFlag::Instance()->m_isStart = true;
+
+			}
+			//Quitを選択していたら
+			else if (m_selectTitleNum) {
+
+				TitleFlag::Instance()->m_isQuit = true;
+
+			}
+
+		}
+
+
+		m_selectTitleUISine += ADD_SELECT_TITLE_SINE;
+
+	}
+
+	Tutorial::Instance()->Update();
+
+	//タイトルロゴを消すまでのタイマー
+	if (TitleFlag::Instance()->m_isStart && TitleFlag::Instance()->m_isDrawTitle) {
+
+		m_titleLogoDeleteTimer = std::clamp(m_titleLogoDeleteTimer + 1.0f, 0.0f, TITLELOGO_DELETE_TIMER);
+
+		//イージングをかけてタイマーを減らす。
+		float easingAmount = EasingMaker(In, Sine, m_titleLogoDeleteTimer / TITLELOGO_DELETE_TIMER);
+
+		//アルファを減らす。
+		m_titleStartUI.m_color.color.a = static_cast<int>((1.0f - easingAmount) * 255);
+		m_titleQuitUI.m_color.color.a = static_cast<int>((1.0f - easingAmount) * 255);
+		m_titleBackGroundUI.m_color.color.a = static_cast<int>((1.0f - easingAmount) * 255);
+
+		if (TITLELOGO_DELETE_TIMER <= m_titleLogoDeleteTimer) {
+
+			m_titleLogoDeleteTimer = 0.0f;
+			TitleFlag::Instance()->m_isDrawTitle = false;
+			Transition::Instance()->Activate();
+
+		}
+
+	}
+
+	//タイトルが消えていて、遷移も終わっていたらタイトルを終える。
+	if (!TitleFlag::Instance()->m_isDrawTitle && !Transition::Instance()->GetIsActive()) {
+
+		TitleFlag::Instance()->m_isTitle = false;
+
+	}
+
+	Transition::Instance()->Update();
+
 }
 
 void GameScene::Draw(DrawingByRasterize& arg_rasterize, Raytracing::BlasVector& arg_blasVec)
@@ -185,67 +301,61 @@ void GameScene::Draw(DrawingByRasterize& arg_rasterize, Raytracing::BlasVector& 
 	BuildingMaterialMgr::Instance()->Draw(arg_rasterize, arg_blasVec);
 	BuildingMgr::Instance()->Draw(arg_rasterize, arg_blasVec);
 
-	//DessolveOutline outline;
-	//outline.m_outline = KazMath::Vec4<float>(0, 0, 0, 1);
-	//m_ground.m_model.extraBufferArray[4].bufferWrapper->TransData(&outline, sizeof(DessolveOutline));
-
-	//m_ground.m_model.extraBufferArray.back() = GBufferMgr::Instance()->m_outlineBuffer;
-	//m_ground.m_model.extraBufferArray.back().rangeType = GRAPHICS_RANGE_TYPE_UAV_DESC;
-	//m_ground.m_model.extraBufferArray.back().rootParamType = GRAPHICS_PRAMTYPE_TEX;
-
-
-	//outline.m_outline = KazMath::Vec4<float>(0, 0, 0, 1);
-	//m_fence.m_model.extraBufferArray[4].bufferWrapper->TransData(&outline, sizeof(DessolveOutline));
-
-	//m_fence.m_model.extraBufferArray.back() = GBufferMgr::Instance()->m_outlineBuffer;
-	//m_fence.m_model.extraBufferArray.back().rangeType = GRAPHICS_RANGE_TYPE_UAV_DESC;
-	//m_fence.m_model.extraBufferArray.back().rootParamType = GRAPHICS_PRAMTYPE_TEX;
-
-
-	//outline.m_outline = KazMath::Vec4<float>(0, 0, 0, 1);
-	//m_tree.m_model.extraBufferArray[4].bufferWrapper->TransData(&outline, sizeof(DessolveOutline));
-
-	//m_tree.m_model.extraBufferArray.back() = GBufferMgr::Instance()->m_outlineBuffer;
-	//m_tree.m_model.extraBufferArray.back().rangeType = GRAPHICS_RANGE_TYPE_UAV_DESC;
-	//m_tree.m_model.extraBufferArray.back().rootParamType = GRAPHICS_PRAMTYPE_TEX;
-
-
-	//outline.m_outline = KazMath::Vec4<float>(0, 0, 0, 1);
-	//m_rock.m_model.extraBufferArray[4].bufferWrapper->TransData(&outline, sizeof(DessolveOutline));
-
-	//m_rock.m_model.extraBufferArray.back() = GBufferMgr::Instance()->m_outlineBuffer;
-	//m_rock.m_model.extraBufferArray.back().rangeType = GRAPHICS_RANGE_TYPE_UAV_DESC;
-	//m_rock.m_model.extraBufferArray.back().rootParamType = GRAPHICS_PRAMTYPE_TEX;
-
 	m_ground.Draw(arg_rasterize, arg_blasVec, m_stageTransform);
 	m_fence.Draw(arg_rasterize, arg_blasVec, m_stageTransform);
 	m_tree.Draw(arg_rasterize, arg_blasVec, m_stageTransform);
 	m_rock.Draw(arg_rasterize, arg_blasVec, m_stageTransform);
 
 
-	//ImGui::Begin("Stage");
+	ImGui::Begin("UI");
 
-	////ImGui::DragFloat("POS_X", &BuildingMgr::Instance()->GetWall(2).lock()->m_initPos.x, 1.0f);
-	////ImGui::DragFloat("POS_Y", &BuildingMgr::Instance()->GetWall(2).lock()->m_initPos.y, 1.0f);
-	////ImGui::DragFloat("POS_Z", &BuildingMgr::Instance()->GetWall(2).lock()->m_initPos.z, 1.0f);
-	////ImGui::DragFloat("SCALE_X", &BuildingMgr::Instance()->GetWall(0).lock()->m_transform.scale.x, 0.01f);
-	////ImGui::DragFloat("SCALE_Y", &BuildingMgr::Instance()->GetWall(0).lock()->m_transform.scale.y, 0.01f);
-	////ImGui::DragFloat("SCALE_Z", &BuildingMgr::Instance()->GetWall(0).lock()->m_transform.scale.z, 0.01f);
-	////ImGui::DragFloat("ROTATE_X", &BuildingMgr::Instance()->GetWall(0).lock()->m_transform.rotation.x, 0.1f);
-	////ImGui::DragFloat("ROTATE_Y", &BuildingMgr::Instance()->GetWall(2).lock()->m_rotateY, 0.1f);
-	////ImGui::DragFloat("ROTATE_Z", &BuildingMgr::Instance()->GetWall(0).lock()->m_transform.rotation.z, 0.1f);
+	//ImGui::DragFloat("POS_X", &BuildingMgr::Instance()->GetWall(2).lock()->m_initPos.x, 1.0f);
+	//ImGui::DragFloat("POS_Y", &BuildingMgr::Instance()->GetWall(2).lock()->m_initPos.y, 1.0f);
+	//ImGui::DragFloat("POS_Z", &BuildingMgr::Instance()->GetWall(2).lock()->m_initPos.z, 1.0f);
+	//ImGui::DragFloat("SCALE_X", &BuildingMgr::Instance()->GetWall(0).lock()->m_transform.scale.x, 0.01f);
+	//ImGui::DragFloat("SCALE_Y", &BuildingMgr::Instance()->GetWall(0).lock()->m_transform.scale.y, 0.01f);
+	//ImGui::DragFloat("SCALE_Z", &BuildingMgr::Instance()->GetWall(0).lock()->m_transform.scale.z, 0.01f);
+	//ImGui::DragFloat("ROTATE_X", &BuildingMgr::Instance()->GetWall(0).lock()->m_transform.rotation.x, 0.1f);
+	//ImGui::DragFloat("ROTATE_Y", &BuildingMgr::Instance()->GetWall(2).lock()->m_rotateY, 0.1f);
+	//ImGui::DragFloat("ROTATE_Z", &BuildingMgr::Instance()->GetWall(0).lock()->m_transform.rotation.z, 0.1f);
 
-	////ImGui::Text(" ");
+	//ImGui::Text(" ");
 
-	////ImGui::DragFloat("EyeDistance", &m_cameraEyeDistance, 1.0f);
-	//ImGui::SliderFloat("DirLight_X", &GBufferMgr::Instance()->m_lightConstData.m_dirLight.m_dir.x, 0.0f, 1.0f);
-	//ImGui::SliderFloat("DirLight_Y", &GBufferMgr::Instance()->m_lightConstData.m_dirLight.m_dir.y, 0.0f, 1.0f);
-	//ImGui::SliderFloat("DirLight_Z", &GBufferMgr::Instance()->m_lightConstData.m_dirLight.m_dir.z, 0.0f, 1.0f);
+	//ImGui::DragFloat("EyeDistance", &m_cameraEyeDistance, 1.0f);
+	ImGui::DragFloat("START_UI_X", &m_titleStartUI.m_transform.pos.x, 1.0f);
+	ImGui::DragFloat("START_UI_Y", &m_titleStartUI.m_transform.pos.y, 1.0f);
+	ImGui::DragFloat("QUIT_UI_X", &m_titleQuitUI.m_transform.pos.x, 1.0f);
+	ImGui::DragFloat("QUIT_UI_Y", &m_titleQuitUI.m_transform.pos.y, 1.0f);
+	//ImGui::SliderFloat("UI_Z", &GBufferMgr::Instance()->m_lightConstData.m_dirLight.m_dir.z, 0.0f, 1.0f);
 
-	//ImGui::Text("X : %f", m_player->GetPosZeroY().x);
-	//ImGui::Text("Z : %f", m_player->GetPosZeroY().z);
+	ImGui::End();
 
-	//ImGui::End();
+	//タイトルのUIをロード
+	if (TitleFlag::Instance()->m_isTitle) {
+
+		//Startを選択していたら。
+		if (m_selectTitleNum == 0) {
+			m_titleStartUI.m_transform.scale += ((UI_MAX_START_SCALE + sinf(m_selectTitleUISine) * SELECT_TITLE_SINE_SCALE) - m_titleStartUI.m_transform.scale) / 3.0f;
+			m_titleQuitUI.m_transform.scale += (UI_DEF_QUIT_SCALE - m_titleQuitUI.m_transform.scale) / 3.0f;
+		}
+		else {
+			m_titleStartUI.m_transform.scale += (UI_DEF_START_SCALE - m_titleStartUI.m_transform.scale) / 3.0f;
+			m_titleQuitUI.m_transform.scale += ((UI_MAX_QUIT_SCALE + sinf(m_selectTitleUISine) * SELECT_TITLE_SINE_SCALE) - m_titleQuitUI.m_transform.scale) / 3.0f;
+		}
+
+
+	}
+	if (TitleFlag::Instance()->m_isDrawTitle) {
+		m_titleStartUI.Draw(arg_rasterize);
+		m_titleQuitUI.Draw(arg_rasterize);
+		m_titleBackGroundUI.Draw(arg_rasterize);
+	}
+
+	//チュートリアルを描画。
+	Tutorial::Instance()->Draw(arg_rasterize, arg_blasVec);
+
+	//遷移を描画。
+	Transition::Instance()->Draw(arg_rasterize, arg_blasVec);
 
 }
 

@@ -15,6 +15,7 @@
 #include"Raytracing/RayPipeline.h"
 #include<time.h>
 #include"../Game/UI/OptionUI.h"
+#include"../Game/TitleFlag.h"
 
 
 //ターゲットがデバックの時のみコンソール用のmain文を参照する
@@ -130,7 +131,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 			sm.Draw();
 		}
 
-		if (sm.endGameFlag)
+		if (sm.endGameFlag || TitleFlag::Instance()->m_isQuit)
 		{
 			break;
 		}

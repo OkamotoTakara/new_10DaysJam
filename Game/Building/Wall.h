@@ -1,12 +1,15 @@
 #pragma once
 #include "../Game/DrawCallSet.h"
 #include "../Game/Collision/MeshCollision.h"
+#include "../KazLibrary/Sound/SoundManager.h"
 
 class Player;
 
 class Wall {
 
 public:
+	SoundData wall_drop;
+	SoundData wall_build;
 
 	//基本情報
 	std::array<DrawCallSet, 3> m_model;
@@ -35,7 +38,7 @@ public:
 	/*オカモトゾーン*/
 
 	int m_hp;
-	const int HP = 10;
+	const int HP = 15;
 
 	//状態
 	enum class NOREADY_STATUS {

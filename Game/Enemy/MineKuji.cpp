@@ -639,7 +639,7 @@ void MineKuji::AttackWall()
 			m_coreAttackReactionVec = reactionDir * (m_coreAttackMoveSpeed * 3.0f);
 
 			//コアにダメージを与える。
-			BuildingMgr::Instance()->DamageWall(1);
+			BuildingMgr::Instance()->DamageWall(m_wallIndex);
 
 			ShakeMgr::Instance()->m_shakeAmount = 1.0f;
 
@@ -827,13 +827,16 @@ void MineKuji::CheckHit(std::weak_ptr<Player> arg_player) {
 	CheckHitPlayer(arg_player);
 
 	//壁との当たり判定を行う。
-	MeshCollision::CheckHitResult result = BuildingMgr::Instance()->CheckHitWall(m_transform.pos, m_forwardVec, 40.0f, m_wallIndex);
+	if (!m_isAttackWall) {
+		MeshCollision::CheckHitResult result = BuildingMgr::Instance()->CheckHitWall(m_transform.pos, m_forwardVec, 40.0f, m_wallIndex);
 
-	//当たっていたら
-	if (result.m_isHit) {
+		//当たっていたら
+		if (result.m_isHit) {
 
-		m_isAttackWall = true;
-		m_mode = WallAttack;
+			m_isAttackWall = true;
+			m_mode = WallAttack;
+
+		}
 
 	}
 
