@@ -49,7 +49,7 @@ void WaveMgr::Setting()
 	enemyInfo.clear();
 
 	//一旦チュートリアルのウェーブを入れておく。
-	m_tutorialWave.emplace_back(m_wave1);
+	m_waves.emplace_back(m_tutorialWave);
 
 
 	//2ウェーブ目 -----------------------------------------------------------------------------------------
@@ -260,9 +260,18 @@ void WaveMgr::Draw(DrawingByRasterize& arg_rasterize, Raytracing::BlasVector& ar
 
 	if (!TitleFlag::Instance()->m_isTitle) {
 
-		//UIを描画
+		//UIを描画。
 		m_frameUI.Draw(arg_rasterize);
 		m_timerUI.Draw(arg_rasterize);
+
+		m_frameUI.m_color.color.a += static_cast<int>((255.0f - m_frameUI.m_color.color.a) / 15.0f);
+		m_timerUI.m_color.color.a += static_cast<int>((255.0f - m_timerUI.m_color.color.a) / 15.0f);
+
+	}
+	else {
+
+		m_frameUI.m_color.color.a = 0;
+		m_timerUI.m_color.color.a = 0;
 
 	}
 

@@ -49,6 +49,8 @@ void Player::Init()
 	m_daipanReturnTimer = 0;
 	m_daipanStrongTimer = 0.0f;
 	m_daipanShakePos = {};
+	m_transform.pos.x = 0.0f;
+	m_transform.pos.z = 0.0f;
 	m_transform.pos.y = DEFAULT_Y;
 	m_daipanPos = m_transform.pos;
 	m_mineralCenterPos = m_transform.pos;
@@ -489,7 +491,28 @@ void Player::Draw(DrawingByRasterize& arg_rasterize, Raytracing::BlasVector& arg
 		m_dadanUI[dadanIndex].Draw(arg_rasterize);
 		m_dadanBackGroundUI.Draw(arg_rasterize);
 
-	}/*
+		m_hpFrameUI.m_color.color.a += static_cast<int>((255.0f - m_hpFrameUI.m_color.color.a) / 15.0f);
+		m_hpUI.m_color.color.a += static_cast<int>((255.0f - m_hpUI.m_color.color.a) / 15.0f);;
+		m_hpBackGroundUI.m_color.color.a += static_cast<int>((255.0f - m_hpBackGroundUI.m_color.color.a) / 15.0f);;
+		m_dadanUI[0].m_color.color.a += static_cast<int>((255.0f - m_dadanUI[0].m_color.color.a) / 15.0f);;
+		m_dadanUI[1].m_color.color.a += static_cast<int>((255.0f - m_dadanUI[1].m_color.color.a) / 15.0f);;
+		m_dadanUI[2].m_color.color.a += static_cast<int>((255.0f - m_dadanUI[2].m_color.color.a) / 15.0f);;
+		m_dadanBackGroundUI.m_color.color.a += static_cast<int>((255.0f - m_dadanBackGroundUI.m_color.color.a) / 15.0f);;
+
+	}
+	else {
+
+		m_hpFrameUI.m_color.color.a = 0;
+		m_hpUI.m_color.color.a = 0;
+		m_hpBackGroundUI.m_color.color.a = 0;
+		m_dadanUI[0].m_color.color.a = 0;
+		m_dadanUI[1].m_color.color.a = 0;
+		m_dadanUI[2].m_color.color.a = 0;
+		m_dadanBackGroundUI.m_color.color.a = 0;
+
+	}
+	
+	/*
 
 	ImGui::Begin("UI");
 
