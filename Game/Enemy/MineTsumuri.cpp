@@ -803,10 +803,10 @@ void MineTsumuri::CheckHitPlayer(std::weak_ptr<Player> arg_player)
 
 				//HP‚ğŒ¸‚ç‚·B
 				if (m_isMineking) {
-					m_hp = std::clamp(m_hp - 3, 0, MINEKING_HP);
+					m_hp = std::clamp(m_hp - 2, 0, MINEKING_HP);
 				}
 				else {
-					m_hp = std::clamp(m_hp - 3, 0, HP);
+					m_hp = std::clamp(m_hp - 2, 0, HP);
 				}
 
 				//UŒ‚‚Ì”½“®‚ğ’Ç‰ÁB
