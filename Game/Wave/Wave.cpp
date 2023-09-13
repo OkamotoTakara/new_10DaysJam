@@ -45,7 +45,7 @@ void Wave::Update(std::weak_ptr<EnemyMgr> arg_enemyMgr)
 			{
 				m_nowTime = 1;
 				Tutorial::Instance()->spawn_minekuzi = true;
-				arg_enemyMgr.lock()->GenerateMinekuji(EnemyRoute::A);
+				arg_enemyMgr.lock()->GenerateMinekuji(EnemyRoute::A, true);
 			}
 			break;
 

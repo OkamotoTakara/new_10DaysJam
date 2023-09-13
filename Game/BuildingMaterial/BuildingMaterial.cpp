@@ -49,7 +49,7 @@ void BuildingMaterial::Update()
 	}
 
 	//d—Í‚ğ‚©‚¯‚éB
-	const float GROUND = 2.0f;
+	const float GROUND = 5.0f;
 	if (GROUND < m_transform.pos.y) {
 
 		m_gravity += GRAVITY;

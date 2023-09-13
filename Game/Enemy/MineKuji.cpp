@@ -41,7 +41,7 @@ void MineKuji::Init()
 	/*オカモトゾーン*/
 }
 
-void MineKuji::Generate(std::vector<KazMath::Vec3<float>> arg_route)
+void MineKuji::Generate(std::vector<KazMath::Vec3<float>> arg_route, bool arg_isTutorialEnemy)
 {
 
 	m_route = arg_route;
@@ -67,6 +67,8 @@ void MineKuji::Generate(std::vector<KazMath::Vec3<float>> arg_route)
 	m_hp = HP;
 	m_attackedReactionVec = {};
 	m_attackedMineral.reset();
+
+	m_isTutorialEnemy = arg_isTutorialEnemy;
 
 	//次の進路の方向に身体を向ける。
 	KazMath::Vec3<float> forwardVec = KazMath::Vec3<float>(arg_route[1] - m_transform.pos).GetNormal();
@@ -145,11 +147,21 @@ void MineKuji::Update(std::weak_ptr<Core> arg_core, std::weak_ptr<Player> arg_pl
 		//コアの近くに居なかったらコアの方向に向かって移動させる。
 		if (CORE_ATTACK_RANGE < coreDistance) {
 
-			//一定時間置きに初速度を与えて動かす。
-			m_coreMoveDelayTimer = std::clamp(m_coreMoveDelayTimer + 1.0f, 0.0f, CORE_MOVE_DELAY);
-			if (CORE_MOVE_DELAY <= m_coreMoveDelayTimer) {
 
-				m_coreMoveSpeed = CORE_MOVE_SPEED;
+
+			//チュートリアルの的だったら移動速度を早く。
+			float coreMoveDelay = CORE_MOVE_DELAY;
+			float coreMoveSpeed = CORE_MOVE_SPEED;
+			if (m_isTutorialEnemy) {
+				coreMoveDelay = CORE_MOVE_DELAY / 2.0f;
+				coreMoveSpeed *= 2.0f;
+			}
+
+			//一定時間置きに初速度を与えて動かす。
+			m_coreMoveDelayTimer = std::clamp(m_coreMoveDelayTimer + 1.0f, 0.0f, coreMoveDelay);
+			if (coreMoveDelay <= m_coreMoveDelayTimer) {
+
+				m_coreMoveSpeed = coreMoveSpeed;
 				m_coreMoveDelayTimer = 0.0f;
 
 			}

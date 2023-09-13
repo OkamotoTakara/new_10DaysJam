@@ -26,7 +26,7 @@ public:
 
 	void DebugGenerate();
 
-	void GenerateMinekuji(EnemyRoute::ROUTE_ID arg_routeID);
+	void GenerateMinekuji(EnemyRoute::ROUTE_ID arg_routeID, bool arg_isTutorialEnemy = false);
 	void GenerateMinetsumuri(EnemyRoute::ROUTE_ID arg_routeID, bool arg_isKing);
 
 	void Update(std::weak_ptr<Core> arg_core, std::weak_ptr<Player> arg_player);
