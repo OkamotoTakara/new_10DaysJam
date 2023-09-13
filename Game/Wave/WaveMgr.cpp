@@ -5,7 +5,7 @@
 #include "../Game/ResultFlag.h"
 #include "../Game/Tutorial.h"
 
-void WaveMgr::Setting()
+void WaveMgr::Setting(std::weak_ptr<Core> m_core)
 {
 
 	//現在のウェーブ数を初期化。
@@ -31,10 +31,10 @@ void WaveMgr::Setting()
 	enemyInfo.emplace_back(EnemyRoute::A, Wave::ENEMY_ID::MINEKUJI, 180);
 	//enemyInfo.emplace_back(EnemyRoute::B, Wave::ENEMY_ID::MINETSUMURI, 0);
 	//ウェーブを追加。
-	m_tutorialWave = std::make_shared<Wave>(dayTime, nightTime, tree, rock, mineralRock, enemyInfo);
+	m_tutorialWave = std::make_shared<Wave>(dayTime, nightTime, tree, rock, mineralRock, enemyInfo, m_core);
 	enemyInfo.clear();
 
-	
+
 	//1ウェーブ目 -----------------------------------------------------------------------------------------
 	dayTime = 600;		//日中の時間 フレーム数
 	nightTime = 1800;	//夜の時間 フレーム数
@@ -49,12 +49,12 @@ void WaveMgr::Setting()
 	//enemyInfo.emplace_back(EnemyRoute::A, Wave::ENEMY_ID::MINEKUJI, 360);
 	//enemyInfo.emplace_back(EnemyRoute::B, Wave::ENEMY_ID::MINETSUMURI, 0);
 	//ウェーブを追加。
-	m_wave1 = std::make_shared<Wave>(dayTime, nightTime, tree, rock, mineralRock, enemyInfo);
+	m_wave1 = std::make_shared<Wave>(dayTime, nightTime, tree, rock, mineralRock, enemyInfo, m_core);
 	enemyInfo.clear();
 
 	m_waves.emplace_back(m_wave1);
 
-	
+
 	//2ウェーブ目 -----------------------------------------------------------------------------------------
 	dayTime = 2700;		//日中の時間 フレーム数
 	nightTime = 3200;	//夜の時間 フレーム数
@@ -73,7 +73,7 @@ void WaveMgr::Setting()
 	enemyInfo.emplace_back(EnemyRoute::B, Wave::ENEMY_ID::MINEKUJI, 180);
 	enemyInfo.emplace_back(EnemyRoute::B, Wave::ENEMY_ID::MINEKUJI, 360);
 	//ウェーブを追加。
-	m_waves.emplace_back(std::make_shared<Wave>(dayTime, nightTime, tree, rock, mineralRock, enemyInfo));
+	m_waves.emplace_back(std::make_shared<Wave>(dayTime, nightTime, tree, rock, mineralRock, enemyInfo, m_core));
 	enemyInfo.clear();
 
 
@@ -100,7 +100,7 @@ void WaveMgr::Setting()
 
 	enemyInfo.emplace_back(EnemyRoute::C, Wave::ENEMY_ID::MINETSUMURI, 900);
 	//ウェーブを追加。
-	m_waves.emplace_back(std::make_shared<Wave>(dayTime, nightTime, tree, rock, mineralRock, enemyInfo));
+	m_waves.emplace_back(std::make_shared<Wave>(dayTime, nightTime, tree, rock, mineralRock, enemyInfo, m_core));
 	enemyInfo.clear();
 
 
@@ -145,7 +145,7 @@ void WaveMgr::Setting()
 	enemyInfo.emplace_back(EnemyRoute::C, Wave::ENEMY_ID::MINEKUJI, 180);
 	enemyInfo.emplace_back(EnemyRoute::C, Wave::ENEMY_ID::MINEKUJI, 360);
 	//ウェーブを追加。
-	m_waves.emplace_back(std::make_shared<Wave>(dayTime, nightTime, tree, rock, mineralRock, enemyInfo));
+	m_waves.emplace_back(std::make_shared<Wave>(dayTime, nightTime, tree, rock, mineralRock, enemyInfo, m_core));
 	enemyInfo.clear();
 
 
@@ -169,7 +169,7 @@ void WaveMgr::Setting()
 	enemyInfo.emplace_back(EnemyRoute::C, Wave::ENEMY_ID::MINETSUMURI, 180);
 	enemyInfo.emplace_back(EnemyRoute::C, Wave::ENEMY_ID::MINETSUMURI, 360);
 	//ウェーブを追加。
-	m_waves.emplace_back(std::make_shared<Wave>(dayTime, nightTime, tree, rock, mineralRock, enemyInfo));
+	m_waves.emplace_back(std::make_shared<Wave>(dayTime, nightTime, tree, rock, mineralRock, enemyInfo, m_core));
 	enemyInfo.clear();
 
 
@@ -191,7 +191,7 @@ void WaveMgr::Setting()
 
 	enemyInfo.emplace_back(EnemyRoute::C, Wave::ENEMY_ID::MINEKING, 0);
 	//ウェーブを追加。
-	m_waves.emplace_back(std::make_shared<Wave>(dayTime, nightTime, tree, rock, mineralRock, enemyInfo));
+	m_waves.emplace_back(std::make_shared<Wave>(dayTime, nightTime, tree, rock, mineralRock, enemyInfo, m_core));
 	enemyInfo.clear();
 
 
@@ -235,7 +235,7 @@ void WaveMgr::Setting()
 	enemyInfo.emplace_back(EnemyRoute::C, Wave::ENEMY_ID::MINEKING, 900);
 
 	//ウェーブを追加。
-	m_waves.emplace_back(std::make_shared<Wave>(dayTime, nightTime, tree, rock, mineralRock, enemyInfo));
+	m_waves.emplace_back(std::make_shared<Wave>(dayTime, nightTime, tree, rock, mineralRock, enemyInfo, m_core));
 	enemyInfo.clear();
 
 
@@ -253,17 +253,17 @@ void WaveMgr::Setting()
 	m_daysUI.m_transform.pos = { 108,230 };
 	m_daysUI.m_transform.scale = { 100,50 };
 
-	//数字テクスチャロード
-	m_number[0].Load("Resource/UI/NumFont/0.png");
-	m_number[1].Load("Resource/UI/NumFont/1.png");
-	m_number[2].Load("Resource/UI/NumFont/2.png");
-	m_number[3].Load("Resource/UI/NumFont/3.png");
-	m_number[4].Load("Resource/UI/NumFont/4.png");
-	m_number[5].Load("Resource/UI/NumFont/5.png");
-	m_number[6].Load("Resource/UI/NumFont/6.png");
-	m_number[7].Load("Resource/UI/NumFont/7.png");
-	m_number[8].Load("Resource/UI/NumFont/8.png");
-	m_number[9].Load("Resource/UI/NumFont/9.png");
+	////数字テクスチャロード
+	//m_number[0].Load("Resource/UI/NumFont/0.png");
+	//m_number[1].Load("Resource/UI/NumFont/1.png");
+	//m_number[2].Load("Resource/UI/NumFont/2.png");
+	//m_number[3].Load("Resource/UI/NumFont/3.png");
+	//m_number[4].Load("Resource/UI/NumFont/4.png");
+	//m_number[5].Load("Resource/UI/NumFont/5.png");
+	//m_number[6].Load("Resource/UI/NumFont/6.png");
+	//m_number[7].Load("Resource/UI/NumFont/7.png");
+	//m_number[8].Load("Resource/UI/NumFont/8.png");
+	//m_number[9].Load("Resource/UI/NumFont/9.png");
 
 	//BGM
 	m_BGM = SoundManager::Instance()->SoundLoadWave("Resource/Sound/bgm.wav");

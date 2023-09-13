@@ -62,7 +62,7 @@ GameScene::GameScene()
 	BuildingMgr::Instance()->Setting();
 	EnemyRoute::Instance()->Setting();
 	WallAndTreeGeneratePos::Instance()->Setting();
-	WaveMgr::Instance()->Setting();
+	WaveMgr::Instance()->Setting(m_goldCore);
 	Transition::Instance()->Setting();
 
 

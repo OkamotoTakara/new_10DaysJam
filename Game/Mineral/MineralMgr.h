@@ -4,6 +4,7 @@
 #include <Raytracing/BlasVector.h>
 #include <memory>
 #include <array>
+#include "../Game/Core/Core.h"
 #include "../KazLibrary/Helper/ISinglton.h"
 
 class Mineral;

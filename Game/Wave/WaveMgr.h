@@ -6,8 +6,10 @@
 
 class Wave;
 class EnemyMgr;
+class Core;
 
 class WaveMgr : public ISingleton<WaveMgr> {
+
 public:
 	SoundData m_BGM;
 	SoundData start_morning;
@@ -30,11 +32,11 @@ private:
 	DrawCallUISet m_frameUI;
 	//“ú”‚ÌUI
 	DrawCallUISet m_daysUI;
-	std::array<DrawCallUISet, 10> m_number;
+	//std::array<DrawCallUISet, 10> m_number;
 
 public:
 
-	void Setting();
+	void Setting(std::weak_ptr<Core> m_core);
 
 	void Init(std::weak_ptr<EnemyMgr> arg_enemyMgr);
 
