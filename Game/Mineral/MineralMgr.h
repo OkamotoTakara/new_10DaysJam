@@ -35,4 +35,6 @@ public:
 
 	std::weak_ptr<Mineral> GetMineral(int arg_index) { return m_minerals[arg_index]; }
 
+	int GetMineralScore();
+
 };

@@ -297,6 +297,7 @@
     <ClInclude Include="Game\Effect\ShockWave.h" />
     <ClInclude Include="Game\Effect\StopMgr.h" />
     <ClInclude Include="Game\Effect\TimeZone.h" />
+    <ClInclude Include="Game\EnemyScore.h" />
     <ClInclude Include="Game\Enemy\EnemyData.h" />
     <ClInclude Include="Game\Enemy\EnemyMgr.h" />
     <ClInclude Include="Game\Enemy\EnemyRoute.h" />

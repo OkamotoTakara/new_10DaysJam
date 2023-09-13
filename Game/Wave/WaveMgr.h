@@ -42,4 +42,6 @@ public:
 	void SetTime(int wave_index, int wave_time);
 
 	bool GetIsFinishAllWave() { return m_isFinishAllWave; }
+
+	int GetNowWaveIndex() { return m_nowWaveIndex; }
 };

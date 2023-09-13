@@ -38,6 +38,8 @@ public:
 
 	void Damage(int arg_damage = 1);
 
+	bool IsDead() { return m_hp <= 0; }
+
 	void SetPos(KazMath::Vec3<float> arg_pos) { m_transform.pos = arg_pos; };
 	float GetScale() { return SCALE; }
 	KazMath::Vec3<float> GetPos() { return m_transform.pos; }

@@ -8,6 +8,7 @@
 #include "../Game/Mineral/MineralMgr.h"
 #include "../KazLibrary/Easing/easing.h"
 #include "../Game/Tutorial.h"
+#include "../Game//EnemyScore.h"
 
 MineKuji::MineKuji()
 {
@@ -257,6 +258,8 @@ void MineKuji::Update(std::weak_ptr<Core> arg_core, std::weak_ptr<Player> arg_pl
 	//HP‚ª0‚É‚È‚Á‚½‚çŽ€–S
 	if (m_hp <= 0) {
 		m_isActive = false;
+
+		EnemyScore::Instance()->m_score += 50;
 
 		if (Tutorial::Instance()->is_tutorial && Tutorial::Instance()->tutorial_num == 2)
 		{

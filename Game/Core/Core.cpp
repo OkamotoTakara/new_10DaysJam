@@ -3,6 +3,7 @@
 #include "../Game/Wave/WaveMgr.h"
 #include "../Game/TitleFlag.h"
 #include "../Game/Tutorial.h"
+#include "../KazLibrary/Input/KeyBoradInputManager.h"
 
 Core::Core()
 {
