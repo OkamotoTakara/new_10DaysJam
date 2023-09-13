@@ -25,7 +25,7 @@ public:
 	const float FACTER = 0.5f;
 	const float POWER = 100.0f;
 
-	std::array<PointLihgtData, 3> m_pointLightData;
+	std::array<PointLihgtData, 10> m_pointLightData;
 
 public:
 

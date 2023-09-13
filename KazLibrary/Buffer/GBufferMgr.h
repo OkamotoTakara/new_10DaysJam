@@ -110,7 +110,7 @@ public:
 	};
 	struct LightConstData {
 		DirLight m_dirLight;
-		std::array<PointLight, 3> m_pointLight;
+		std::array<PointLight, 10> m_pointLight;
 	}m_lightConstData;
 
 	KazBufferHelper::BufferData m_lightBuffer;
