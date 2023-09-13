@@ -500,13 +500,13 @@ void Mineral::Update(std::weak_ptr<Player> arg_player, std::vector<std::pair<Kaz
 				}
 			}
 
-			//Šâ‚ðŽ‚Á‚Ä‚¢‚½‚ç—Ž‚Æ‚·B
-			if (!m_haveMaterial.expired()) {
+		}
 
-				m_haveMaterial.lock()->Release();
-				m_haveMaterial.reset();
+		//Šâ‚ðŽ‚Á‚Ä‚¢‚½‚ç—Ž‚Æ‚·B
+		if (!m_haveMaterial.expired()) {
 
-			}
+			m_haveMaterial.lock()->Release();
+			m_haveMaterial.reset();
 
 		}
 

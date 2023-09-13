@@ -200,19 +200,26 @@ void Rock::Update(std::weak_ptr<Player> arg_player, std::vector<std::pair<KazMat
 	}
 
 	//ミネラルのサイズをステータスによって変更させる。
-	switch (m_rockID)
-	{
-	case ROCK_ID::SMALL:
-		m_transform.scale = { DRAW_SIZE_SMALL,DRAW_SIZE_SMALL ,DRAW_SIZE_SMALL };
-		break;
-	case ROCK_ID::MEDIUM:
-		m_transform.scale = { DRAW_SIZE_MEDIUM,DRAW_SIZE_MEDIUM ,DRAW_SIZE_MEDIUM };
-		break;
-	case ROCK_ID::BIG:
-		m_transform.scale = { DRAW_SIZE_BIG,DRAW_SIZE_BIG ,DRAW_SIZE_BIG };
-		break;
-	default:
-		break;
+	if (m_isMineralRock) {
+
+		m_transform.scale = KazMath::Vec3(6.0f, 6.0f, 6.0f);
+
+	}
+	else {
+		switch (m_rockID)
+		{
+		case ROCK_ID::SMALL:
+			m_transform.scale = { DRAW_SIZE_SMALL,DRAW_SIZE_SMALL ,DRAW_SIZE_SMALL };
+			break;
+		case ROCK_ID::MEDIUM:
+			m_transform.scale = { DRAW_SIZE_MEDIUM,DRAW_SIZE_MEDIUM ,DRAW_SIZE_MEDIUM };
+			break;
+		case ROCK_ID::BIG:
+			m_transform.scale = { DRAW_SIZE_BIG,DRAW_SIZE_BIG ,DRAW_SIZE_BIG };
+			break;
+		default:
+			break;
+		}
 	}
 
 	//HPが0になったら初期化
