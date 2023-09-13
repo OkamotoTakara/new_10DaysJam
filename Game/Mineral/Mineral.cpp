@@ -98,7 +98,7 @@ void Mineral::Generate(std::weak_ptr<Mineral> arg_thisMineral, KazMath::Vec3<flo
 
 }
 
-void Mineral::Update(std::weak_ptr<Player> arg_player, std::vector<std::pair<KazMath::Vec3<float>, int>>& arg_respawnVec) {
+void Mineral::Update(std::weak_ptr<Player> arg_player, std::vector<std::pair<KazMath::Vec3<float>, int>>& arg_respawnVec, int& arg_moveSECount) {
 
 	using namespace KazMath;
 
@@ -133,7 +133,7 @@ void Mineral::Update(std::weak_ptr<Player> arg_player, std::vector<std::pair<Kaz
 	//攻撃の更新処理
 	if (m_isAttack) {
 
-		UpdateAttack(arg_player);
+		UpdateAttack(arg_player, arg_moveSECount);
 
 	}
 	//マテリアルを取りに行く状態だったら
@@ -158,7 +158,10 @@ void Mineral::Update(std::weak_ptr<Player> arg_player, std::vector<std::pair<Kaz
 
 			m_moveSpan = 0;
 
-			SoundManager::Instance()->SoundPlayerWave(walk, 0);
+			if (arg_moveSECount < 1) {
+				++arg_moveSECount;
+				SoundManager::Instance()->SoundPlayerWave(walk, 0);
+			}
 
 		}
 
@@ -774,7 +777,7 @@ float Mineral::GetCollisionScale() {
 
 }
 
-void Mineral::UpdateAttack(std::weak_ptr<Player> arg_player)
+void Mineral::UpdateAttack(std::weak_ptr<Player> arg_player, int& arg_moveSECount)
 {
 
 	switch (m_attackID)
@@ -823,7 +826,10 @@ void Mineral::UpdateAttack(std::weak_ptr<Player> arg_player)
 			else
 			{
 				move_span_count = 0;
-				SoundManager::Instance()->SoundPlayerWave(walk, 0);
+
+				if (arg_moveSECount < 1) {
+					SoundManager::Instance()->SoundPlayerWave(walk, 0);
+				}
 			}
 		}
 

@@ -129,6 +129,8 @@ GameScene::GameScene()
 
 	NumberFont::Instance()->Load();
 	Tutorial::Instance()->setting();
+
+	//Tutorial::Instance()->is_tutorial = false;
 }
 
 GameScene::~GameScene()
@@ -182,6 +184,8 @@ void GameScene::Init()
 	m_isTitleNight = false;
 
 	EnemyScore::Instance()->m_score = 0;
+
+	
 
 }
 

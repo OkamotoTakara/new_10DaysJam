@@ -379,6 +379,9 @@ void WaveMgr::Draw(DrawingByRasterize& arg_rasterize, Raytracing::BlasVector& ar
 
 	}
 
+	m_dayNumerUI.m_transform.pos = { 170.0f, 230.0f };
+	m_dayNumerUI.m_transform.scale = { 30.0f, 30.0f };
+
 }
 
 void WaveMgr::GameStart()

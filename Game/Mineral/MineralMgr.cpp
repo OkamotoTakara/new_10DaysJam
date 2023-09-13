@@ -64,6 +64,8 @@ void MineralMgr::Generate(KazMath::Vec3<float>& arg_pos, KazMath::Vec3<float>& a
 
 void MineralMgr::Update(std::weak_ptr<Player> arg_player, std::weak_ptr<MineralTarget> arg_mineralTarget) {
 
+	moveSECount = 0;
+
 	for (auto& index : m_minerals) {
 
 		if (!index->GetIsAlive()) continue;
@@ -72,7 +74,7 @@ void MineralMgr::Update(std::weak_ptr<Player> arg_player, std::weak_ptr<MineralT
 		std::vector<std::pair<KazMath::Vec3<float>, int>> breakUpPos;
 
 		//更新処理
-		index->Update(arg_player, breakUpPos);
+		index->Update(arg_player, breakUpPos, moveSECount);
 
 		//分裂した場合、生成する。
 		for (auto& breakUp : breakUpPos) {
