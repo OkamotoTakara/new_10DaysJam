@@ -35,7 +35,7 @@ private:
 	const float STRONG_DAIPAN_POWER = 2.0f;
 	const float GATHERING_DAIPAN_POWER = 1.0f;	//すでに追従しているときの、反応用の力
 	int m_hp;
-	std::array<int, 3> HP = { 5, 15, 45 };
+	std::array<int, 3> HP = { 2, 6, 45 };
 	std::weak_ptr<Mineral> m_thisMineral;	//自分自身
 
 	//解散するときのベクトル

@@ -22,8 +22,8 @@ private:
 	float m_gravity;
 	const float GRAVITY = 0.1f;
 	int m_hp;
-	const int HP = 9;
-	const int MINEKING_HP = 30;
+	const int HP = 10;
+	const int MINEKING_HP = 50;
 	const float SCALE = 3.0f;
 	const float KING_SCALE = 10.0f;
 	bool m_isMineking;
@@ -57,8 +57,8 @@ private:
 
 	//コアに向かっていく変数
 	const float CORE_MOVE_SPEED = 0.8f;	//コアに向かって行く初速度
-	const float CORE_MOVE_DELAY = 70.0f;
-	const float CORE_MOVE_DELAY_MINEING = 120.0f;
+	const float CORE_MOVE_DELAY = 65.0f;
+	const float CORE_MOVE_DELAY_MINEING = 80.0f;
 	float m_coreMoveDelayTimer;
 	float m_coreMoveSpeed;
 	bool m_isAttackCore;
@@ -95,8 +95,8 @@ private:
 	const float SHELL_POS_Y = 8.0f;
 	float m_shellGravity;
 	float m_shellHP;
-	const float SHELL_HP = 10.0f;
-	const float MINEKING_SHELL_HP = 50.0f;
+	const float SHELL_HP = 20.0f;
+	const float MINEKING_SHELL_HP = 100.0f;
 	KazMath::Vec3<float> m_shellBreakVel;
 	const float SHELL_BRWAK_VEL = 5.0f;
 	KazMath::Vec3<float> m_shellBreakRightVec;
