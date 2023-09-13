@@ -77,7 +77,7 @@ private:
 	bool m_isAttackWall;
 
 	//出現地点をランダム化
-	const float RANDOM_SPAWN_RANGE = 30.0f;
+	const float RANDOM_SPAWN_RANGE = 20.0f;
 
 
 public:

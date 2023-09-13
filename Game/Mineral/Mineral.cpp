@@ -234,7 +234,7 @@ void Mineral::Update(std::weak_ptr<Player> arg_player, std::vector<std::pair<Kaz
 
 			//ID‚ªSmallˆÈŠO‚¾‚Á‚½‚ç¬‚³‚­‚µ‚ÄA•ª—ô‚³‚¹‚éB
 			if (m_mineralID != SMALL) {
-				for (int index = 0; index < 2; ++index) {
+				for (int index = 0; index < 3; ++index) {
 					std::pair<KazMath::Vec3<float>, int> respawnData;
 					respawnData.first = { Vec3<float>(KazMath::Rand(-1.0f, 1.0f) ,KazMath::Rand(-0.0f, 2.0f) ,KazMath::Rand(-1.0f, 1.0f)) };
 					respawnData.first.GetNormal();

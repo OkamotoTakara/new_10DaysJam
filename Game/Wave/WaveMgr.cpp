@@ -34,15 +34,16 @@ void WaveMgr::Setting()
 	enemyInfo.clear();
 
 	//通常のウェーブ1
-	dayTime = 600;		//日中の時間 フレーム数
+	dayTime = 60;		//日中の時間 フレーム数
 	nightTime = 1800;	//夜の時間 フレーム数
 	tree = {  };		//有効化時に生成される木のIndex 1スタート
 	rock = { 3 };		//有効化時に生成される岩のIndex 1スタート
 	mineralRock = { 1,2 };		//有効化時に生成されるミネラル岩のIndex 1スタート
 	//敵を追加していく。
-	enemyInfo.emplace_back(EnemyRoute::A, Wave::ENEMY_ID::MINEKUJI, 0);
-	enemyInfo.emplace_back(EnemyRoute::A, Wave::ENEMY_ID::MINEKUJI, 180);
-	enemyInfo.emplace_back(EnemyRoute::A, Wave::ENEMY_ID::MINEKUJI, 360);
+	//enemyInfo.emplace_back(EnemyRoute::A, Wave::ENEMY_ID::MINEKUJI, 0);
+	//enemyInfo.emplace_back(EnemyRoute::A, Wave::ENEMY_ID::MINETSUMURI, 180);
+	enemyInfo.emplace_back(EnemyRoute::A, Wave::ENEMY_ID::MINEKING, 180);
+	//enemyInfo.emplace_back(EnemyRoute::A, Wave::ENEMY_ID::MINEKUJI, 360);
 	//enemyInfo.emplace_back(EnemyRoute::B, Wave::ENEMY_ID::MINETSUMURI, 0);
 	//ウェーブを追加。
 	m_wave1 = std::make_shared<Wave>(dayTime, nightTime, tree, rock, mineralRock, enemyInfo);

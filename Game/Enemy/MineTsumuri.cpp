@@ -383,6 +383,7 @@ void MineTsumuri::Damage(std::weak_ptr<Mineral> arg_mineral, int arg_damage)
 		if (m_attackedMineral.expired()) {
 			m_attackedMineral = arg_mineral;
 		}
+	}
 
 	/*ÉIÉJÉÇÉgÉ]Å[Éì*/
 	isDrawHpBox = true;
@@ -398,7 +399,6 @@ void MineTsumuri::Damage(std::weak_ptr<Mineral> arg_mineral, int arg_damage)
 		else {
 			m_shellHP = std::clamp(m_shellHP - arg_damage, 0.0f, SHELL_HP);
 		}
-		m_shellHP = std::clamp(m_shellHP - arg_damage, 0.0f, SHELL_HP);
 		if (m_shellHP <= 0.0f) {
 
 			//äkÇ™âÛÇ≥ÇÍÇΩèuä‘ÇæÇ¡ÇΩÇÁÅB
@@ -429,8 +429,6 @@ void MineTsumuri::Damage(std::weak_ptr<Mineral> arg_mineral, int arg_damage)
 		}
 	}
 
-		m_hp = std::clamp(m_hp - arg_damage, 0, HP);
-	}
 }
 
 void MineTsumuri::AttackCore(std::weak_ptr<Core> arg_core)

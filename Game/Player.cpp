@@ -90,20 +90,26 @@ void Player::Update()
 
 		//プレイヤーを動かす。
 		const float MOVE_SPEED = 1.0f;
-		m_transform.pos.z += (KeyBoradInputManager::Instance()->InputState(DIK_W)) * MOVE_SPEED;
-		m_transform.pos.z -= (KeyBoradInputManager::Instance()->InputState(DIK_S)) * MOVE_SPEED;
-		m_transform.pos.x += (KeyBoradInputManager::Instance()->InputState(DIK_D)) * MOVE_SPEED;
-		m_transform.pos.x -= (KeyBoradInputManager::Instance()->InputState(DIK_A)) * MOVE_SPEED;
+		float moveSpeed = MOVE_SPEED;
+		//台パンチャージ中は若干移動速度を上げる。
+		if (m_daipanStatus == CHARGE) {
+			const float DAIPAN_SPEED = 0.3f;
+			moveSpeed += DAIPAN_SPEED;
+		}
+		m_transform.pos.z += (KeyBoradInputManager::Instance()->InputState(DIK_W)) * moveSpeed;
+		m_transform.pos.z -= (KeyBoradInputManager::Instance()->InputState(DIK_S)) * moveSpeed;
+		m_transform.pos.x += (KeyBoradInputManager::Instance()->InputState(DIK_D)) * moveSpeed;
+		m_transform.pos.x -= (KeyBoradInputManager::Instance()->InputState(DIK_A)) * moveSpeed;
 
 		//コントローラーも対応。
 		float inputStickX = ControllerInputManager::Instance()->GetJoyStickLXNum() / 32767.0f;
 		float inputStickY = ControllerInputManager::Instance()->GetJoyStickLYNum() / 32767.0f;
-		const float STICK_DEADLINE = 0.3f;
+		const float STICK_DEADLINE = 0.1f;
 		if (STICK_DEADLINE <= fabs(inputStickX)) {
-			m_transform.pos.x += inputStickX * MOVE_SPEED;
+			m_transform.pos.x += inputStickX * moveSpeed;
 		}
 		if (STICK_DEADLINE <= fabs(inputStickY)) {
-			m_transform.pos.z += inputStickY * MOVE_SPEED;
+			m_transform.pos.z += inputStickY * moveSpeed;
 		}
 
 		//隊列を操作する。
