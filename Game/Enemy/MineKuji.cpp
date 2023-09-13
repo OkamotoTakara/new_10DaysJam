@@ -35,8 +35,8 @@ void MineKuji::Init()
 	m_hpBoxDrawTimer = HP_BOX_DRAW_TIME_MAX;
 	hpBoxEaseTime = HP_BOX_EASE_TIME_MAX;
 	ease_scale = 0.0f;
-	m_hpBoxTransform.scale.y = 2.0f;
-	m_hpBoxTransform.scale.z = 2.0f;
+	m_hpBoxTransform.scale.y = 1.0f;
+	m_hpBoxTransform.scale.z = 1.0f;
 	m_hpBoxTransform.scale.x = static_cast<float> (HP);
 	/*オカモトゾーン*/
 }
