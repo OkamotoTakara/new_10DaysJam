@@ -55,8 +55,8 @@ void Player::Init()
 	m_daipanReturnTimer = 0;
 	m_daipanStrongTimer = 0.0f;
 	m_daipanShakePos = {};
-	m_transform.pos.x = 0.0f;
-	m_transform.pos.z = 0.0f;
+	m_transform.pos.x = 113.0f;
+	m_transform.pos.z = 117.0f;
 	m_transform.pos.y = DEFAULT_Y;
 	m_daipanPos = m_transform.pos;
 	m_mineralCenterPos = m_transform.pos;
