@@ -9,7 +9,7 @@
 #include "../Game/Tutorial.h"
 #include "../Wave/WaveMgr.h"
 
-Wave::Wave(int arg_dayTime, int arg_nightTime, std::vector<int> arg_tree, std::vector<int> arg_rock, std::vector<int> arg_mineralRock, std::vector<EnemyWaveInfo> arg_enemyWaveInfo)
+Wave::Wave(int arg_dayTime, int arg_nightTime, std::vector<int> arg_tree, std::vector<int> arg_rock, std::vector<int> arg_mineralRock, std::vector<EnemyWaveInfo> arg_enemyWaveInfo, std::weak_ptr<Core> core)
 {
 
 	m_dayTime = arg_dayTime;
@@ -22,6 +22,8 @@ Wave::Wave(int arg_dayTime, int arg_nightTime, std::vector<int> arg_tree, std::v
 	m_isNight = false;
 	m_isActiveWave = false;
 
+	m_core = core;
+	m_core.lock()->SetHp(25);
 	night_start = SoundManager::Instance()->SoundLoadWave("Resource/Sound/night_start.wav");
 	night_start.volume = 0.1f;
 

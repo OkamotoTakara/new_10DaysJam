@@ -49,5 +49,5 @@ public:
 	float GetScale() { return SCALE; }
 	KazMath::Vec3<float> GetPos() { return m_transform.pos; }
 	KazMath::Vec3<float> GetPosZeroY() { return { m_transform.pos.x, 0.0f, m_transform.pos.z }; }
-
+	int SetHp(int hp) { m_hp = hp; }
 };
