@@ -62,8 +62,8 @@ private:
 	float m_daipanTimer;
 	const float DAIPAN_NOW_TIMER = 7.0f;
 	const float DAIPAN_NOW_STRONG_TIMER = 4.0f;
-	const float DAIPAN_SHAKE = 1.0f;
-	const float DAIPAN_STRONG_SHAKE = 1.8f;
+	const float DAIPAN_SHAKE = 1.5f;
+	const float DAIPAN_STRONG_SHAKE = 3.8f;
 
 	//‘äƒpƒ“‚©‚ç‹A‚Á‚Ä‚¢‚é“r’†‚Ì•Ï”B
 	float m_daipanReturnTimer;

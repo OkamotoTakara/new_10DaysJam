@@ -39,13 +39,13 @@ private:
 	bool m_isMineralRock;
 
 	//ƒTƒCƒYŠÖŒW •`‰æ
-	const float DRAW_SIZE_BIG = 6.5f;
+	const float DRAW_SIZE_BIG = 12.0f;
 	const float DRAW_SIZE_MEDIUM = 5.5f;
-	const float DRAW_SIZE_SMALL = 3.5f;
+	const float DRAW_SIZE_SMALL = 6.0f;
 	//“–‚½‚è”»’è
-	const float COLLISION_SIZE_BIG = 6.0f;
+	const float COLLISION_SIZE_BIG = 12.0f;
 	const float COLLISION_SIZE_MEDIUM = 4.6f;
-	const float COLLISION_SIZE_SMALL = 3.5f;
+	const float COLLISION_SIZE_SMALL = 6.0f;
 
 public:
 

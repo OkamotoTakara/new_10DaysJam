@@ -107,7 +107,7 @@ void MineralTarget::Draw(DrawingByRasterize& arg_rasterize, Raytracing::BlasVect
 	if (targetIndex == 1) {
 
 		//‘å‚«‚³‚ðÝ’è
-		const float SCALE = 1.0f;
+		const float SCALE = 3.0f;
 		m_transform.scale += ((RockMgr::Instance()->GetScale(m_targetRockIndex) + KazMath::Vec3<float>(SCALE, SCALE, SCALE)) - m_transform.scale) / 3.0f;
 		const float TARGET_SCALE = 10.0f;
 		m_targetTransform.scale += (KazMath::Vec3<float>(TARGET_SCALE, TARGET_SCALE, TARGET_SCALE) - m_targetTransform.scale) / 5.0f;
