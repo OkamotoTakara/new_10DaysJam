@@ -97,20 +97,42 @@ void Player::Update()
 			const float DAIPAN_SPEED = 0.3f;
 			moveSpeed += DAIPAN_SPEED;
 		}
-		m_transform.pos.z += (KeyBoradInputManager::Instance()->InputState(DIK_W)) * moveSpeed;
-		m_transform.pos.z -= (KeyBoradInputManager::Instance()->InputState(DIK_S)) * moveSpeed;
-		m_transform.pos.x += (KeyBoradInputManager::Instance()->InputState(DIK_D)) * moveSpeed;
-		m_transform.pos.x -= (KeyBoradInputManager::Instance()->InputState(DIK_A)) * moveSpeed;
+
+		//動く方向
+		KazMath::Vec3<float> moveVec = {};
+
+		moveVec.z += (KeyBoradInputManager::Instance()->InputState(DIK_W));
+		moveVec.z -= (KeyBoradInputManager::Instance()->InputState(DIK_S));
+		moveVec.x += (KeyBoradInputManager::Instance()->InputState(DIK_D));
+		moveVec.x -= (KeyBoradInputManager::Instance()->InputState(DIK_A));
 
 		//コントローラーも対応。
 		float inputStickX = ControllerInputManager::Instance()->GetJoyStickLXNum() / 32767.0f;
 		float inputStickY = ControllerInputManager::Instance()->GetJoyStickLYNum() / 32767.0f;
 		const float STICK_DEADLINE = 0.1f;
 		if (STICK_DEADLINE <= fabs(inputStickX)) {
-			m_transform.pos.x += inputStickX * moveSpeed;
+			moveVec.x += inputStickX;
 		}
 		if (STICK_DEADLINE <= fabs(inputStickY)) {
-			m_transform.pos.z += inputStickY * moveSpeed;
+			moveVec.z += inputStickY;
+		}
+
+		//入力があったら。
+		if (0 < moveVec.Length()) {
+
+			//範囲を調整。
+			moveVec.x = std::clamp(moveVec.x, -1.0f, 1.0f);
+			moveVec.z = std::clamp(moveVec.z, -1.0f, 1.0f);
+
+			//正規化して方向を決める。
+			moveVec.Normalize();
+
+			//回転をかけて入力を直感的にする。
+			moveVec = TransformVec3(moveVec, DirectX::XMQuaternionRotationAxis({ 0,1,0 }, DirectX::XM_PIDIV4 * 1.18f));
+
+			//動かす。
+			m_transform.pos += moveVec * moveSpeed;
+
 		}
 
 		//隊列を操作する。
@@ -530,8 +552,8 @@ void Player::Draw(DrawingByRasterize& arg_rasterize, Raytracing::BlasVector& arg
 		m_dadanBackGroundUI.m_color.color.a = 0;
 
 	}
-	
-	
+
+
 
 	ImGui::Begin("UI");
 
