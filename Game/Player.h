@@ -67,7 +67,7 @@ private:
 
 	//台パンから帰っている途中の変数。
 	float m_daipanReturnTimer;
-	const float DAIPAN_RETURN_TIMER = 10.0f;
+	const float DAIPAN_RETURN_TIMER = 8.0f;
 
 	//Y軸関連
 	const float DEFAULT_Y = 30.0f;

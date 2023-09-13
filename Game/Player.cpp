@@ -158,7 +158,7 @@ void Player::Update()
 		}
 
 		//座標をデフォルトの位置に補間する。
-		m_transform.pos.y += (DEFAULT_Y - m_transform.pos.y) / 5.0f;
+		m_transform.pos.y += (DEFAULT_Y - m_transform.pos.y) / 3.0f;
 
 		//なにもない時のみ台パン座標を保存する。
 		//m_daipanPos += (m_transform.pos - m_daipanPos) / 3.0f;
@@ -262,7 +262,7 @@ void Player::Update()
 		}
 
 		//座標をデフォルトの位置に補間する。
-		m_transform.pos.y += (DEFAULT_Y - m_transform.pos.y) / 5.0f;
+		m_transform.pos.y += (DEFAULT_Y - m_transform.pos.y) / 3.0f;
 
 	}
 	break;
