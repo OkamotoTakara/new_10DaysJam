@@ -10,13 +10,9 @@ private:
 
 public:
 
-	bool input_return;
-	bool input_old_return;
 	bool is_next;
 	bool is_tutorial;
 	int tutorial_num;
-	float ease_time;
-	const float EASE_TIME_MAX = 30.0f;
 	std::array<DrawCallUISet, 12> tutorial_tex;
 	KazMath::Transform2D tex_transform;
 	//チュートリアルを飛ばす条件に使う変数たち
