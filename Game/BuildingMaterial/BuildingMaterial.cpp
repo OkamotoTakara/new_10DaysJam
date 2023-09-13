@@ -53,7 +53,7 @@ void BuildingMaterial::Update()
 	if (GROUND < m_transform.pos.y) {
 
 		m_gravity += GRAVITY;
-		m_transform.pos.y =- m_gravity;
+		m_transform.pos.y -= m_gravity;
 
 	}
 	else {
