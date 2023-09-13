@@ -36,6 +36,50 @@ void Wave::Update(std::weak_ptr<EnemyMgr> arg_enemyMgr)
 	if (Tutorial::Instance()->is_tutorial)
 	{
 		m_nowTime = 1;
+		//ŽžŠÔ‚ÌÝ’è
+		switch (Tutorial::Instance()->tutorial_num)
+		{
+		case 2:
+			//ƒ~ƒlƒNƒW‚ª—N‚­
+			if (!Tutorial::Instance()->spawn_minekuzi)
+			{
+				m_nowTime = 1;
+				Tutorial::Instance()->spawn_minekuzi = true;
+				arg_enemyMgr.lock()->GenerateMinekuji(EnemyRoute::A);
+			}
+			break;
+
+		case 3:
+			//ƒ~ƒlƒ‰ƒ‹Šâ‚ª—N‚­
+			if (!Tutorial::Instance()->spawn_m_rock)
+			{
+				Tutorial::Instance()->spawn_m_rock = true;
+				RockMgr::Instance()->Generate(WallAndTreeGeneratePos::Instance()->m_rockPos[2], {}, true, 2);
+			}
+			break;
+
+		case 5:
+			//Šâ‚ª—N‚­
+			if (!Tutorial::Instance()->spawn_rock)
+			{
+				Tutorial::Instance()->spawn_rock = true;
+				RockMgr::Instance()->Generate(WallAndTreeGeneratePos::Instance()->m_rockPos[2], {}, false, 2);
+			}
+			break;
+
+
+		case 8:
+			//–Ø‚ª—N‚­
+			if (!Tutorial::Instance()->spawn_tree)
+			{
+				Tutorial::Instance()->spawn_tree = true;
+				DestructibleObjectMgr::Instance()->GenerateTree(WallAndTreeGeneratePos::Instance()->m_treePos[2]);
+			}
+			break;
+		default:
+
+			break;
+		}
 	}
 
 	//–éŽžŠÔ‚¾‚Á‚½‚ç
@@ -72,7 +116,10 @@ void Wave::Update(std::weak_ptr<EnemyMgr> arg_enemyMgr)
 		if (m_nighTime <= m_nowTime) {
 
 			Invalidate(arg_enemyMgr);
-
+			if (Tutorial::Instance()->is_tutorial)
+			{
+				Tutorial::Instance()->is_tutorial = false;
+			}
 		}
 
 	}

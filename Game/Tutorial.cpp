@@ -1,6 +1,7 @@
 #include "Tutorial.h"
 #include "../KazLibrary/Input/KeyBoradInputManager.h"
 #include"../Game/TitleFlag.h"
+#include "../Game/Wave/WaveMgr.h"
 
 void Tutorial::setting()
 {
@@ -15,13 +16,28 @@ void Tutorial::setting()
 	tutorial_tex[7].Load("Resource/TutorialTex/UI_Tutorial8.png");
 	tutorial_tex[8].Load("Resource/TutorialTex/UI_Tutorial9.png");
 	tutorial_tex[9].Load("Resource/TutorialTex/UI_Tutorial10.png");
+	tutorial_tex[10].Load("Resource/TutorialTex/UI_Tutorial11.png");
+	tutorial_tex[11].Load("Resource/TutorialTex/UI_Tutorial12.png");
 
 	is_tutorial = true;
 	tutorial_num = 0;
 	tex_transform.pos = { 1280.0f / 2.0f, 720.0f / 2.0f };
 	tex_transform.scale = { 1280.0f, 720.0f };
-
+	ease_time = 0.0f;
 	input_return = false;
+	move_amount = 0.0f;
+	spawn_minekuzi = false;
+	spawn_m_rock = false;
+	spawn_rock = false;
+	break_mineral = false;
+	draw_timer = 0;
+	tree_carry_count = 0;
+	tutorial_timer = 0;
+	TUTORIAL_TIME_MAX = 400.0f;
+	for (int i = 0; i < static_cast<int>(tutorial_tex.size()); i++)
+	{
+		tutorial_tex[i].m_transform = tex_transform;
+	}
 }
 
 void Tutorial::Update()
@@ -33,13 +49,92 @@ void Tutorial::Update()
 		if (!is_next)
 		{
 			is_next = true;
+			ease_time = 0;
 		}
 	}
 
+	//画像を動かす処理
+	for (int i = 0; i < static_cast<int>(tutorial_tex.size()); i++)
+	{
+		float tex_base_y = -200.0f;
+		if (tutorial_num == i)
+		{
+			tex_base_y = 720.0f / 2.0f;
+		}
+		tutorial_tex[i].m_transform.pos.y += (tex_base_y - tutorial_tex[i].m_transform.pos.y) / 20.0f;
+	}
+
+	//時間経過でチュートリアルを飛ばすときの処理
+	if (tutorial_num == 0 || tutorial_num == 4 || tutorial_num == 6 || tutorial_num == 11)
+	{
+		if (tutorial_timer <= TUTORIAL_TIME_MAX)
+		{
+			tutorial_timer++;
+		}
+		else
+		{
+			is_next = true;
+			tutorial_timer = 0;
+		}
+	}
+
+	if (tutorial_num == 7)
+	{
+		if (draw_timer < DRAW_TIME_MAX)
+		{
+			draw_timer++;
+		}
+
+		else
+		{
+			//もしミネラルを割っていたら次のフェーズに飛ばす
+			if (break_mineral)
+			{
+				is_next = true;
+			}
+		}
+	}
+
+	if (tutorial_num == 9)
+	{
+		if (tree_carry_count >= 3)
+		{
+			is_next = true;
+		}
+	}
+
+	//次のチュートリアルに飛ばす
 	if (is_next)
 	{
 		tutorial_num++;
+
+		//ミネクジを湧かせる
+		if (spawn_minekuzi)
+		{
+			spawn_minekuzi = false;
+		}
+		//ミネラル岩をわかせる
+		if (spawn_m_rock)
+		{
+			spawn_m_rock = false;
+		}
+		//岩をわかせる
+		if (spawn_rock)
+		{
+			spawn_rock = false;
+		}
+		//木をわかせる
+		if (spawn_tree)
+		{
+			spawn_tree = false;
+		}
+
 		is_next = false;
+
+		if (tutorial_num == 12)
+		{
+			is_tutorial = false;
+		}
 	}
 }
 
@@ -47,7 +142,9 @@ void Tutorial::Draw(DrawingByRasterize& arg_rasterize, Raytracing::BlasVector& a
 {
 	if (!TitleFlag::Instance()->m_isTitle)
 	{
-		tutorial_tex[tutorial_num].m_transform = tex_transform;
-		tutorial_tex[tutorial_num].Draw(arg_rasterize);
+		for (int i = 0; i < static_cast<int>(tutorial_tex.size()); i++)
+		{
+			tutorial_tex[i].Draw(arg_rasterize);
+		}
 	}
 }

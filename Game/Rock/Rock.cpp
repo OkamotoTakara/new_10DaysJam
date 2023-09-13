@@ -1,6 +1,7 @@
 #include "Rock.h"
 #include "../Game/Player.h"
 #include "../Game/Effect/ShakeMgr.h"
+#include "../Game/Tutorial.h"
 
 Rock::Rock()
 {
@@ -181,8 +182,13 @@ void Rock::Update(std::weak_ptr<Player> arg_player, std::vector<std::pair<KazMat
 					//こいつ本体は消す。
 					Init();
 
-					return;
+					//次のチュートリアルに送る
+					if (Tutorial::Instance()->tutorial_num == 3)
+					{
+						Tutorial::Instance()->is_next = true;
+					}
 
+					return;
 
 				}
 
@@ -272,9 +278,12 @@ void Rock::Update(std::weak_ptr<Player> arg_player, std::vector<std::pair<KazMat
 		//こいつ本体は消す。
 		Init();
 
+		//次のチュートリアルに送る
+		if (Tutorial::Instance()->tutorial_num == 5)
+		{
+			Tutorial::Instance()->is_next = true;
+		}
 	}
-
-
 }
 
 void Rock::Draw(DrawingByRasterize& arg_rasterize, Raytracing::BlasVector& arg_blasVec)

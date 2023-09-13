@@ -7,6 +7,7 @@
 #include "../Game/Effect/ChromaticAberration.h"
 #include <Imgui/imgui.h>
 #include "../Game/TitleFlag.h"
+#include"../Game/Tutorial.h"
 
 Player::Player()
 {
@@ -437,6 +438,18 @@ void Player::Update()
 	m_attackModel.m_model.extraBufferArray.back() = GBufferMgr::Instance()->m_outlineBuffer;
 	m_attackModel.m_model.extraBufferArray.back().rangeType = GRAPHICS_RANGE_TYPE_UAV_DESC;
 	m_attackModel.m_model.extraBufferArray.back().rootParamType = GRAPHICS_PRAMTYPE_TEX;
+
+	//チュートリアルのとき
+	if (Tutorial::Instance()->is_tutorial && Tutorial::Instance()->tutorial_num == 1)
+	{
+		Tutorial::Instance()->move_amount += (m_oldTransform.pos - m_transform.pos).Length();
+
+		//一定量動いたらチュートリアルを進める
+		if (Tutorial::Instance()->move_amount >= 300.0f)
+		{
+			Tutorial::Instance()->is_next = true;
+		}
+	}
 
 }
 
