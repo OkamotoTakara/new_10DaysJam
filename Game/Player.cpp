@@ -453,7 +453,7 @@ void Player::Update()
 		Tutorial::Instance()->move_amount += (m_oldTransform.pos - m_transform.pos).Length();
 
 		//一定量動いたらチュートリアルを進める
-		if (Tutorial::Instance()->move_amount >= 300.0f)
+		if (Tutorial::Instance()->move_amount >= 400.0f)
 		{
 			Tutorial::Instance()->is_next = true;
 		}
