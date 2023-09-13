@@ -130,10 +130,6 @@ void Rock::Update(std::weak_ptr<Player> arg_player, std::vector<std::pair<KazMat
 				Damage(dir / 5.0f, 4);
 				if (m_hp <= 0.0f) {
 
-
-				}
-				else {
-
 					int id = 0;
 					switch (m_rockID)
 					{
@@ -193,7 +189,9 @@ void Rock::Update(std::weak_ptr<Player> arg_player, std::vector<std::pair<KazMat
 
 					return;
 
+
 				}
+
 			}
 
 		}
