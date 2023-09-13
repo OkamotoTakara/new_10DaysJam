@@ -297,6 +297,7 @@
     <ClInclude Include="Game\Effect\ShockWave.h" />
     <ClInclude Include="Game\Effect\StopMgr.h" />
     <ClInclude Include="Game\Effect\TimeZone.h" />
+    <ClInclude Include="Game\EnemyScore.h" />
     <ClInclude Include="Game\Enemy\EnemyData.h" />
     <ClInclude Include="Game\Enemy\EnemyMgr.h" />
     <ClInclude Include="Game\Enemy\EnemyRoute.h" />
@@ -315,6 +316,7 @@
     <ClInclude Include="Game\Mineral\MineralTarget.h" />
     <ClInclude Include="Game\Player.h" />
     <ClInclude Include="Game\PointLightMgr.h" />
+    <ClInclude Include="Game\ResultFlag.h" />
     <ClInclude Include="Game\Rock\Rock.h" />
     <ClInclude Include="Game\Rock\RockMgr.h" />
     <ClInclude Include="Game\Stage\ChildOfEdenStage.h" />

@@ -22,9 +22,12 @@
 #include"../Game/WallAndTreeGeneratePos.h"
 #include"../Game/Wave/WaveMgr.h"
 #include"../Game/TitleFlag.h"
+#include"../Game/ResultFlag.h"
 #include"../Game/Tutorial.h"
 #include"../KazLibrary/Easing/easing.h"
 #include"../Game/Transition.h"
+#include"../Game/EnemyScore.h"
+#include"../Game/PointLightMgr.h"
 
 GameScene::GameScene()
 {
@@ -87,6 +90,43 @@ GameScene::GameScene()
 	m_selectTitleNum = 0;
 	m_selectTitleUISine = 0.0f;
 
+	//リザルト関連
+	m_resultBackGroundUI.Load("Resource/Result/Result_UI4.png");
+	m_resultTitleUI.Load("Resource/Result/Result_UI2.png");
+	m_resultRetryUI.Load("Resource/Result/Result_UI3.png");
+
+	//リザルトのUIの数字をロード
+	for (auto& index : m_resultDayScoreUI) {
+
+		index.Load("Resource/Result/Result_UI3.png");
+
+	}
+	for (auto& index : m_resultMineralScoreUI) {
+
+		index.Load("Resource/Result/Result_UI3.png");
+
+	}
+	for (auto& index : m_reesultEnemyScoreUI) {
+
+		index.Load("Resource/Result/Result_UI3.png");
+
+	}
+	for (auto& index : m_totalScoreUI) {
+
+		index.Load("Resource/Result/Result_UI3.png");
+
+	}
+
+	//サイズを調整。
+	m_resultBackGroundUI.m_transform.pos = { 1280.0f / 2.0f, 720.0f / 2.0f };
+	m_resultBackGroundUI.m_transform.scale = { 1280.0f, 720.0f };
+	m_resultTitleUI.m_transform.pos = { 640.0f, 610.0f };
+	m_resultTitleUI.m_transform.scale = UI_DEF_TITLE_SCALE;
+	m_resultRetryUI.m_transform.pos = { 640.0f, 535.0f };
+	m_resultRetryUI.m_transform.scale = { UI_MAX_RETRY_SCALE };
+
+	EnemyScore::Instance()->m_score = 0;
+
 	NumberFont::Instance()->Load();
 	Tutorial::Instance()->setting();
 }
@@ -124,6 +164,7 @@ void GameScene::Init()
 	GBufferMgr::Instance()->m_lightConstData.m_dirLight.m_dir = KazMath::Vec3<float>(0.0f, -0.894f, 0.4472f);
 
 	TitleFlag::Instance()->Init();
+	ResultFlag::Instance()->Init();
 	m_titleLogoDeleteTimer = 0.0f;
 
 	Transition::Instance()->Init();
@@ -131,6 +172,16 @@ void GameScene::Init()
 	m_titleStartUI.m_color.color.a = 255;
 	m_titleQuitUI.m_color.color.a = 255;
 	m_titleBackGroundUI.m_color.color.a = 255;
+
+	//リザルト関連
+	m_selectResultNum = 0;
+	m_isResultToTitle = false;
+	m_resultDayScore = 0;
+
+	m_isTitleNightChangeTimer = 0;
+	m_isTitleNight = false;
+
+	EnemyScore::Instance()->m_score = 0;
 
 }
 
@@ -152,9 +203,6 @@ void GameScene::Update()
 
 	if (KeyBoradInputManager::Instance()->InputTrigger(DIK_R)) {
 		Init();
-	}
-	if (KeyBoradInputManager::Instance()->InputTrigger(DIK_I)) {
-		TitleFlag::Instance()->m_isTitle = false;
 	}
 
 	//ウェーブを更新。
@@ -197,84 +245,50 @@ void GameScene::Update()
 	//シェイクを更新。
 	ShakeMgr::Instance()->Update();
 
-	//タイトル画面だったら。
-	if (TitleFlag::Instance()->m_isTitle) {
+	//ウェーブが終わったらリザルトへ。
+	if ((!ResultFlag::Instance()->m_isResult && WaveMgr::Instance()->GetIsFinishAllWave()) || m_goldCore->IsDead()) {
 
+		++ResultFlag::Instance()->m_uiDeleteTime;
+		if (ResultFlag::Instance()->UI_DELETE_TIME <= ResultFlag::Instance()->m_uiDeleteTime) {
 
-		if (KeyBoradInputManager::Instance()->InputState(DIK_W) ||
-			KeyBoradInputManager::Instance()->InputState(DIK_UP) ||
-			ControllerInputManager::Instance()->InputStickTrigger(ControllerStickSide::LEFT_STICK, ControllerSide::UP_SIDE)) {
-
-			m_selectTitleNum = std::clamp(m_selectTitleNum - 1, 0, 1);
-
-		}
-
-		if (KeyBoradInputManager::Instance()->InputState(DIK_S) ||
-			KeyBoradInputManager::Instance()->InputState(DIK_DOWN) ||
-			ControllerInputManager::Instance()->InputStickTrigger(ControllerStickSide::LEFT_STICK, ControllerSide::DOWN_SIDE)) {
-
-			m_selectTitleNum = std::clamp(m_selectTitleNum + 1, 0, 1);
-
-		}
-
-		//決定キーが入力されたら
-		if (KeyBoradInputManager::Instance()->InputState(DIK_SPACE) ||
-			KeyBoradInputManager::Instance()->InputState(DIK_RETURN) ||
-			ControllerInputManager::Instance()->InputTrigger(XINPUT_GAMEPAD_A)) {
-
-			//Startを選択していたら。
-			if (m_selectTitleNum == 0) {
-
-				TitleFlag::Instance()->m_isStart = true;
-
+			//遷移が始まっていなかったら遷移させる。
+			if (!Transition::Instance()->GetIsActive()) {
+				Transition::Instance()->Activate();
 			}
-			//Quitを選択していたら
-			else if (m_selectTitleNum) {
+			//終わっていたら
+			else if (Transition::Instance()->GetIsFinish()) {
+				ResultFlag::Instance()->m_isResult = true;
+				ResultFlag::Instance()->m_isDraw = true;
+				Transition::Instance()->Init();
 
-				TitleFlag::Instance()->m_isQuit = true;
+				//スコアを算出。
+				for (int index = 0; index < 5; ++index) {
 
+					if (m_resultDayScore <= 0) {
+						m_resultDayScore = 100;
+					}
+					else {
+
+						m_resultDayScore += m_resultDayScore;
+
+					}
+
+				}
 			}
 
 		}
 
-
-		m_selectTitleUISine += ADD_SELECT_TITLE_SINE;
-
 	}
 
-	Tutorial::Instance()->Update();
+	//タイトルの更新処理
+	UpdateTitle();
 
-	//タイトルロゴを消すまでのタイマー
-	if (TitleFlag::Instance()->m_isStart && TitleFlag::Instance()->m_isDrawTitle) {
-
-		m_titleLogoDeleteTimer = std::clamp(m_titleLogoDeleteTimer + 1.0f, 0.0f, TITLELOGO_DELETE_TIMER);
-
-		//イージングをかけてタイマーを減らす。
-		float easingAmount = EasingMaker(In, Sine, m_titleLogoDeleteTimer / TITLELOGO_DELETE_TIMER);
-
-		//アルファを減らす。
-		m_titleStartUI.m_color.color.a = static_cast<int>((1.0f - easingAmount) * 255);
-		m_titleQuitUI.m_color.color.a = static_cast<int>((1.0f - easingAmount) * 255);
-		m_titleBackGroundUI.m_color.color.a = static_cast<int>((1.0f - easingAmount) * 255);
-
-		if (TITLELOGO_DELETE_TIMER <= m_titleLogoDeleteTimer) {
-
-			m_titleLogoDeleteTimer = 0.0f;
-			TitleFlag::Instance()->m_isDrawTitle = false;
-			Transition::Instance()->Activate();
-
-		}
-
-	}
-
-	//タイトルが消えていて、遷移も終わっていたらタイトルを終える。
-	if (!TitleFlag::Instance()->m_isDrawTitle && !Transition::Instance()->GetIsActive()) {
-
-		TitleFlag::Instance()->m_isTitle = false;
-
-	}
+	//リザルトの更新処理
+	UpdateResult();
 
 	Transition::Instance()->Update();
+
+	Tutorial::Instance()->Update();
 
 }
 
@@ -309,24 +323,32 @@ void GameScene::Draw(DrawingByRasterize& arg_rasterize, Raytracing::BlasVector& 
 
 	//ImGui::Begin("UI");
 
-	////ImGui::DragFloat("POS_X", &BuildingMgr::Instance()->GetWall(2).lock()->m_initPos.x, 1.0f);
-	////ImGui::DragFloat("POS_Y", &BuildingMgr::Instance()->GetWall(2).lock()->m_initPos.y, 1.0f);
-	////ImGui::DragFloat("POS_Z", &BuildingMgr::Instance()->GetWall(2).lock()->m_initPos.z, 1.0f);
-	////ImGui::DragFloat("SCALE_X", &BuildingMgr::Instance()->GetWall(0).lock()->m_transform.scale.x, 0.01f);
-	////ImGui::DragFloat("SCALE_Y", &BuildingMgr::Instance()->GetWall(0).lock()->m_transform.scale.y, 0.01f);
-	////ImGui::DragFloat("SCALE_Z", &BuildingMgr::Instance()->GetWall(0).lock()->m_transform.scale.z, 0.01f);
-	////ImGui::DragFloat("ROTATE_X", &BuildingMgr::Instance()->GetWall(0).lock()->m_transform.rotation.x, 0.1f);
-	////ImGui::DragFloat("ROTATE_Y", &BuildingMgr::Instance()->GetWall(2).lock()->m_rotateY, 0.1f);
-	////ImGui::DragFloat("ROTATE_Z", &BuildingMgr::Instance()->GetWall(0).lock()->m_transform.rotation.z, 0.1f);
+	//////ImGui::DragFloat("POS_X", &BuildingMgr::Instance()->GetWall(2).lock()->m_initPos.x, 1.0f);
+	//////ImGui::DragFloat("POS_Y", &BuildingMgr::Instance()->GetWall(2).lock()->m_initPos.y, 1.0f);
+	//////ImGui::DragFloat("POS_Z", &BuildingMgr::Instance()->GetWall(2).lock()->m_initPos.z, 1.0f);
+	//////ImGui::DragFloat("SCALE_X", &BuildingMgr::Instance()->GetWall(0).lock()->m_transform.scale.x, 0.01f);
+	//////ImGui::DragFloat("SCALE_Y", &BuildingMgr::Instance()->GetWall(0).lock()->m_transform.scale.y, 0.01f);
+	//////ImGui::DragFloat("SCALE_Z", &BuildingMgr::Instance()->GetWall(0).lock()->m_transform.scale.z, 0.01f);
+	//////ImGui::DragFloat("ROTATE_X", &BuildingMgr::Instance()->GetWall(0).lock()->m_transform.rotation.x, 0.1f);
+	//////ImGui::DragFloat("ROTATE_Y", &BuildingMgr::Instance()->GetWall(2).lock()->m_rotateY, 0.1f);
+	//////ImGui::DragFloat("ROTATE_Z", &BuildingMgr::Instance()->GetWall(0).lock()->m_transform.rotation.z, 0.1f);
 
-	////ImGui::Text(" ");
+	//////ImGui::Text(" ");
+
+
+	////KazMath::Vec2<float> baseDayPos = { 1280.0f / 2.0f, 200.0f };
+	////KazMath::Vec2<float> baseMineralPos = { 1280.0f / 2.0f, 300.0f };
+	////KazMath::Vec2<float> baseEnemyScorePos = { 1280.0f / 2.0f, 400.0f };
+	////KazMath::Vec2<float> baseTotalScorePos = { 1280.0f / 2.0f, 500.0f };
 
 	////ImGui::DragFloat("EyeDistance", &m_cameraEyeDistance, 1.0f);
-	//ImGui::DragFloat("START_UI_X", &m_titleStartUI.m_transform.pos.x, 1.0f);
-	//ImGui::DragFloat("START_UI_Y", &m_titleStartUI.m_transform.pos.y, 1.0f);
-	//ImGui::DragFloat("QUIT_UI_X", &m_titleQuitUI.m_transform.pos.x, 1.0f);
-	//ImGui::DragFloat("QUIT_UI_Y", &m_titleQuitUI.m_transform.pos.y, 1.0f);
-	////ImGui::SliderFloat("UI_Z", &GBufferMgr::Instance()->m_lightConstData.m_dirLight.m_dir.z, 0.0f, 1.0f);
+	//ImGui::DragFloat("TITLE_UI_X", &baseEnemyScorePos.x, 1.0f);
+	//ImGui::DragFloat("TITLE_UI_Y", &baseEnemyScorePos.y, 1.0f);
+	//ImGui::DragFloat("RETRY_UI_X", &baseTotalScorePos.x, 1.0f);
+	//ImGui::DragFloat("RETRY_UI_Y", &baseTotalScorePos.y, 1.0f);
+	//ImGui::DragFloat("FONT_SIZE", &fontScale, 0.1f);
+	//ImGui::DragFloat("GYOKAN", &gyokan, 0.1f);
+	////ImGui::SliderFloat("UI_Z", &GBufferMgr::Instance()->m_lightConstData.m_dirLight.m_dir.z, 0.0f, 1.0f);  
 
 	//ImGui::End();
 
@@ -351,6 +373,31 @@ void GameScene::Draw(DrawingByRasterize& arg_rasterize, Raytracing::BlasVector& 
 		m_titleBackGroundUI.Draw(arg_rasterize);
 	}
 
+	//リザルト画面を描画
+	if (ResultFlag::Instance()->m_isResult) {
+
+		//Startを選択していたら。
+		if (m_selectResultNum == 0) {
+			m_resultRetryUI.m_transform.scale += ((UI_MAX_RETRY_SCALE + sinf(m_selectTitleUISine) * SELECT_TITLE_SINE_SCALE) - m_resultRetryUI.m_transform.scale) / 3.0f;
+			m_resultTitleUI.m_transform.scale += (UI_DEF_TITLE_SCALE - m_resultTitleUI.m_transform.scale) / 3.0f;
+		}
+		else {
+			m_resultRetryUI.m_transform.scale += (UI_DEF_RETRY_SCALE - m_resultRetryUI.m_transform.scale) / 3.0f;
+			m_resultTitleUI.m_transform.scale += ((UI_MAX_TITLE_SCALE + sinf(m_selectTitleUISine) * SELECT_TITLE_SINE_SCALE) - m_resultTitleUI.m_transform.scale) / 3.0f;
+		}
+
+
+	}
+	if (ResultFlag::Instance()->m_isDraw) {
+		for (auto& index : m_resultDayScoreUI) index.Draw(arg_rasterize);
+		for (auto& index : m_resultMineralScoreUI) index.Draw(arg_rasterize);
+		for (auto& index : m_reesultEnemyScoreUI) index.Draw(arg_rasterize);
+		for (auto& index : m_totalScoreUI) index.Draw(arg_rasterize);
+		m_resultTitleUI.Draw(arg_rasterize);
+		m_resultRetryUI.Draw(arg_rasterize);
+		m_resultBackGroundUI.Draw(arg_rasterize);
+	}
+
 	//チュートリアルを描画。
 	Tutorial::Instance()->Draw(arg_rasterize, arg_blasVec);
 
@@ -362,4 +409,371 @@ void GameScene::Draw(DrawingByRasterize& arg_rasterize, Raytracing::BlasVector& 
 int GameScene::SceneChange()
 {
 	return SCENE_NONE;
+}
+
+void GameScene::UpdateTitle()
+{
+
+	//タイトル画面だったら。
+	if (TitleFlag::Instance()->m_isTitle) {
+
+
+		if (KeyBoradInputManager::Instance()->InputState(DIK_W) ||
+			KeyBoradInputManager::Instance()->InputState(DIK_UP) ||
+			ControllerInputManager::Instance()->InputStickTrigger(ControllerStickSide::LEFT_STICK, ControllerSide::UP_SIDE)) {
+
+			m_selectTitleNum = std::clamp(m_selectTitleNum - 1, 0, 1);
+
+		}
+
+		if (KeyBoradInputManager::Instance()->InputState(DIK_S) ||
+			KeyBoradInputManager::Instance()->InputState(DIK_DOWN) ||
+			ControllerInputManager::Instance()->InputStickTrigger(ControllerStickSide::LEFT_STICK, ControllerSide::DOWN_SIDE)) {
+
+			m_selectTitleNum = std::clamp(m_selectTitleNum + 1, 0, 1);
+
+		}
+
+		//決定キーが入力されたら
+		if (KeyBoradInputManager::Instance()->InputState(DIK_SPACE) ||
+			KeyBoradInputManager::Instance()->InputState(DIK_RETURN) ||
+			ControllerInputManager::Instance()->InputTrigger(XINPUT_GAMEPAD_A)) {
+
+			//Startを選択していたら。
+			if (m_selectTitleNum == 0) {
+
+				TitleFlag::Instance()->m_isStart = true;
+
+			}
+			//Quitを選択していたら
+			else if (m_selectTitleNum == 1) {
+
+				TitleFlag::Instance()->m_isQuit = true;
+
+			}
+
+		}
+
+
+		m_selectTitleUISine += ADD_SELECT_TITLE_SINE;
+
+		//タイトルが消えていて、遷移も終わっていたらタイトルを終える。
+		if (!TitleFlag::Instance()->m_isDrawTitle && !Transition::Instance()->GetIsActive()) {
+
+			TitleFlag::Instance()->m_isTitle = false;
+			Transition::Instance()->Init();
+
+		}
+
+		++m_isTitleNightChangeTimer;
+		if (600 < m_isTitleNightChangeTimer) {
+
+			m_isTitleNightChangeTimer = 0;
+			m_isTitleNight = !m_isTitleNight;
+
+		}
+
+		//ディレクショナルライトの方向を変えて昼夜を表現
+		if (!m_isTitleNight) {
+			GBufferMgr::Instance()->m_lightConstData.m_dirLight.m_dir += (KazMath::Vec3<float>(0.0f, -0.894f, 0.4472f) - GBufferMgr::Instance()->m_lightConstData.m_dirLight.m_dir) / 30.0f;
+		}
+		else if (m_isTitleNight) {
+			GBufferMgr::Instance()->m_lightConstData.m_dirLight.m_dir += (KazMath::Vec3<float>(0.0f, -0.4472f, 0.894f) - GBufferMgr::Instance()->m_lightConstData.m_dirLight.m_dir) / 30.0f;
+		}
+		GBufferMgr::Instance()->m_lightConstData.m_dirLight.m_dir.Normalize();
+
+		PointLightMgr::Instance()->Update(m_isTitleNight);
+
+	}
+
+	//タイトルロゴを消すまでのタイマー
+	if (TitleFlag::Instance()->m_isStart && TitleFlag::Instance()->m_isDrawTitle) {
+
+		m_titleLogoDeleteTimer = std::clamp(m_titleLogoDeleteTimer + 1.0f, 0.0f, TITLELOGO_DELETE_TIMER);
+
+		//イージングをかけてタイマーを減らす。
+		float easingAmount = EasingMaker(In, Sine, m_titleLogoDeleteTimer / TITLELOGO_DELETE_TIMER);
+
+		//アルファを減らす。
+		m_titleStartUI.m_color.color.a = static_cast<int>((1.0f - easingAmount) * 255);
+		m_titleQuitUI.m_color.color.a = static_cast<int>((1.0f - easingAmount) * 255);
+		m_titleBackGroundUI.m_color.color.a = static_cast<int>((1.0f - easingAmount) * 255);
+
+		if (TITLELOGO_DELETE_TIMER <= m_titleLogoDeleteTimer) {
+
+			m_titleLogoDeleteTimer = 0.0f;
+			TitleFlag::Instance()->m_isDrawTitle = false;
+			Transition::Instance()->Activate();
+
+		}
+
+	}
+	else if (TitleFlag::Instance()->m_isTitle) {
+
+		m_titleStartUI.m_color.color.a += static_cast<int>((255.0f - m_titleStartUI.m_color.color.a) / 10.0f);
+		m_titleQuitUI.m_color.color.a += static_cast<int>((255.0f - m_titleQuitUI.m_color.color.a) / 10.0f);
+		m_titleBackGroundUI.m_color.color.a += static_cast<int>((255.0f - m_titleBackGroundUI.m_color.color.a) / 10.0f);
+
+	}
+	else {
+
+		m_titleStartUI.m_color.color.a = 0;
+		m_titleQuitUI.m_color.color.a = 0;
+		m_titleBackGroundUI.m_color.color.a = 0;
+
+	}
+
+}
+
+void GameScene::UpdateResult()
+{
+
+
+	//リザルト画面だったら。
+	if (ResultFlag::Instance()->m_isResult) {
+
+		if (KeyBoradInputManager::Instance()->InputState(DIK_W) ||
+			KeyBoradInputManager::Instance()->InputState(DIK_UP) ||
+			ControllerInputManager::Instance()->InputStickTrigger(ControllerStickSide::LEFT_STICK, ControllerSide::UP_SIDE)) {
+
+			m_selectResultNum = std::clamp(m_selectResultNum - 1, 0, 1);
+
+		}
+
+		if (KeyBoradInputManager::Instance()->InputState(DIK_S) ||
+			KeyBoradInputManager::Instance()->InputState(DIK_DOWN) ||
+			ControllerInputManager::Instance()->InputStickTrigger(ControllerStickSide::LEFT_STICK, ControllerSide::DOWN_SIDE)) {
+
+			m_selectResultNum = std::clamp(m_selectResultNum + 1, 0, 1);
+
+		}
+
+		//決定キーが入力されたら
+		if (KeyBoradInputManager::Instance()->InputState(DIK_SPACE) ||
+			KeyBoradInputManager::Instance()->InputState(DIK_RETURN) ||
+			ControllerInputManager::Instance()->InputTrigger(XINPUT_GAMEPAD_A)) {
+
+			//Startを選択していたら。
+			if (m_selectResultNum == 0) {
+
+				//リトライ
+				m_isResultToGame = true;
+				m_titleLogoDeleteTimer = 0;
+
+			}
+			//Quitを選択していたら
+			else if (m_selectResultNum == 1) {
+
+				m_isResultToTitle = true;
+				m_titleLogoDeleteTimer = 0;
+				//Init();
+
+			}
+
+		}
+
+
+		m_selectTitleUISine += ADD_SELECT_TITLE_SINE;
+
+	}
+
+	//タイトルか再挑戦が選ばれていて、遷移が終わっていたら。
+	if ((m_isResultToTitle) && Transition::Instance()->GetIsBlackOut()) {
+
+		m_player->Init();
+		MineralMgr::Instance()->Init();
+		//MineralMgr::Instance()->DebugGenerate();
+		m_goldCore->Init();
+
+		m_enemyMgr->Init();
+		//m_enemyMgr->DebugGenerate();
+
+		RockMgr::Instance()->Init();
+		//m_rockMgr->DebugGenerate();
+
+		DestructibleObjectMgr::Instance()->Init();
+		//m_destructibleObject->DebugGenerate();
+
+		WaveMgr::Instance()->Init(m_enemyMgr);
+		WaveMgr::Instance()->GameStart();
+
+		BuildingMaterialMgr::Instance()->Init();
+		BuildingMgr::Instance()->Init();
+		BuildingMgr::Instance()->Generate();
+
+		//太陽の方向を昼に設定
+		GBufferMgr::Instance()->m_lightConstData.m_dirLight.m_dir = KazMath::Vec3<float>(0.0f, -0.894f, 0.4472f);
+
+	}
+	if ((m_isResultToTitle) && Transition::Instance()->GetIsFinish()) {
+
+		ResultFlag::Instance()->Init();
+		TitleFlag::Instance()->Init();
+
+		Transition::Instance()->Init();
+		m_isResultToTitle = false;
+
+		EnemyScore::Instance()->m_score = 0;
+
+	}
+
+	//タイトルか再挑戦が選ばれていて、遷移が終わっていたら。
+	if ((m_isResultToGame) && Transition::Instance()->GetIsBlackOut()) {
+
+		m_player->Init();
+		MineralMgr::Instance()->Init();
+		//MineralMgr::Instance()->DebugGenerate();
+		m_goldCore->Init();
+
+		m_enemyMgr->Init();
+		//m_enemyMgr->DebugGenerate();
+
+		RockMgr::Instance()->Init();
+		//m_rockMgr->DebugGenerate();
+
+		DestructibleObjectMgr::Instance()->Init();
+		//m_destructibleObject->DebugGenerate();
+
+		WaveMgr::Instance()->Init(m_enemyMgr);
+		WaveMgr::Instance()->GameStart();
+
+		BuildingMaterialMgr::Instance()->Init();
+		BuildingMgr::Instance()->Init();
+		BuildingMgr::Instance()->Generate();
+
+		//太陽の方向を昼に設定
+		GBufferMgr::Instance()->m_lightConstData.m_dirLight.m_dir = KazMath::Vec3<float>(0.0f, -0.894f, 0.4472f);
+
+	}
+	if ((m_isResultToGame) && Transition::Instance()->GetIsFinish()) {
+
+
+		ResultFlag::Instance()->Init();
+		Transition::Instance()->Init();
+		m_isResultToGame = false;
+
+		EnemyScore::Instance()->m_score = 0;
+
+	}
+
+	//タイトルロゴを消すまでのタイマー
+	if (ResultFlag::Instance()->m_isResult && ResultFlag::Instance()->m_isDraw && (m_isResultToTitle || m_isResultToGame)) {
+
+		m_titleLogoDeleteTimer = std::clamp(m_titleLogoDeleteTimer + 1.0f, 0.0f, TITLELOGO_DELETE_TIMER);
+
+		//イージングをかけてタイマーを減らす。
+		float easingAmount = EasingMaker(In, Sine, m_titleLogoDeleteTimer / TITLELOGO_DELETE_TIMER);
+
+		//アルファを減らす。
+		m_resultTitleUI.m_color.color.a = static_cast<int>((1.0f - easingAmount) * 255);
+		m_resultRetryUI.m_color.color.a = static_cast<int>((1.0f - easingAmount) * 255);
+		m_resultBackGroundUI.m_color.color.a = static_cast<int>((1.0f - easingAmount) * 255);
+		for (auto& index : m_resultDayScoreUI) {
+			index.m_color.color.a = static_cast<int>((1.0f - easingAmount) * 255);
+		}
+		for (auto& index : m_resultMineralScoreUI) {
+			index.m_color.color.a = static_cast<int>((1.0f - easingAmount) * 255);
+		}
+		for (auto& index : m_reesultEnemyScoreUI) {
+			index.m_color.color.a = static_cast<int>((1.0f - easingAmount) * 255);
+		}
+		for (auto& index : m_totalScoreUI) {
+			index.m_color.color.a = static_cast<int>((1.0f - easingAmount) * 255);
+		}
+
+		if (TITLELOGO_DELETE_TIMER <= m_titleLogoDeleteTimer) {
+
+			m_titleLogoDeleteTimer = 0.0f;
+			ResultFlag::Instance()->m_isDraw = false;
+			Transition::Instance()->Activate();
+
+		}
+
+	}
+	else if (ResultFlag::Instance()->m_isResult) {
+
+		m_resultTitleUI.m_color.color.a += static_cast<int>((255.0f - m_resultTitleUI.m_color.color.a) / 10.0f);
+		m_resultRetryUI.m_color.color.a += static_cast<int>((255.0f - m_resultRetryUI.m_color.color.a) / 10.0f);
+		m_resultBackGroundUI.m_color.color.a += static_cast<int>((255.0f - m_resultBackGroundUI.m_color.color.a) / 10.0f);
+		for (auto& index : m_resultDayScoreUI) {
+			index.m_color.color.a += static_cast<int>((255.0f - index.m_color.color.a) / 10.0f);
+		}
+		for (auto& index : m_resultMineralScoreUI) {
+			index.m_color.color.a += static_cast<int>((255.0f - index.m_color.color.a) / 10.0f);
+		}
+		for (auto& index : m_reesultEnemyScoreUI) {
+			index.m_color.color.a += static_cast<int>((255.0f - index.m_color.color.a) / 10.0f);
+		}
+		for (auto& index : m_totalScoreUI) {
+			index.m_color.color.a += static_cast<int>((255.0f - index.m_color.color.a) / 10.0f);
+		}
+
+
+		//日数スコアを更新。
+		const float FONT_SIZE = fontScale;
+		for (int index = 0; index < 4; ++index) {
+
+			m_resultDayScoreUI[index].m_texture = NumberFont::Instance()->m_font[GetDigits(m_resultDayScore, 3 - index, 3 - index)];
+			m_resultDayScoreUI[index].m_transform.pos = baseDayPos;
+			m_resultDayScoreUI[index].m_transform.pos.x += index * gyokan;
+
+			m_resultDayScoreUI[index].m_transform.scale = { FONT_SIZE ,FONT_SIZE };
+
+		}
+		const int MINERAL_SCORE = std::clamp(MineralMgr::Instance()->GetMineralScore(), 0, 9999);
+		for (int index = 0; index < 4; ++index) {
+
+			m_resultMineralScoreUI[index].m_texture = NumberFont::Instance()->m_font[GetDigits(MINERAL_SCORE, 3 - index, 3 - index)];
+			m_resultMineralScoreUI[index].m_transform.pos = baseMineralPos;
+			m_resultMineralScoreUI[index].m_transform.pos.x += index * gyokan;
+
+			m_resultMineralScoreUI[index].m_transform.scale = { FONT_SIZE ,FONT_SIZE };
+
+		}
+		for (int index = 0; index < 4; ++index) {
+
+			m_resultMineralScoreUI[index].m_texture = NumberFont::Instance()->m_font[std::clamp(GetDigits(EnemyScore::Instance()->m_score, 0, 9999), 3 - index, 3 - index)];
+			//m_reesultEnemyScoreUI[index].m_texture = NumberFont::Instance()->m_font[GetDigits(3456, 3 - index, 3 - index)];
+			m_reesultEnemyScoreUI[index].m_transform.pos = baseEnemyScorePos;
+			m_reesultEnemyScoreUI[index].m_transform.pos.x += index * gyokan;
+
+			m_reesultEnemyScoreUI[index].m_transform.scale = { FONT_SIZE ,FONT_SIZE };
+
+		}
+		const int TOTAL_SCORE = std::clamp(m_resultDayScore + MINERAL_SCORE + EnemyScore::Instance()->m_score, 0, 99999);
+		for (int index = 0; index < 5; ++index) {
+
+			m_totalScoreUI[index].m_texture = NumberFont::Instance()->m_font[GetDigits(3456, 4 - index, 4 - index)];
+			m_totalScoreUI[index].m_transform.pos = baseTotalScorePos;
+			m_totalScoreUI[index].m_transform.pos.x += index * gyokan;
+
+			m_totalScoreUI[index].m_transform.scale = { FONT_SIZE ,FONT_SIZE };
+
+		}
+
+
+
+	}
+	else {
+
+		m_resultTitleUI.m_color.color.a = 0;
+		m_resultRetryUI.m_color.color.a = 0;
+		m_resultBackGroundUI.m_color.color.a = 0;
+		for (auto& index : m_resultDayScoreUI) {
+			index.m_color.color.a = 0;
+		}
+		for (auto& index : m_resultMineralScoreUI) {
+			index.m_color.color.a = 0;
+		}
+		for (auto& index : m_reesultEnemyScoreUI) {
+			index.m_color.color.a = 0;
+		}
+		for (auto& index : m_totalScoreUI) {
+			index.m_color.color.a = 0;
+		}
+
+
+	}
+
+
 }

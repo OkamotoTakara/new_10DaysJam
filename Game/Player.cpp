@@ -7,6 +7,7 @@
 #include "../Game/Effect/ChromaticAberration.h"
 #include <Imgui/imgui.h>
 #include "../Game/TitleFlag.h"
+#include "../Game/ResultFlag.h"
 #include"../Game/Tutorial.h"
 
 Player::Player()
@@ -91,7 +92,7 @@ void Player::Update()
 	m_oldTransform = m_transform;
 
 	//スタン中は動かさない。
-	if (!m_isStun && !TitleFlag::Instance()->m_isTitle) {
+	if (!m_isStun && (!TitleFlag::Instance()->m_isTitle && !ResultFlag::Instance()->m_isResult)) {
 
 		//プレイヤーを動かす。
 		const float MOVE_SPEED = 1.0f;
@@ -528,7 +529,43 @@ void Player::Draw(DrawingByRasterize& arg_rasterize, Raytracing::BlasVector& arg
 		dadanIndex = 1;
 	}
 
-	if (!TitleFlag::Instance()->m_isTitle) {
+	if (0 < ResultFlag::Instance()->m_uiDeleteTime) {
+
+
+		m_hpFrameUI.m_color.color.a += static_cast<int>((0.0f - m_hpFrameUI.m_color.color.a) / 3.0f);
+		m_hpUI.m_color.color.a += static_cast<int>((0.0f - m_hpUI.m_color.color.a) / 3.0f);
+		m_hpBackGroundUI.m_color.color.a += static_cast<int>((0.0f - m_hpBackGroundUI.m_color.color.a) / 3.0f);
+		m_dadanUI[0].m_color.color.a += static_cast<int>((0.0f - m_dadanUI[0].m_color.color.a) / 3.0f);
+		m_dadanUI[1].m_color.color.a += static_cast<int>((0.0f - m_dadanUI[1].m_color.color.a) / 3.0f);
+		m_dadanUI[2].m_color.color.a += static_cast<int>((0.0f - m_dadanUI[2].m_color.color.a) / 3.0f);
+		m_dadanBackGroundUI.m_color.color.a += static_cast<int>((0.0f - m_dadanBackGroundUI.m_color.color.a) / 3.0f);
+
+		if (m_hpFrameUI.m_color.color.a <= 50.0f) {
+
+			m_hpFrameUI.m_color.color.a = 0;
+			m_hpUI.m_color.color.a = 0;
+			m_hpBackGroundUI.m_color.color.a = 0;
+			m_dadanUI[0].m_color.color.a = 0;
+			m_dadanUI[1].m_color.color.a = 0;
+			m_dadanUI[2].m_color.color.a = 0;
+			m_dadanBackGroundUI.m_color.color.a = 0;
+
+		}
+		else {
+
+			//UIを描画。
+			m_hpFrameUI.Draw(arg_rasterize);
+			m_hpUI.Draw(arg_rasterize);
+			m_hpBackGroundUI.Draw(arg_rasterize);
+			m_dadanUI[dadanIndex].Draw(arg_rasterize);
+			m_dadanBackGroundUI.Draw(arg_rasterize);
+
+		}
+
+
+
+	}
+	else if ((!TitleFlag::Instance()->m_isTitle && !ResultFlag::Instance()->m_isResult)) {
 
 		//UIを描画。
 		m_hpFrameUI.Draw(arg_rasterize);
@@ -538,12 +575,12 @@ void Player::Draw(DrawingByRasterize& arg_rasterize, Raytracing::BlasVector& arg
 		m_dadanBackGroundUI.Draw(arg_rasterize);
 
 		m_hpFrameUI.m_color.color.a += static_cast<int>((255.0f - m_hpFrameUI.m_color.color.a) / 15.0f);
-		m_hpUI.m_color.color.a += static_cast<int>((255.0f - m_hpUI.m_color.color.a) / 15.0f);;
-		m_hpBackGroundUI.m_color.color.a += static_cast<int>((255.0f - m_hpBackGroundUI.m_color.color.a) / 15.0f);;
-		m_dadanUI[0].m_color.color.a += static_cast<int>((255.0f - m_dadanUI[0].m_color.color.a) / 15.0f);;
-		m_dadanUI[1].m_color.color.a += static_cast<int>((255.0f - m_dadanUI[1].m_color.color.a) / 15.0f);;
-		m_dadanUI[2].m_color.color.a += static_cast<int>((255.0f - m_dadanUI[2].m_color.color.a) / 15.0f);;
-		m_dadanBackGroundUI.m_color.color.a += static_cast<int>((255.0f - m_dadanBackGroundUI.m_color.color.a) / 15.0f);;
+		m_hpUI.m_color.color.a += static_cast<int>((255.0f - m_hpUI.m_color.color.a) / 15.0f);
+		m_hpBackGroundUI.m_color.color.a += static_cast<int>((255.0f - m_hpBackGroundUI.m_color.color.a) / 15.0f);
+		m_dadanUI[0].m_color.color.a += static_cast<int>((255.0f - m_dadanUI[0].m_color.color.a) / 15.0f);
+		m_dadanUI[1].m_color.color.a += static_cast<int>((255.0f - m_dadanUI[1].m_color.color.a) / 15.0f);
+		m_dadanUI[2].m_color.color.a += static_cast<int>((255.0f - m_dadanUI[2].m_color.color.a) / 15.0f);
+		m_dadanBackGroundUI.m_color.color.a += static_cast<int>((255.0f - m_dadanBackGroundUI.m_color.color.a) / 15.0f);
 
 	}
 	else {
@@ -560,12 +597,12 @@ void Player::Draw(DrawingByRasterize& arg_rasterize, Raytracing::BlasVector& arg
 
 
 
-	ImGui::Begin("UI");
+	//ImGui::Begin("UI");
 
-	ImGui::Text("POS_X : %f", m_transform.pos.x);
-	ImGui::Text("POS_Z : %f", m_transform.pos.z);
+	//ImGui::Text("POS_X : %f", m_transform.pos.x);
+	//ImGui::Text("POS_Z : %f", m_transform.pos.z);
 
-	ImGui::End();
+	//ImGui::End();
 
 
 }

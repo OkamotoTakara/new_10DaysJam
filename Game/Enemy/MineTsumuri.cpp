@@ -7,6 +7,7 @@
 #include "../Game/Building/BuildingMgr.h"
 #include "../Game/Mineral/MineralMgr.h"
 #include "../KazLibrary/Easing/easing.h"
+#include "../Game/EnemyScore.h"
 
 MineTsumuri::MineTsumuri()
 {
@@ -262,6 +263,15 @@ void MineTsumuri::Update(std::weak_ptr<Core> arg_core, std::weak_ptr<Player> arg
 	//HPが0になったら死亡
 	if (m_hp <= 0) {
 		m_isActive = false;
+
+
+		//ミネキングだったら
+		if (m_isMineking) {
+			EnemyScore::Instance()->m_score += 250;
+		}
+		else {
+			EnemyScore::Instance()->m_score += 50;
+		}
 	}
 
 }
@@ -463,6 +473,14 @@ void MineTsumuri::Damage(std::weak_ptr<Mineral> arg_mineral, int arg_damage)
 
 				m_shellBreakRightVec = KazMath::Vec3<float>(arg_mineral.lock()->GetPosZeroY() - GetPosZeroY()).GetNormal().Cross({ 0,1,0 });
 				m_shellBreakRotation = 0;
+
+
+				if (m_isMineking) {
+					EnemyScore::Instance()->m_score += 250;
+				}
+				else {
+					EnemyScore::Instance()->m_score += 50;
+				}
 
 			}
 			m_isShell = false;

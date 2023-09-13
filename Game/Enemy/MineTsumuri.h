@@ -59,8 +59,8 @@ private:
 
 	//コアに向かっていく変数
 	const float CORE_MOVE_SPEED = 0.8f;	//コアに向かって行く初速度
-	const float CORE_MOVE_DELAY = 65.0f;
-	const float CORE_MOVE_DELAY_MINEING = 80.0f;
+	const float CORE_MOVE_DELAY = 55.0f;
+	const float CORE_MOVE_DELAY_MINEING = 60.0f;
 	float m_coreMoveDelayTimer;
 	float m_coreMoveSpeed;
 	bool m_isAttackCore;

@@ -8,6 +8,7 @@ private:
 
 	DrawCallUISet m_transitionUI;
 	bool m_isActive;
+	bool m_isFinish;
 	enum class STATUS {
 		APPEAR,
 		STAY,
@@ -31,5 +32,7 @@ public:
 	void Activate();
 
 	bool GetIsActive() { return m_isActive; }
+	bool GetIsFinish() { return m_isFinish; }
+	bool GetIsBlackOut() { return m_status == STATUS::STAY; }
 
 };
