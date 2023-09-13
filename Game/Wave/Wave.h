@@ -2,13 +2,14 @@
 #include "../Game/DrawCallSet.h"
 #include "../Enemy/EnemyRoute.h"
 #include "../KazLibrary/Sound/SoundManager.h"
+#include "../Game/Core/Core.h"
 
 class EnemyMgr;
 
 class Wave {
 
 public:
-
+	std::weak_ptr<Core> m_core;
 	SoundData night_start;
 	bool volume_up;
 	bool volume_down;
@@ -40,7 +41,7 @@ private:
 
 public:
 
-	Wave(int arg_dayTime, int arg_nightTime, std::vector<int> arg_tree, std::vector<int> arg_rock, std::vector<int> arg_mineralRock, std::vector<EnemyWaveInfo> arg_enemyWaveInfo);
+	Wave(int arg_dayTime, int arg_nightTime, std::vector<int> arg_tree, std::vector<int> arg_rock, std::vector<int> arg_mineralRock, std::vector<EnemyWaveInfo> arg_enemyWaveInfo, std::weak_ptr<Core> m_core);
 
 	void Update(std::weak_ptr<EnemyMgr> arg_enemyMgr);
 
@@ -53,5 +54,5 @@ public:
 
 	bool GetIsActiveWave() { return m_isActiveWave; }
 	bool GetIsNight() { return m_isNight; }
-	void SetMNowTime(int set_time) { m_nowTime = set_time;}
+	void SetMNowTime(int set_time) { m_nowTime = set_time; }
 };
