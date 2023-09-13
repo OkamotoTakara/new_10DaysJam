@@ -424,7 +424,7 @@ void GameScene::UpdateTitle()
 
 		if (KeyBoradInputManager::Instance()->InputState(DIK_W) ||
 			KeyBoradInputManager::Instance()->InputState(DIK_UP) ||
-			ControllerInputManager::Instance()->InputStickTrigger(ControllerStickSide::LEFT_STICK, ControllerSide::UP_SIDE)) {
+			ControllerInputManager::Instance()->InputStickState(ControllerStickSide::LEFT_STICK, ControllerSide::UP_SIDE, 10000)) {
 
 			m_selectTitleNum = std::clamp(m_selectTitleNum - 1, 0, 1);
 
@@ -432,7 +432,7 @@ void GameScene::UpdateTitle()
 
 		if (KeyBoradInputManager::Instance()->InputState(DIK_S) ||
 			KeyBoradInputManager::Instance()->InputState(DIK_DOWN) ||
-			ControllerInputManager::Instance()->InputStickTrigger(ControllerStickSide::LEFT_STICK, ControllerSide::DOWN_SIDE)) {
+			ControllerInputManager::Instance()->InputStickState(ControllerStickSide::LEFT_STICK, ControllerSide::DOWN_SIDE, 10000)) {
 
 			m_selectTitleNum = std::clamp(m_selectTitleNum + 1, 0, 1);
 
@@ -538,7 +538,7 @@ void GameScene::UpdateResult()
 
 		if (KeyBoradInputManager::Instance()->InputState(DIK_W) ||
 			KeyBoradInputManager::Instance()->InputState(DIK_UP) ||
-			ControllerInputManager::Instance()->InputStickTrigger(ControllerStickSide::LEFT_STICK, ControllerSide::UP_SIDE)) {
+			ControllerInputManager::Instance()->InputStickState(ControllerStickSide::LEFT_STICK, ControllerSide::UP_SIDE, 10000)) {
 
 			m_selectResultNum = std::clamp(m_selectResultNum - 1, 0, 1);
 
@@ -546,7 +546,7 @@ void GameScene::UpdateResult()
 
 		if (KeyBoradInputManager::Instance()->InputState(DIK_S) ||
 			KeyBoradInputManager::Instance()->InputState(DIK_DOWN) ||
-			ControllerInputManager::Instance()->InputStickTrigger(ControllerStickSide::LEFT_STICK, ControllerSide::DOWN_SIDE)) {
+			ControllerInputManager::Instance()->InputStickState(ControllerStickSide::LEFT_STICK, ControllerSide::DOWN_SIDE, 10000)) {
 
 			m_selectResultNum = std::clamp(m_selectResultNum + 1, 0, 1);
 
