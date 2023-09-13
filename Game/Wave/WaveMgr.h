@@ -37,4 +37,6 @@ public:
 	void GameStart();
 
 	bool GetIsNight();
+
+	void SetTime(int wave_index, int wave_time);
 };

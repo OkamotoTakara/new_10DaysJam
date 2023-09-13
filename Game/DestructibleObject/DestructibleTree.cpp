@@ -1,5 +1,6 @@
 #include "DestructibleTree.h"
 #include "../Game/BuildingMaterial/BuildingMaterialMgr.h"
+#include "../Game/Tutorial.h"
 
 DestructibleTree::DestructibleTree()
 {
@@ -50,6 +51,11 @@ void DestructibleTree::Update()
 			BuildingMaterialMgr::Instance()->Generate(m_transform.pos, generateVec);
 		}
 
+		//次のチュートリアルに送る
+		if (Tutorial::Instance()->tutorial_num == 8)
+		{
+			Tutorial::Instance()->is_next = true;
+		}
 	}
 
 }

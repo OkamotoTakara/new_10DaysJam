@@ -42,6 +42,9 @@ void WaveMgr::Setting()
 	m_wave1 = std::make_shared<Wave>(dayTime, nightTime, tree, rock, mineralRock, enemyInfo);
 	enemyInfo.clear();
 
+	m_waves.emplace_back(m_wave1);
+
+
 	//2ウェーブ目 -----------------------------------------------------------------------------------------
 	dayTime = 3200;		//日中の時間 フレーム数
 	nightTime = 3200;	//夜の時間 フレーム数
@@ -325,4 +328,9 @@ void WaveMgr::GameStart()
 bool WaveMgr::GetIsNight()
 {
 	return m_waves[m_nowWaveIndex]->GetIsNight();
+}
+
+void WaveMgr::SetTime(int wave_index, int wave_time)
+{
+	m_waves[wave_index]->SetMNowTime(wave_time);
 }

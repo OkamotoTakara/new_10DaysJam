@@ -7,6 +7,7 @@
 #include "../Game/Building/BuildingMgr.h"
 #include "../Game/Mineral/MineralMgr.h"
 #include "../KazLibrary/Easing/easing.h"
+#include "../Game/Tutorial.h"
 
 MineKuji::MineKuji()
 {
@@ -244,8 +245,12 @@ void MineKuji::Update(std::weak_ptr<Core> arg_core, std::weak_ptr<Player> arg_pl
 	//HP‚ª0‚É‚È‚Á‚½‚çŽ€–S
 	if (m_hp <= 0) {
 		m_isActive = false;
-	}
 
+		if (Tutorial::Instance()->is_tutorial && Tutorial::Instance()->tutorial_num == 2)
+		{
+			Tutorial::Instance()->is_next = true;
+		}
+	}
 }
 
 void MineKuji::Draw(DrawingByRasterize& arg_rasterize, Raytracing::BlasVector& arg_blasVec)
