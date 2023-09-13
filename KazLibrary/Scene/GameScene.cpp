@@ -130,7 +130,7 @@ GameScene::GameScene()
 	NumberFont::Instance()->Load();
 	Tutorial::Instance()->setting();
 
-	Tutorial::Instance()->is_tutorial = false;
+	//Tutorial::Instance()->is_tutorial = false;
 }
 
 GameScene::~GameScene()
