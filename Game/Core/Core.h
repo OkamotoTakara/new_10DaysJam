@@ -1,9 +1,14 @@
 #pragma once
 #include "../Game/DrawCallSet.h"
+#include "../KazLibrary/Sound/SoundManager.h"
 
 class Core {
 
 private:
+
+	SoundData wall_break01;
+	SoundData wall_break02;
+	SoundData damage;
 
 	DrawCallSet m_model;
 	DrawCallSet m_crownModel;

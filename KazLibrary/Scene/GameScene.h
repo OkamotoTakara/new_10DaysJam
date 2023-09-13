@@ -21,6 +21,8 @@ class GameScene :public SceneBase
 {
 
 private:
+	SoundData Select;
+	SoundData Move;
 
 	std::shared_ptr<Player> m_player;
 	std::shared_ptr<MineralTarget> m_mineralTarget;

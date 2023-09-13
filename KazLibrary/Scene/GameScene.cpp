@@ -89,7 +89,6 @@ GameScene::GameScene()
 
 	NumberFont::Instance()->Load();
 	Tutorial::Instance()->setting();
-
 }
 
 GameScene::~GameScene()

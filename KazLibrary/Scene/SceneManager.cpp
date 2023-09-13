@@ -19,9 +19,11 @@
 #include"../Game/UI/OptionUI.h"
 #include <Input/ControllerInputManager.h>
 #include"../KazLibrary/Sound/SoundManager.h"
+#include "../Game/TitleFlag.h"
 
 SceneManager::SceneManager() :gameFirstInitFlag(false)
 {
+	SoundManager::Instance()->SettingSoundManager();
 
 	//デモ用のゲームシーンを設定。
 	scene.emplace_back(std::make_unique<GameScene>());
@@ -126,13 +128,13 @@ SceneManager::SceneManager() :gameFirstInitFlag(false)
 
 	EnemyDissolveParam::Instance()->Setting();
 
-	SoundManager::Instance()->SettingSoundManager();
-
 	m_debugLineScale = 0;
 
-	m_BGN = SoundManager::Instance()->SoundLoadWave("Resource/Sound/bgm.wav");
-	m_BGN.volume = 0.05f;
-	SoundManager::Instance()->SoundPlayerWave(m_BGN, 100);
+	//BGMの再生
+	m_Title = SoundManager::Instance()->SoundLoadWave("Resource/Sound/Title.wav");
+	SoundManager::Instance()->SoundPlayerWave(m_Title, 100);
+	m_Title.source->SetVolume(0.1f);
+
 }
 
 SceneManager::~SceneManager()
@@ -141,6 +143,10 @@ SceneManager::~SceneManager()
 
 void SceneManager::Update()
 {
+	if (TitleFlag::Instance()->m_isTitle)
+	{
+
+	}
 	DescriptorHeapMgr::Instance()->SetDescriptorHeap();
 
 	if (StopMgr::Instance()->IsHitStop()) {

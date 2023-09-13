@@ -1,5 +1,6 @@
 #pragma once
 #include "../Game/DrawCallSet.h"
+#include "../KazLibrary/Sound/SoundManager.h"
 
 class Core;
 class Player;
@@ -8,7 +9,7 @@ class Mineral;
 class MineKuji {
 
 private:
-
+	SoundData attack;
 	//Šî–{î•ñ
 	DrawCallSet m_model;
 	KazMath::Transform3D m_oldTransform;

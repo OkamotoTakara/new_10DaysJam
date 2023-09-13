@@ -1,5 +1,6 @@
 #pragma once
 #include "../Game/DrawCallSet.h"
+#include "../KazLibrary/Sound/SoundManager.h"
 
 class Core;
 class Player;
@@ -8,7 +9,8 @@ class Mineral;
 class MineTsumuri {
 
 private:
-
+	SoundData shell_slap;
+	SoundData attack;
 	//Šî–{î•ñ
 	DrawCallSet m_model;
 	DrawCallSet m_shellModel;

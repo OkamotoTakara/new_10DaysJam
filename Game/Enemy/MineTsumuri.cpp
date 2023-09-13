@@ -21,6 +21,12 @@ MineTsumuri::MineTsumuri()
 	m_attackedScale = 0.0f;
 	m_scale = 0.0f;
 
+	//SE
+	shell_slap = SoundManager::Instance()->SoundLoadWave("Resource/Sound/Guard.wav");
+	shell_slap.volume = 0.07f;
+	attack = SoundManager::Instance()->SoundLoadWave("Resource/Sound/Attack.wav");
+	attack.volume = 0.1f;
+
 	Init();
 
 }
@@ -595,7 +601,7 @@ void MineTsumuri::AttackMineral()
 		if (KazMath::Vec3<float>(m_attackedMineral.lock()->GetPosZeroY() - m_transform.pos).Length() <= m_attackedMineral.lock()->GetScale().x + m_transform.scale.x) {
 
 			m_attackID = STAY;
-
+			SoundManager::Instance()->SoundPlayerWave(attack, 0);
 			//îΩìÆÇ≈êÅÇ´îÚÇŒÇ∑ÅB
 			KazMath::Vec3<float> reactionDir = moveDir;
 			reactionDir *= -1.0f;
@@ -833,7 +839,7 @@ void MineTsumuri::CheckHitPlayer(std::weak_ptr<Player> arg_player)
 					//äkÇ…Ç±Ç‡ÇÈÅB
 					m_inShell = true;
 					m_inShellTimer = IN_SHELL_TIMER;
-
+					SoundManager::Instance()->SoundPlayerWave(shell_slap, 0);
 				}
 
 			}

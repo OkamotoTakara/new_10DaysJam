@@ -6,6 +6,7 @@
 #include "../Game/Rock/RockMgr.h"
 #include "../Game/TitleFlag.h"
 #include "../Game/Tutorial.h"
+#include "../Wave/WaveMgr.h"
 
 Wave::Wave(int arg_dayTime, int arg_nightTime, std::vector<int> arg_tree, std::vector<int> arg_rock, std::vector<int> arg_mineralRock, std::vector<EnemyWaveInfo> arg_enemyWaveInfo)
 {
@@ -20,13 +21,51 @@ Wave::Wave(int arg_dayTime, int arg_nightTime, std::vector<int> arg_tree, std::v
 	m_isNight = false;
 	m_isActiveWave = false;
 
-	//SE
 	night_start = SoundManager::Instance()->SoundLoadWave("Resource/Sound/night_start.wav");
 	night_start.volume = 0.1f;
+
+	//BGM用
+	volume_up = false;
+	volume_down = true;
 }
 
 void Wave::Update(std::weak_ptr<EnemyMgr> arg_enemyMgr)
 {
+	//ボリューム調整
+	WaveMgr::Instance()->m_BGM.source->SetVolume(WaveMgr::Instance()->volume);
+
+	if (WaveMgr::Instance()->start_bgm)
+	{
+		WaveMgr::Instance()->m_BGM.source->Start();
+		WaveMgr::Instance()->start_bgm = false;
+	}
+
+	if (volume_up)
+	{
+		if (WaveMgr::Instance()->volume < 0.05f)
+		{
+			WaveMgr::Instance()->volume += 0.0005f;
+		}
+		else
+		{
+			volume_up = false;
+		}
+	}
+
+	if (volume_down)
+	{
+
+		if (WaveMgr::Instance()->volume > 0.0001f)
+		{
+			WaveMgr::Instance()->volume -= 0.0005f;
+		}
+
+		else
+		{
+			volume_down = false;
+		}
+	}
+
 	//タイトルだったらタイマーを1二固定する。
 	if (TitleFlag::Instance()->m_isTitle) {
 		m_nowTime = 1;
@@ -114,7 +153,7 @@ void Wave::Update(std::weak_ptr<EnemyMgr> arg_enemyMgr)
 
 		//時間が終わったWaveを無効化する。
 		if (m_nighTime <= m_nowTime) {
-
+			SoundManager::Instance()->SoundPlayerWave(WaveMgr::Instance()->start_morning, 0);
 			Invalidate(arg_enemyMgr);
 			if (Tutorial::Instance()->is_tutorial)
 			{
@@ -137,8 +176,14 @@ void Wave::Update(std::weak_ptr<EnemyMgr> arg_enemyMgr)
 			m_nowTime = 0;
 			m_isNight = true;
 			SoundManager::Instance()->SoundPlayerWave(night_start, 0);
-		}
 
+			//BGMを鳴らす
+			volume_up = true;
+			if (WaveMgr::Instance()->GetWaveCount() == 0)
+			{
+				WaveMgr::Instance()->start_bgm = true;
+			}
+		}
 	}
 
 	//ディレクショナルライトの方向を変えて昼夜を表現

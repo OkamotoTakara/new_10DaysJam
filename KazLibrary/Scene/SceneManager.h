@@ -32,8 +32,8 @@ private:
 	bool itisInArrayFlag;
 	bool gameFirstInitFlag;
 
-
-	SoundData m_BGN;
+	//SE
+	SoundData m_Title;
 
 
 

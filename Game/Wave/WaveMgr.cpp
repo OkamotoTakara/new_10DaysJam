@@ -201,6 +201,32 @@ void WaveMgr::Setting()
 	m_timerUI.Load("Resource/UI/Timer/Timer.png");
 	m_frameUI.Load("Resource/UI/Timer/Frame.png");
 
+	//日数表示用UI
+	m_daysUI.Load("Resource/UI/NumFont/Day.png");
+	m_daysUI.m_transform.pos = { 108,230 };
+	m_daysUI.m_transform.scale = { 100,50 };
+
+	//数字テクスチャロード
+	m_number[0].Load("Resource/UI/NumFont/0.png");
+	m_number[1].Load("Resource/UI/NumFont/1.png");
+	m_number[2].Load("Resource/UI/NumFont/2.png");
+	m_number[3].Load("Resource/UI/NumFont/3.png");
+	m_number[4].Load("Resource/UI/NumFont/4.png");
+	m_number[5].Load("Resource/UI/NumFont/5.png");
+	m_number[6].Load("Resource/UI/NumFont/6.png");
+	m_number[7].Load("Resource/UI/NumFont/7.png");
+	m_number[8].Load("Resource/UI/NumFont/8.png");
+	m_number[9].Load("Resource/UI/NumFont/9.png");
+
+	//BGM
+	m_BGM = SoundManager::Instance()->SoundLoadWave("Resource/Sound/bgm.wav");
+	SoundManager::Instance()->SoundPlayerWave(m_BGM, 100);
+	m_BGM.source->SetVolume(0.0f);
+	m_BGM.source->Stop();
+	volume = 0.0f;
+	start_bgm = false;
+	start_morning = SoundManager::Instance()->SoundLoadWave("Resource/Sound/Kokekoko.wav");
+	start_morning.volume = 0.07f;
 }
 
 void WaveMgr::Init(std::weak_ptr<EnemyMgr> arg_enemyMgr)
@@ -259,6 +285,7 @@ void WaveMgr::Draw(DrawingByRasterize& arg_rasterize, Raytracing::BlasVector& ar
 	if (!TitleFlag::Instance()->m_isTitle) {
 
 		//UIを描画。
+		m_daysUI.Draw(arg_rasterize);
 		m_frameUI.Draw(arg_rasterize);
 		m_timerUI.Draw(arg_rasterize);
 

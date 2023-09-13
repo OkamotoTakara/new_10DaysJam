@@ -22,8 +22,8 @@ Rock::Rock()
 	//SE
 	rock_break01 = SoundManager::Instance()->SoundLoadWave("Resource/Sound/rock.wav");
 	rock_break02 = SoundManager::Instance()->SoundLoadWave("Resource/Sound/break.wav");
-	rock_break01.volume = 0.1f;
-	rock_break02.volume = 0.1f;
+	rock_break01.volume = 0.05f;
+	rock_break02.volume = 0.05f;
 }
 
 void Rock::Init()

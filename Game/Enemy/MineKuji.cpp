@@ -18,7 +18,8 @@ MineKuji::MineKuji()
 	/*オカモトゾーン*/
 	m_attackedScale = 0.0f;
 	m_scale = 0.0f;
-
+	attack = SoundManager::Instance()->SoundLoadWave("Resource/Sound/Attack.wav");
+	attack.volume = 0.1f;
 }
 
 void MineKuji::Init()
@@ -494,7 +495,7 @@ void MineKuji::AttackMineral()
 		if (KazMath::Vec3<float>(m_attackedMineral.lock()->GetPosZeroY() - m_transform.pos).Length() <= m_attackedMineral.lock()->GetScale().x + m_transform.scale.x) {
 
 			m_attackID = STAY;
-
+			SoundManager::Instance()->SoundPlayerWave(attack, 0);
 			//反動で吹き飛ばす。
 			KazMath::Vec3<float> reactionDir = moveDir;
 			reactionDir *= -1.0f;
