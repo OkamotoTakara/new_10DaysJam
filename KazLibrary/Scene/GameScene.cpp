@@ -85,6 +85,7 @@ GameScene::GameScene()
 	m_selectTitleUISine = 0.0f;
 
 	NumberFont::Instance()->Load();
+	Tutorial::Instance()->setting();
 }
 
 GameScene::~GameScene()
@@ -120,8 +121,6 @@ void GameScene::Init()
 	GBufferMgr::Instance()->m_lightConstData.m_dirLight.m_dir = KazMath::Vec3<float>(0.0f, -0.894f, 0.4472f);
 
 	TitleFlag::Instance()->m_isTitle = true;
-
-	Tutorial::Instance()->Init();
 
 }
 

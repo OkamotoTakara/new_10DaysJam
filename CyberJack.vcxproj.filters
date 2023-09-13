@@ -157,6 +157,7 @@
     <ClCompile Include="Game\DrawCallUISet.cpp" />
     <ClCompile Include="Game\PointLightMgr.cpp" />
     <ClCompile Include="Game\Enemy\MineTsumuri.cpp" />
+    <ClCompile Include="Game\Tutorial.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Game\Debug\ParameterMgr.h" />
@@ -337,6 +338,7 @@
     <ClInclude Include="Game\Enemy\MineTsumuri.h" />
     <ClInclude Include="Game\Effect\ChromaticAberration.h" />
     <ClInclude Include="Game\TitleFlag.h" />
+    <ClInclude Include="Game\Tutorial.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

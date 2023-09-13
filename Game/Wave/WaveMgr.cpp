@@ -2,6 +2,7 @@
 #include "Wave.h"
 #include "../Game/Enemy/EnemyMgr.h"
 #include "../Game/TitleFlag.h"
+#include "../Game/Tutorial.h"
 
 void WaveMgr::Setting()
 {
@@ -11,21 +12,46 @@ void WaveMgr::Setting()
 
 	//生成する敵の情報配列
 	std::vector<Wave::EnemyWaveInfo> enemyInfo;
-
-	//1ウェーブ目 -----------------------------------------------------------------------------------------
-	int dayTime = 600;		//日中の時間 フレーム数
-	int nightTime = 1800;	//夜の時間 フレーム数
+	//ウェーブに必要な情報
+	int dayTime;		//日中の時間 フレーム数
+	int nightTime;	//夜の時間 フレーム数
 	std::vector<int> tree = {  };		//有効化時に生成される木のIndex 1スタート
 	std::vector<int> rock = {  };		//有効化時に生成される岩のIndex 1スタート
 	std::vector<int> mineralRock = {  };		//有効化時に生成されるミネラル岩のIndex 1スタート
-	//敵を追加していく。
-	enemyInfo.emplace_back(EnemyRoute::A, Wave::ENEMY_ID::MINEKUJI, 0);
-	enemyInfo.emplace_back(EnemyRoute::A, Wave::ENEMY_ID::MINEKUJI, 180);
-	enemyInfo.emplace_back(EnemyRoute::A, Wave::ENEMY_ID::MINEKUJI, 360);
-	//enemyInfo.emplace_back(EnemyRoute::B, Wave::ENEMY_ID::MINETSUMURI, 0);
+
+	//1ウェーブ目 -----------------------------------------------------------------------------------------
+
+	//チュートリアルのとき
+	if (Tutorial::Instance()->is_tutorial)
+	{
+		dayTime = 600;
+		nightTime = 1800;
+		//敵を追加していく。
+		enemyInfo.emplace_back(EnemyRoute::A, Wave::ENEMY_ID::MINEKUJI, 0);
+		enemyInfo.emplace_back(EnemyRoute::A, Wave::ENEMY_ID::MINEKUJI, 180);
+		enemyInfo.emplace_back(EnemyRoute::A, Wave::ENEMY_ID::MINEKUJI, 360);
+		//enemyInfo.emplace_back(EnemyRoute::B, Wave::ENEMY_ID::MINETSUMURI, 0);
 	//ウェーブを追加。
-	m_waves.emplace_back(std::make_shared<Wave>(dayTime, nightTime, tree, rock, mineralRock, enemyInfo));
-	enemyInfo.clear();
+		m_waves.emplace_back(std::make_shared<Wave>(dayTime, nightTime, tree, rock, mineralRock, enemyInfo));
+		enemyInfo.clear();
+	}
+	//チュートリアルではないとき
+	else
+	{
+		int dayTime = 600;		//日中の時間 フレーム数
+		int nightTime = 1800;	//夜の時間 フレーム数
+		std::vector<int> tree = {  };		//有効化時に生成される木のIndex 1スタート
+		std::vector<int> rock = {  };		//有効化時に生成される岩のIndex 1スタート
+		std::vector<int> mineralRock = {  };		//有効化時に生成されるミネラル岩のIndex 1スタート
+		//敵を追加していく。
+		enemyInfo.emplace_back(EnemyRoute::A, Wave::ENEMY_ID::MINEKUJI, 0);
+		enemyInfo.emplace_back(EnemyRoute::A, Wave::ENEMY_ID::MINEKUJI, 180);
+		enemyInfo.emplace_back(EnemyRoute::A, Wave::ENEMY_ID::MINEKUJI, 360);
+		//enemyInfo.emplace_back(EnemyRoute::B, Wave::ENEMY_ID::MINETSUMURI, 0);
+	//ウェーブを追加。
+		m_waves.emplace_back(std::make_shared<Wave>(dayTime, nightTime, tree, rock, mineralRock, enemyInfo));
+		enemyInfo.clear();
+	}
 
 
 	//2ウェーブ目 -----------------------------------------------------------------------------------------

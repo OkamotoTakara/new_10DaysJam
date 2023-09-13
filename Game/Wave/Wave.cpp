@@ -5,6 +5,7 @@
 #include "../PointLightMgr.h"
 #include "../Game/Rock/RockMgr.h"
 #include "../Game/TitleFlag.h"
+#include "../Game/Tutorial.h"
 
 Wave::Wave(int arg_dayTime, int arg_nightTime, std::vector<int> arg_tree, std::vector<int> arg_rock, std::vector<int> arg_mineralRock, std::vector<EnemyWaveInfo> arg_enemyWaveInfo)
 {
@@ -26,9 +27,14 @@ Wave::Wave(int arg_dayTime, int arg_nightTime, std::vector<int> arg_tree, std::v
 
 void Wave::Update(std::weak_ptr<EnemyMgr> arg_enemyMgr)
 {
-
 	//タイトルだったらタイマーを1二固定する。
 	if (TitleFlag::Instance()->m_isTitle) {
+		m_nowTime = 1;
+	}
+
+	//チュートリアルだったらタイマーを1に固定する
+	if (Tutorial::Instance()->is_tutorial)
+	{
 		m_nowTime = 1;
 	}
 
