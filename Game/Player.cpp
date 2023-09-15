@@ -560,13 +560,12 @@ void Player::Draw(DrawingByRasterize& arg_rasterize, Raytracing::BlasVector& arg
 		else {
 
 			//UIÇï`âÊÅB
-			m_hpFrameUI.Draw(arg_rasterize);
-			m_hpUI.Draw(arg_rasterize);
-			m_hpBackGroundUI.Draw(arg_rasterize);
-			m_sousaUI.Draw(arg_rasterize);
-			m_dadanUI[dadanIndex].Draw(arg_rasterize);
 			m_dadanBackGroundUI.Draw(arg_rasterize);
-
+			m_dadanUI[dadanIndex].Draw(arg_rasterize);
+			m_sousaUI.Draw(arg_rasterize);
+			m_hpBackGroundUI.Draw(arg_rasterize);
+			m_hpUI.Draw(arg_rasterize);
+			m_hpFrameUI.Draw(arg_rasterize);
 		}
 
 
@@ -575,12 +574,12 @@ void Player::Draw(DrawingByRasterize& arg_rasterize, Raytracing::BlasVector& arg
 	else if ((!TitleFlag::Instance()->m_isTitle && !ResultFlag::Instance()->m_isResult)) {
 
 		//UIÇï`âÊÅB
-		m_hpFrameUI.Draw(arg_rasterize);
-		m_hpUI.Draw(arg_rasterize);
-		m_hpBackGroundUI.Draw(arg_rasterize);
-		m_sousaUI.Draw(arg_rasterize);
-		m_dadanUI[dadanIndex].Draw(arg_rasterize);
 		m_dadanBackGroundUI.Draw(arg_rasterize);
+		m_dadanUI[dadanIndex].Draw(arg_rasterize);
+		m_sousaUI.Draw(arg_rasterize);
+		m_hpBackGroundUI.Draw(arg_rasterize);
+		m_hpUI.Draw(arg_rasterize);
+		m_hpFrameUI.Draw(arg_rasterize);
 
 		m_hpFrameUI.m_color.color.a += static_cast<int>((255.0f - m_hpFrameUI.m_color.color.a) / 15.0f);
 		m_hpUI.m_color.color.a += static_cast<int>((255.0f - m_hpUI.m_color.color.a) / 15.0f);
