@@ -92,9 +92,6 @@ private:
 	KazMath::Vec2<float> UI_DEF_RETRY_SCALE = KazMath::Vec2<float>(100.0f, 50.0f);
 	KazMath::Vec2<float> UI_MAX_TITLE_SCALE = KazMath::Vec2<float>(100.0f, 50.0f) * 1.3f;
 	KazMath::Vec2<float> UI_MAX_RETRY_SCALE = KazMath::Vec2<float>(100.0f, 50.0f) * 1.3f;
-
-	DrawCallUISet m_blackWindowRender;
-	DrawCallUISet m_alphaWindowRender;
 public:
 	GameScene();
 	~GameScene();
