@@ -56,7 +56,7 @@ private:
 	int m_moveSpan;
 	int m_randomMoveSpan;
 	const int MOVE_SPAN = 1;
-	std::array<const float, 3> MOVE_SPEED = { 2.0f, 1.5f, 0.1f };
+	std::array<const float, 3> MOVE_SPEED = { 3.0f, 2.0f, 0.1f };
 	std::array<const int, 3> ATTACK_DAMAGE = { 1, 3, 9 };
 	KazMath::Vec3<float> m_wallJump;	//•Ç’´‚¦‚Ì‘åƒWƒƒƒ“ƒv
 
@@ -94,7 +94,7 @@ private:
 	const int MIN_STAY_DELAY = 60;
 	const int MAX_STAY_DELAY = 90;
 	const float ADD_ATTACK_SPEED = 0.05f;
-	const float MAX_ATTACK_SPEED = 1.0f;
+	const float MAX_ATTACK_SPEED = 1.5f;
 	bool m_isAttack;
 	enum ATTACK_ID {
 		ATTACK,

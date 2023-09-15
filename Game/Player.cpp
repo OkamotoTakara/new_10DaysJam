@@ -99,11 +99,11 @@ void Player::Update()
 	if (!m_isStun && (!TitleFlag::Instance()->m_isTitle && !ResultFlag::Instance()->m_isResult)) {
 
 		//プレイヤーを動かす。
-		const float MOVE_SPEED = 1.0f;
+		const float MOVE_SPEED = 1.5f;
 		float moveSpeed = MOVE_SPEED;
 		//台パンチャージ中は若干移動速度を上げる。
 		if (m_daipanStatus == CHARGE) {
-			const float DAIPAN_SPEED = 0.3f;
+			const float DAIPAN_SPEED = 0.5f;
 			moveSpeed += DAIPAN_SPEED;
 		}
 

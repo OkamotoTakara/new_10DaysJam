@@ -265,7 +265,7 @@ void Wall::Update(std::weak_ptr<Player> arg_player)
 		//サイン波の動きを更新。
 		m_sineWaveTimer += ADD_SINE_WAVE_TIMER;
 
-		if (MATERIAL_COUNT <= m_materialCounter || KeyBoradInputManager::Instance()->InputTrigger(DIK_B)) {
+		if (MATERIAL_COUNT <= m_materialCounter) {
 			SoundManager::Instance()->SoundPlayerWave(wall_build, 0);
 			m_isBuild = true;
 			m_buildStatus = BUILD_STATUS::UPPER;
