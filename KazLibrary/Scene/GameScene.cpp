@@ -77,6 +77,8 @@ GameScene::GameScene()
 	m_titleBackGroundUI.Load("Resource/Title/Title_1.png");
 	m_titleStartUI.Load("Resource/Title/Title_2.png");
 	m_titleQuitUI.Load("Resource/Title/Title_3.png");
+	m_blackWindowRender.Load("Resource/Test/Black.png");
+	m_alphaWindowRender.Load("Resource/Title/TitleLogo.png");
 
 	//タイトルロゴの場所を設定。
 	m_titleLogoUI.m_transform.pos = { 1280.0f / 2.0f, 720.0f / 2.0f };
@@ -89,6 +91,11 @@ GameScene::GameScene()
 	m_titleQuitUI.m_transform.scale = { UI_DEF_QUIT_SCALE };
 	m_selectTitleNum = 0;
 	m_selectTitleUISine = 0.0f;
+
+	m_blackWindowRender.m_transform = m_titleBackGroundUI.m_transform;
+	m_blackWindowRender.m_transform.scale = { 700.0f,500.0f };
+	m_blackWindowRender.m_color.color.a = 100;
+	m_alphaWindowRender.m_transform = m_titleLogoUI.m_transform;
 
 	//リザルト関連
 	m_resultBackGroundUI.Load("Resource/Result/Result_UI4.png");
@@ -372,10 +379,14 @@ void GameScene::Draw(DrawingByRasterize& arg_rasterize, Raytracing::BlasVector& 
 
 
 	}
-	if (TitleFlag::Instance()->m_isDrawTitle) {
-		m_titleStartUI.Draw(arg_rasterize);
-		m_titleQuitUI.Draw(arg_rasterize);
-		m_titleBackGroundUI.Draw(arg_rasterize);
+	if (TitleFlag::Instance()->m_isDrawTitle)
+	{
+		//m_titleStartUI.Draw(arg_rasterize);
+		//m_titleQuitUI.Draw(arg_rasterize);
+		//m_titleBackGroundUI.Draw(arg_rasterize);
+
+		m_blackWindowRender.Draw(arg_rasterize);
+		m_alphaWindowRender.Draw(arg_rasterize);
 	}
 
 	//リザルト画面を描画

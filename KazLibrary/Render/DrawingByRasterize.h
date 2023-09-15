@@ -15,27 +15,15 @@ class DrawingByRasterize
 public:
 	DrawingByRasterize();
 
-	/// <summary>
-	/// 描画情報にスタックした情報の初期化
-	/// シーン切り替え時に呼び出し推奨
-	/// </summary>
-	void Clear();
-
-
-	//描画情報のスタック----------------------------------------
-
-	RESOURCE_HANDLE GetHandle();
-	DrawFuncData::DrawData* StackData(RESOURCE_HANDLE HANDLE);
-	//描画情報のスタック----------------------------------------
-
 	//新システムでの描画命令
 	void ObjectRender(const DrawFuncData::DrawCallData& DRAW_DATA);
+	void UIRender(const DrawFuncData::DrawCallData& DRAW_DATA);
+	void UISort();
 	void Sort();
 	void Render();
+	void RenderAfterBackBuffer();
 
 private:
-	HandleMaker drawHandle;
-	std::vector<DrawFuncData::DrawData> graphicDataArray;
 
 	//パイプラインの情報----------------------------------------
 
@@ -63,6 +51,11 @@ private:
 	//描画命令の受け取り
 	std::list<DrawFuncData::DrawCallData> kazCommandList;
 
+	//UIの描画命令の受け取り--------------------------------
+	//描画情報
+	std::vector<DrawFuncData::DrawData> m_uiRenderInfomationArray;
+	//描画命令の受け取り
+	std::list<DrawFuncData::DrawCallData> m_uiKazCommandList;
 
 	//描画に必要なバッファをコマンドリストに積む
 	void SetBufferOnCmdList(const  std::vector<KazBufferHelper::BufferData>& BUFFER_ARRAY, std::vector<RootSignatureParameter> ROOT_PARAM);
@@ -72,7 +65,7 @@ private:
 	void DrawIndexInstanceCommand(const KazRenderHelper::DrawIndexInstanceCommandData& DATA);
 	void DrawInstanceCommand(const KazRenderHelper::DrawInstanceCommandData& DATA);
 
-	void DrawExecuteIndirect(const KazRenderHelper::MultipleMeshesDrawIndexInstanceCommandData& DATA, const Microsoft::WRL::ComPtr<ID3D12CommandSignature>&arg_commandSignature,const DrawFuncData::ExcuteIndirectArgumentData &arg_argmentData);
+	void DrawExecuteIndirect(const KazRenderHelper::MultipleMeshesDrawIndexInstanceCommandData& DATA, const Microsoft::WRL::ComPtr<ID3D12CommandSignature>& arg_commandSignature, const DrawFuncData::ExcuteIndirectArgumentData& arg_argmentData);
 
 	//何処の描画関数から呼び出されたかエラー文を書く
 	void ErrorCheck(RESOURCE_HANDLE HANDLE, const std::source_location& DRAW_SOURCE_LOCATION)
