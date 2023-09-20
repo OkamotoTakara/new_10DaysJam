@@ -372,10 +372,11 @@ void GameScene::Draw(DrawingByRasterize& arg_rasterize, Raytracing::BlasVector& 
 
 
 	}
-	if (TitleFlag::Instance()->m_isDrawTitle) {
+	if (TitleFlag::Instance()->m_isDrawTitle)
+	{
+		m_titleBackGroundUI.Draw(arg_rasterize);
 		m_titleStartUI.Draw(arg_rasterize);
 		m_titleQuitUI.Draw(arg_rasterize);
-		m_titleBackGroundUI.Draw(arg_rasterize);
 	}
 
 	//リザルト画面を描画
@@ -398,9 +399,9 @@ void GameScene::Draw(DrawingByRasterize& arg_rasterize, Raytracing::BlasVector& 
 		for (auto& index : m_resultMineralScoreUI) index.Draw(arg_rasterize);
 		for (auto& index : m_reesultEnemyScoreUI) index.Draw(arg_rasterize);
 		for (auto& index : m_totalScoreUI) index.Draw(arg_rasterize);
+		m_resultBackGroundUI.Draw(arg_rasterize);
 		m_resultTitleUI.Draw(arg_rasterize);
 		m_resultRetryUI.Draw(arg_rasterize);
-		m_resultBackGroundUI.Draw(arg_rasterize);
 	}
 
 	//チュートリアルを描画。

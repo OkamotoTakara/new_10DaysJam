@@ -13,6 +13,6 @@ void DrawCallUISet::Draw(DrawingByRasterize& arg_rasterize)
 {
 
 	DrawFunc::DrawTextureIn2D(m_render, m_transform, m_texture, m_color);
-	arg_rasterize.ObjectRender(m_render);
+	arg_rasterize.UIRender(m_render);
 
 }

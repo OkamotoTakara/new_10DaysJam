@@ -225,7 +225,7 @@ namespace DrawFuncPipelineData
 		//デプスステンシルステートの設定
 		gPipeline.DepthStencilState.DepthEnable = true;							//深度テストを行う
 		gPipeline.DepthStencilState.DepthWriteMask = D3D12_DEPTH_WRITE_MASK_ALL;//書き込み許可
-		gPipeline.DepthStencilState.DepthFunc = D3D12_COMPARISON_FUNC_LESS;		//小さければOK
+		gPipeline.DepthStencilState.DepthFunc = D3D12_COMPARISON_FUNC_ALWAYS;		//小さければOK
 		gPipeline.DSVFormat = DXGI_FORMAT_D32_FLOAT;							//深度値フォーマット
 
 		return gPipeline;

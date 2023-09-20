@@ -346,23 +346,19 @@ void WaveMgr::Draw(DrawingByRasterize& arg_rasterize, Raytracing::BlasVector& ar
 		else {
 
 			//UIÇï`âÊÅB
-			m_frameUI.Draw(arg_rasterize);
-			m_timerUI.Draw(arg_rasterize);
-			m_timerUI.Draw(arg_rasterize);
 			m_dayNumerUI.Draw(arg_rasterize);
-
+			m_timerUI.Draw(arg_rasterize);
+			m_timerUI.Draw(arg_rasterize);
+			m_frameUI.Draw(arg_rasterize);
 		}
-
-
-
 	}
 	else if ((!TitleFlag::Instance()->m_isTitle && !ResultFlag::Instance()->m_isResult)) {
 
 		//UIÇï`âÊÅB
-		m_daysUI.Draw(arg_rasterize);
-		m_frameUI.Draw(arg_rasterize);
-		m_timerUI.Draw(arg_rasterize);
 		m_dayNumerUI.Draw(arg_rasterize);
+		m_timerUI.Draw(arg_rasterize);
+		m_frameUI.Draw(arg_rasterize);
+		m_daysUI.Draw(arg_rasterize);
 
 		m_frameUI.m_color.color.a += static_cast<int>((255.0f - m_frameUI.m_color.color.a) / 15.0f);
 		m_timerUI.m_color.color.a += static_cast<int>((255.0f - m_timerUI.m_color.color.a) / 15.0f);

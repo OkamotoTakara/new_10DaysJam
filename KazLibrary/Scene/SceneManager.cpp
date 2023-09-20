@@ -343,4 +343,7 @@ void SceneManager::Draw()
 		m_rayPipeline->TraceRay(m_tlas);
 	}
 
+	m_rasterize.UISort();
+	m_rasterize.RenderAfterBackBuffer();
+
 }
