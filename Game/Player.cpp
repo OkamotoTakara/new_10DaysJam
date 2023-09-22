@@ -502,9 +502,7 @@ void Player::Draw(DrawingByRasterize& arg_rasterize, Raytracing::BlasVector& arg
 		m_attackModel.Draw(arg_rasterize, arg_blasVec, m_transform, 10);
 	}
 	else {
-		if (KeyBoradInputManager::Instance()->InputState(DIK_I)) {
-			m_model.Draw(arg_rasterize, arg_blasVec, m_transform, 10);
-		}
+		m_model.Draw(arg_rasterize, arg_blasVec, m_transform, 10);
 	}
 
 	//プレイヤーの台パンの範囲を描画
@@ -608,12 +606,12 @@ void Player::Draw(DrawingByRasterize& arg_rasterize, Raytracing::BlasVector& arg
 
 
 
-	//ImGui::Begin("UI");
+	ImGui::Begin("UI");
 
-	//ImGui::Text("POS_X : %f", m_transform.pos.x);
-	//ImGui::Text("POS_Z : %f", m_transform.pos.z);
+	ImGui::Text("POS_X : %f", m_transform.pos.x);
+	ImGui::Text("POS_Z : %f", m_transform.pos.z);
 
-	//ImGui::End();
+	ImGui::End();
 
 
 }
